@@ -22,6 +22,14 @@ export const metadata: Metadata = {
     default: "Club Voley Zúñiga | Formamos Campeones",
     template: "%s | Voley Zúñiga"
   },
+  icons: {
+    icon: [
+      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/logo.svg", type: "image/svg+xml" }
+    ],
+    shortcut: "/logo.svg",
+    apple: "/logo.svg",
+  },
   description: "Club deportivo premium de voleibol en Medellín, Antioquia. Formación de élite, desarrollo atlético y valores competitivos.",
   keywords: ["voleibol", "medellin", "club deportivo", "voley", "antioquia", "entrenamiento", "deporte"],
   openGraph: {
