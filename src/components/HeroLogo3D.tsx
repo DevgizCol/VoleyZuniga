@@ -90,7 +90,7 @@ export default function HeroLogo3D() {
         
         <PresentationControls
           global
-          config={{ mass: 1, tension: 170, friction: 26 }} as any
+
           snap={true}
           rotation={[0, -0.1, 0]}
           polar={[-Math.PI / 3, Math.PI / 3]}
