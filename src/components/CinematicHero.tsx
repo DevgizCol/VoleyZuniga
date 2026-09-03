@@ -1,53 +1,21 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import React from "react";
 import { motion } from "framer-motion";
 import HeroLogo3D from "./HeroLogo3D";
 
-gsap.registerPlugin(ScrollTrigger);
-
 export default function CinematicHero() {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const videoOverlayRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-
-      // Efecto parallax y fade del overlay al hacer scroll
-      gsap.to(videoOverlayRef.current, {
-        scrollTrigger: {
-          trigger: containerRef.current,
-          start: "top top",
-          end: "bottom top",
-          scrub: true,
-        },
-        backgroundColor: "rgba(247, 248, 250, 1)", // Transición a Titanium White
-      });
-    }, containerRef);
-
-    return () => ctx.revert();
-  }, []);
-
   return (
-    <section
-      ref={containerRef}
-      className="relative h-[120vh] w-full flex items-center justify-center overflow-hidden bg-[#071426]"
-    >
-      {/* Placeholder para Video 4K Cinematic / Imagen Optimizada */}
-      <div className="absolute inset-0 z-0">
-        <div className="w-full h-full bg-[url('https://images.unsplash.com/photo-1592656094267-764a45160876?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-center opacity-10"></div>
+    <section className="relative min-h-screen w-full flex items-center justify-center overflow-hidden bg-[#071426] pt-24 pb-16 lg:py-0">
+      {/* Fondo Deportivo de Lujo con Luces Volumétricas */}
+      <div className="absolute inset-0 z-0 pointer-events-none">
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] md:w-[900px] h-[500px] bg-[#F29A2E]/10 rounded-full blur-[140px]" />
+        <div className="absolute bottom-10 left-10 w-[400px] h-[400px] bg-[#0F284B]/40 rounded-full blur-[100px]" />
+        <div className="w-full h-full bg-[radial-gradient(#ffffff0a_1px,transparent_1px)] [background-size:24px_24px] opacity-25" />
       </div>
 
-      {/* Overlay que cambia con GSAP */}
-      <div
-        ref={videoOverlayRef}
-        className="absolute inset-0 z-10 bg-gradient-to-b from-[#071426]/60 via-[#071426]/80 to-[#F7F8FA]"
-      ></div>
-
       {/* Contenido Brutalista y 3D */}
-      <div className="relative z-20 container mx-auto px-6 h-screen flex flex-col lg:flex-row items-center justify-between">
+      <div className="relative z-20 container mx-auto px-6 flex flex-col lg:flex-row items-center justify-between">
         
         {/* Lado Izquierdo: Texto */}
         <motion.div 

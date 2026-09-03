@@ -44,7 +44,7 @@ export default function TeamPage() {
       spikeReach: "2.75 m",
       specialty: "Distribución Rápida & Fintas",
       rating: 94,
-      image: "https://images.unsplash.com/photo-1592656094267-764a45160876?q=80&w=800&auto=format&fit=crop"
+      image: "https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?q=80&w=800&auto=format&fit=crop"
     },
     {
       id: "3",

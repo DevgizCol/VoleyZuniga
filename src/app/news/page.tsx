@@ -14,7 +14,7 @@ export default function NewsPage() {
     category: "Liga Antioqueña",
     date: "02 Septiembre 2026",
     readTime: "3 min de lectura",
-    image: "https://images.unsplash.com/photo-1592656094267-764a45160876?q=80&w=1200&auto=format&fit=crop",
+    image: "https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?q=80&w=1200&auto=format&fit=crop",
     excerpt: "En un emocionante desempate a 5 sets frente a Envigado VC, nuestras atletas demostraron temple y disciplina táctica para levantar el trofeo más codiciado del voleibol juvenil antioqueño.",
     author: "Comité de Prensa Zúñiga"
   };

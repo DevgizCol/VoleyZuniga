@@ -4,7 +4,6 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import CartDrawer from "@/components/CartDrawer";
 import { CartProvider } from "@/context/CartContext";
-import SmoothScroller from "@/components/SmoothScroller";
 import "./globals.css";
 
 const inter = Inter({
@@ -78,15 +77,14 @@ export default function RootLayout({
   return (
     <html
       lang="es"
-      className={`${inter.variable} ${oswald.variable} h-full antialiased`}
+      className={`${inter.variable} ${oswald.variable} scroll-smooth antialiased`}
     >
-      <body className="min-h-full flex flex-col font-sans text-white bg-[#071426] selection:bg-[#F29A2E] selection:text-white overflow-x-hidden">
+      <body className="min-h-screen flex flex-col font-sans text-white bg-[#071426] selection:bg-[#F29A2E] selection:text-white">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
         <CartProvider>
-          <SmoothScroller />
           <Header />
           <CartDrawer />
           <div className="flex-1">

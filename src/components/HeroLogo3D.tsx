@@ -96,8 +96,6 @@ export default function HeroLogo3D() {
         <pointLight position={[0, 0, 5]} intensity={1.5} color="#ffffff" />
         
         <PresentationControls
-          global
-
           snap={true}
           rotation={[0, -0.1, 0]}
           polar={[-Math.PI / 3, Math.PI / 3]}
