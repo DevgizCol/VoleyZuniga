@@ -12,6 +12,7 @@ function ExtrudedLogo() {
   
   // Cargar el SVG y parsearlo
   const svg = useLoader(SVGLoader, "/logo.svg");
+  // @ts-ignore - TS types for SVGLoader might differ in some @types/three versions
   const shapes = useMemo(() => svg.paths.map((p) => p.toShapes(true)), [svg]);
 
   // Animación de aparición y rotación constante
@@ -89,7 +90,7 @@ export default function HeroLogo3D() {
         
         <PresentationControls
           global
-          config={{ mass: 1, tension: 170, friction: 26 }}
+          config={{ mass: 1, tension: 170, friction: 26 }} as any
           snap={true}
           rotation={[0, -0.1, 0]}
           polar={[-Math.PI / 3, Math.PI / 3]}
