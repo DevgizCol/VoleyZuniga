@@ -1,5 +1,5 @@
 import React from "react";
-import { MapPin, Phone, Mail, Clock, Instagram, Facebook } from "lucide-react";
+import { MapPin, Phone, Mail, Clock } from "lucide-react";
 
 export default function ContactPage() {
   return (
@@ -53,11 +53,11 @@ export default function ContactPage() {
               <div className="mt-8 pt-8 border-t border-gray-100">
                 <h4 className="font-bold mb-4 uppercase">Redes Sociales</h4>
                 <div className="flex gap-4">
-                  <a href="https://www.instagram.com/voleyzuniga_oficial" target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full bg-[#071426] flex items-center justify-center text-white hover:bg-[#F29A2E] transition-colors">
-                    <Instagram size={20} />
+                  <a href="https://www.instagram.com/voleyzuniga_oficial" target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full bg-[#071426] flex items-center justify-center text-white hover:bg-[#F29A2E] transition-colors font-bold">
+                    IG
                   </a>
-                  <a href="https://www.facebook.com/clubvoleyzuniga" target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full bg-[#071426] flex items-center justify-center text-white hover:bg-[#F29A2E] transition-colors">
-                    <Facebook size={20} />
+                  <a href="https://www.facebook.com/clubvoleyzuniga" target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full bg-[#071426] flex items-center justify-center text-white hover:bg-[#F29A2E] transition-colors font-bold">
+                    FB
                   </a>
                 </div>
               </div>
