@@ -1,93 +1,183 @@
 import React from "react";
 import Image from "next/image";
-import { Trophy, Users, Target, Heart } from "lucide-react";
+import Link from "next/link";
+import { Trophy, Award, Target, Flame, ChevronRight, Sparkles, Compass } from "lucide-react";
 
 export default function HistoryPage() {
+  const stages = [
+    {
+      step: "01",
+      title: "Semillero de Iniciación",
+      age: "8 a 11 Años",
+      focus: "Psicomotricidad, Control Óculo-Manual & Disciplina Básica",
+      desc: "El primer contacto con el balón. Priorizamos la diversión técnica, la postura corporal, el compañerismo y el amor incondicional por la disciplina deportiva.",
+      badge: "Formación Temprana"
+    },
+    {
+      step: "02",
+      title: "Desarrollo Táctico & Fuerza",
+      age: "12 a 14 Años",
+      focus: "Biomecánica de Salto, Batida de Remate & Lectura de Bloqueo",
+      desc: "Introducción a los sistemas de juego 5-1 y 4-2. Entrenamiento pliométrico seguro para aumentar la suspensión vertical y perfeccionar la precisión en el saque.",
+      badge: "Especialización"
+    },
+    {
+      step: "03",
+      title: "Alta Competencia Departamental",
+      age: "15 a 18 Años",
+      focus: "Liga Antioqueña de Voleibol & Festivales Nacionales",
+      desc: "Nuestros equipos compiten al más alto nivel competitivo en los coliseos de Medellín y el país. Enfoque en resiliencia mental, toma de decisiones bajo presión y liderazgo en cancha.",
+      badge: "Competencia Élite"
+    },
+    {
+      step: "04",
+      title: "Proyección & Becas Deportivas",
+      age: "Mayores / Egresados",
+      focus: "Becas Universitarias & Selección Departamental",
+      desc: "Acompañamos a nuestros atletas destacados para postularse a becas deportivas universitarias en Colombia y el exterior, manteniendo viva la red de egresados de la familia Zúñiga.",
+      badge: "Futuro & Éxito"
+    }
+  ];
+
   return (
-    <div className="pt-28 pb-20 bg-white min-h-screen text-[#0F2347]">
-      {/* Hero Section */}
+    <div className="pt-28 pb-20 bg-[#071426] min-h-screen text-white">
+      {/* 1. Header Hero */}
       <div className="container mx-auto px-6 mb-20">
-        <div className="flex flex-col md:flex-row gap-12 items-center">
-          <div className="md:w-1/2">
-            <h1 className="text-5xl md:text-6xl font-heading font-bold uppercase mb-6 text-[#071426]">
-              Nuestra <span className="text-[#F29A2E]">Historia</span>
-            </h1>
-            <p className="text-xl text-[#64748B] mb-6 leading-relaxed">
-              El Club Deportivo Voley Zúñiga nació de la pasión por el voleibol y el deseo de construir un espacio de formación integral en Medellín.
-            </p>
-            <p className="text-[#64748B] leading-relaxed">
-              A lo largo de los años, hemos crecido de ser un pequeño grupo de entusiastas a convertirnos en una institución referente en la región, participando en ligas locales, departamentales y nacionales, siempre llevando en alto nuestros valores de respeto, disciplina y amor por el deporte.
-            </p>
+        <div className="max-w-3xl">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#F29A2E]/10 border border-[#F29A2E]/20 text-[#F29A2E] text-xs uppercase tracking-widest font-bold mb-6">
+            <Compass size={14} />
+            <span>Nuestra Trayectoria & Filosofía</span>
           </div>
-          <div className="md:w-1/2 relative h-[400px] w-full rounded-3xl overflow-hidden shadow-2xl">
-            {/* Using a placeholder or an external image for now */}
-            <div className="absolute inset-0 bg-[#071426]/20 z-10 mix-blend-multiply"></div>
-            <Image 
-              src="https://images.unsplash.com/photo-1592656094267-764a45160876?q=80&w=800&auto=format&fit=crop" 
-              alt="Historia del Club" 
-              fill
-              className="object-cover"
-            />
-          </div>
+          <h1 className="text-4xl md:text-6xl font-heading font-bold uppercase tracking-tight text-white mb-6">
+            Una Década Forjando <span className="text-[#F29A2E]">Campeones</span> en Medellín
+          </h1>
+          <p className="text-gray-300 text-lg md:text-xl font-sans leading-relaxed">
+            El Club Deportivo Voley Zúñiga nació con una convicción inquebrantable: el voleibol es la herramienta más poderosa para forjar jóvenes disciplinados, competitivos y con valores a prueba de fuego.
+          </p>
         </div>
       </div>
 
-      {/* Valores Section */}
-      <div className="bg-[#071426] py-20 text-white">
+      {/* 2. Path to Glory (Timeline Inmersivo) */}
+      <section className="py-16 bg-[#0B1E38]/50 border-y border-white/5 relative">
         <div className="container mx-auto px-6">
-          <h2 className="text-4xl font-heading font-bold uppercase text-center mb-16">Nuestros Pilares</h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div className="bg-white/5 p-8 rounded-2xl border border-white/10 hover:border-[#F29A2E] transition-colors">
-              <Trophy size={40} className="text-[#F29A2E] mb-6" />
-              <h3 className="text-2xl font-bold mb-3 uppercase">Excelencia</h3>
-              <p className="text-white/70">Buscamos el máximo rendimiento deportivo, técnico y táctico en cada entrenamiento y competición.</p>
+          <div className="text-center max-w-2xl mx-auto mb-20">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 text-[#F29A2E] text-xs font-mono uppercase tracking-widest mb-3">
+              <Sparkles size={14} />
+              <span>Metodología Progresiva</span>
             </div>
-            
-            <div className="bg-white/5 p-8 rounded-2xl border border-white/10 hover:border-[#F29A2E] transition-colors">
-              <Users size={40} className="text-[#F29A2E] mb-6" />
-              <h3 className="text-2xl font-bold mb-3 uppercase">Compañerismo</h3>
-              <p className="text-white/70">Fomentamos el trabajo en equipo, la solidaridad y el apoyo mutuo dentro y fuera de la cancha.</p>
-            </div>
+            <h2 className="text-3xl md:text-5xl font-heading font-bold uppercase text-white mb-4">
+              Path to Glory: El Camino del Atleta
+            </h2>
+            <p className="text-gray-400 font-sans text-base">
+              Así es como acompañamos el crecimiento atlético y humano de cada deportista desde que pisa la cancha por primera vez.
+            </p>
+          </div>
 
-            <div className="bg-white/5 p-8 rounded-2xl border border-white/10 hover:border-[#F29A2E] transition-colors">
-              <Target size={40} className="text-[#F29A2E] mb-6" />
-              <h3 className="text-2xl font-bold mb-3 uppercase">Disciplina</h3>
-              <p className="text-white/70">El compromiso, la puntualidad y el esfuerzo constante son innegociables en nuestro club.</p>
-            </div>
-
-            <div className="bg-white/5 p-8 rounded-2xl border border-white/10 hover:border-[#F29A2E] transition-colors">
-              <Heart size={40} className="text-[#F29A2E] mb-6" />
-              <h3 className="text-2xl font-bold mb-3 uppercase">Pasión</h3>
-              <p className="text-white/70">Amamos el voleibol y transmitimos esa energía y entusiasmo a las nuevas generaciones.</p>
-            </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 relative">
+            {stages.map((stage, idx) => (
+              <div 
+                key={idx}
+                className="relative p-8 rounded-3xl bg-[#071426] border border-white/10 hover:border-[#F29A2E]/50 transition-all duration-300 group flex flex-col justify-between shadow-xl"
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-6">
+                    <span className="text-4xl font-heading font-bold text-white/20 group-hover:text-[#F29A2E] transition-colors">
+                      {stage.step}
+                    </span>
+                    <span className="px-3 py-1 rounded-full bg-white/5 text-[11px] font-bold tracking-wider uppercase text-gray-300">
+                      {stage.age}
+                    </span>
+                  </div>
+                  <div className="inline-block px-2.5 py-1 rounded-md bg-[#F29A2E]/10 text-[#F29A2E] text-[10px] font-bold uppercase tracking-wider mb-3">
+                    {stage.badge}
+                  </div>
+                  <h3 className="text-2xl font-heading font-bold uppercase text-white mb-3 group-hover:text-[#F29A2E] transition-colors">
+                    {stage.title}
+                  </h3>
+                  <p className="text-xs font-bold uppercase tracking-wider text-gray-300 mb-4">
+                    {stage.focus}
+                  </p>
+                  <p className="text-gray-400 font-sans text-sm leading-relaxed">
+                    {stage.desc}
+                  </p>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
+      </section>
+
+      {/* 3. Valores Inquebrantables */}
+      <section className="py-24 container mx-auto px-6">
+        <div className="text-center max-w-xl mx-auto mb-16">
+          <h2 className="text-3xl md:text-4xl font-heading font-bold uppercase text-white mb-4">
+            Nuestros Cuatro Pilares Éticos
+          </h2>
+          <p className="text-gray-400 text-sm md:text-base font-sans">
+            La técnica se entrena con repetición; el carácter se forja con valores.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <PillarCard 
+            icon={<Trophy size={32} className="text-[#F29A2E]" />}
+            title="Excelencia"
+            desc="Exigimos el 100% de compromiso tanto en una práctica de lunes como en la final de un campeonato."
+          />
+          <PillarCard 
+            icon={<Target size={32} className="text-[#F29A2E]" />}
+            title="Disciplina"
+            desc="Puntualidad rigurosa, respeto al uniforme y constancia. El talento sin disciplina no llega a la meta."
+          />
+          <PillarCard 
+            icon={<Award size={32} className="text-[#F29A2E]" />}
+            title="Humildad"
+            desc="Celebramos la victoria con respeto hacia el rival y asumimos la derrota como el maestro más valioso."
+          />
+          <PillarCard 
+            icon={<Flame size={32} className="text-[#F29A2E]" />}
+            title="Identidad Zúñiga"
+            desc="Pasión innegociable por la camiseta. En cada bloqueo y cada remate se deja el corazón en la cancha."
+          />
+        </div>
+
+        {/* CTA a Inscripciones */}
+        <div className="mt-20 p-10 md:p-12 rounded-3xl bg-gradient-to-r from-[#0B1E38] to-[#071426] border border-[#F29A2E]/30 flex flex-col md:flex-row items-center justify-between gap-8">
+          <div>
+            <h3 className="text-2xl md:text-3xl font-heading font-bold uppercase text-white mb-2">
+              ¿Quieres ser parte de esta historia?
+            </h3>
+            <p className="text-gray-300 font-sans text-sm md:text-base max-w-xl">
+              Abiertas inscripciones para niños, niñas y jóvenes desde los 8 años en nuestras sedes de Medellín.
+            </p>
+          </div>
+          <Link
+            href="/registrations"
+            className="px-8 py-4 bg-[#F29A2E] text-[#071426] hover:bg-white font-bold text-sm uppercase tracking-wider rounded-xl transition-all shadow-lg shrink-0"
+          >
+            Inscribirse al Club
+          </Link>
+        </div>
+      </section>
+    </div>
+  );
+}
+
+function PillarCard({ icon, title, desc }: { icon: React.ReactNode, title: string, desc: string }) {
+  return (
+    <div className="p-8 rounded-3xl bg-white/[0.02] border border-white/10 hover:border-[#F29A2E]/40 transition-all duration-300 flex flex-col justify-between group">
+      <div className="w-14 h-14 rounded-2xl bg-white/5 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+        {icon}
       </div>
-
-      {/* Social Proof / Estadísticas */}
-      <div className="bg-white py-20 border-t border-gray-100">
-        <div className="container mx-auto px-6">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-            <div>
-              <div className="text-5xl font-heading font-bold text-[#F29A2E] mb-2">+500</div>
-              <div className="text-[#071426] font-bold uppercase tracking-wider text-sm">Deportistas Formados</div>
-            </div>
-            <div>
-              <div className="text-5xl font-heading font-bold text-[#F29A2E] mb-2">+15</div>
-              <div className="text-[#071426] font-bold uppercase tracking-wider text-sm">Títulos Obtenidos</div>
-            </div>
-            <div>
-              <div className="text-5xl font-heading font-bold text-[#F29A2E] mb-2">10</div>
-              <div className="text-[#071426] font-bold uppercase tracking-wider text-sm">Años de Experiencia</div>
-            </div>
-            <div>
-              <div className="text-5xl font-heading font-bold text-[#F29A2E] mb-2">4</div>
-              <div className="text-[#071426] font-bold uppercase tracking-wider text-sm">Sedes de Entrenamiento</div>
-            </div>
-          </div>
-        </div>
+      <div>
+        <h3 className="text-2xl font-heading font-bold uppercase text-white mb-3">
+          {title}
+        </h3>
+        <p className="text-gray-400 font-sans text-sm leading-relaxed">
+          {desc}
+        </p>
       </div>
     </div>
   );
 }
+

@@ -79,8 +79,15 @@ export default function HeroLogo3D() {
   if (!mounted) return <div className="w-full h-full min-h-[400px]"></div>;
 
   return (
-    <div className="w-full h-[400px] md:h-[500px] lg:h-[700px] cursor-grab active:cursor-grabbing opacity-0 animate-fade-in-up" style={{ animationDelay: '0.5s', animationFillMode: 'forwards' }}>
-      <Canvas camera={{ position: [0, 0, 15], fov: 45 }} dpr={[1, 1.5]}>
+    <div 
+      className="w-full h-[400px] md:h-[500px] lg:h-[700px] cursor-grab active:cursor-grabbing opacity-0 animate-fade-in-up" 
+      style={{ animationDelay: '0.5s', animationFillMode: 'forwards', touchAction: 'pan-y' }}
+    >
+      <Canvas 
+        camera={{ position: [0, 0, 15], fov: 45 }} 
+        dpr={[1, 1.5]}
+        style={{ touchAction: 'pan-y' }}
+      >
         
         {/* Iluminación Dramática */}
         <ambientLight intensity={0.4} />
