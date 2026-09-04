@@ -86,6 +86,7 @@ export default function HeroLogo3D() {
       <Canvas 
         camera={{ position: [0, 0, 15], fov: 45 }} 
         dpr={[1, 1.5]}
+        gl={{ powerPreference: "high-performance", antialias: true, alpha: true, stencil: false }}
         style={{ touchAction: 'pan-y' }}
       >
         
@@ -111,10 +112,10 @@ export default function HeroLogo3D() {
         
         <ContactShadows
           position={[0, -3, 0]}
-          opacity={0.5}
-          scale={15}
+          opacity={0.4}
+          scale={12}
           blur={1.5}
-          resolution={256}
+          resolution={128}
           far={5}
           color="#071426"
         />

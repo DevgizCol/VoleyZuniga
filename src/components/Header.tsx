@@ -47,6 +47,7 @@ export default function Header() {
               alt="Club Voley Zúñiga Logo"
               width={50}
               height={50}
+              priority
               className="object-contain transition-transform group-hover:scale-110"
             />
             <div className="flex flex-col">

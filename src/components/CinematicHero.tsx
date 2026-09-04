@@ -1,8 +1,20 @@
 "use client";
 
 import React from "react";
+import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
-import HeroLogo3D from "./HeroLogo3D";
+
+// Dynamic import with SSR disabled to prevent Three.js from blocking FCP / TTI
+const HeroLogo3D = dynamic(() => import("./HeroLogo3D"), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-[350px] sm:h-[450px] md:h-[500px] flex items-center justify-center">
+      <div className="w-32 h-32 md:w-48 md:h-48 rounded-full bg-[#F29A2E]/10 border border-[#F29A2E]/30 animate-pulse flex items-center justify-center">
+        <span className="text-[#F29A2E] text-xs font-mono uppercase tracking-widest font-bold">Cargando 3D</span>
+      </div>
+    </div>
+  ),
+});
 
 export default function CinematicHero() {
   return (
@@ -23,7 +35,7 @@ export default function CinematicHero() {
           animate="visible" 
           variants={{
             hidden: {},
-            visible: { transition: { staggerChildren: 0.15, delayChildren: 0.2 } }
+            visible: { transition: { staggerChildren: 0.15, delayChildren: 0.1 } }
           }}
           className="text-center lg:text-left flex flex-col justify-center lg:w-1/2 pt-20 lg:pt-0"
         >
@@ -64,8 +76,8 @@ export default function CinematicHero() {
           </motion.h2>
         </motion.div>
 
-        {/* Lado Derecho: Modelo 3D Digital Twin */}
-        <div className="w-full lg:w-1/2 flex items-center justify-center mt-10 lg:mt-0 relative z-30">
+        {/* Lado Derecho: Modelo 3D Digital Twin Cargado Dinámicamente */}
+        <div className="w-full lg:w-1/2 flex items-center justify-center mt-10 lg:mt-0 relative z-30 min-h-[350px]">
           <HeroLogo3D />
         </div>
         
