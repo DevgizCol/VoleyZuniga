@@ -94,44 +94,105 @@ export default function MethodologyPage() {
           ))}
         </div>
 
+        {/* Tabla Comparativa de Carga Deportiva y Horas Semanales */}
+        <div className="mb-24">
+          <div className="text-center max-w-2xl mx-auto mb-12">
+            <h2 className="text-3xl md:text-4xl font-heading font-bold uppercase text-white mb-3">
+              Carga Deportiva & Horas Semanales
+            </h2>
+            <p className="text-gray-400 font-sans text-sm md:text-base">
+              Estructura de entrenamiento diseñada para optimizar el rendimiento sin provocar saturación escolar.
+            </p>
+          </div>
+
+          <div className="rounded-3xl bg-[#0B1E38] border border-white/10 overflow-hidden shadow-2xl">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse font-sans text-sm">
+                <thead>
+                  <tr className="bg-[#071426] text-gray-400 border-b border-white/10 text-[11px] font-mono uppercase tracking-wider">
+                    <th className="py-5 px-6">Categoría</th>
+                    <th className="py-5 px-6">Rango de Edad</th>
+                    <th className="py-5 px-6 text-center text-[#F29A2E] font-bold">Horas / Sem</th>
+                    <th className="py-5 px-6">Enfoque Físico</th>
+                    <th className="py-5 px-6">Enfoque Táctico</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-white/5">
+                  <tr className="hover:bg-white/[0.02] transition-colors">
+                    <td className="py-5 px-6 font-heading font-bold text-lg text-white">Semillero Mini-Voley</td>
+                    <td className="py-5 px-6 text-gray-300 font-mono text-xs">7 a 10 Años</td>
+                    <td className="py-5 px-6 text-center font-heading font-bold text-xl text-[#F29A2E]">4h</td>
+                    <td className="py-5 px-6 text-gray-400 text-xs">Psicomotricidad & Juegos de Reacción</td>
+                    <td className="py-5 px-6 text-gray-400 text-xs">Contacto con balón (dedos/antebrazos)</td>
+                  </tr>
+                  <tr className="hover:bg-white/[0.02] transition-colors">
+                    <td className="py-5 px-6 font-heading font-bold text-lg text-white">Menores Formativo</td>
+                    <td className="py-5 px-6 text-gray-300 font-mono text-xs">11 a 14 Años</td>
+                    <td className="py-5 px-6 text-center font-heading font-bold text-xl text-[#F29A2E]">6h</td>
+                    <td className="py-5 px-6 text-gray-400 text-xs">Pliometría base & Fortalecimiento Core</td>
+                    <td className="py-5 px-6 text-gray-400 text-xs">Sistema 4-2, batida y bloqueo simple</td>
+                  </tr>
+                  <tr className="hover:bg-white/[0.02] transition-colors">
+                    <td className="py-5 px-6 font-heading font-bold text-lg text-white">Juvenil Competencia</td>
+                    <td className="py-5 px-6 text-gray-300 font-mono text-xs">15 a 18 Años</td>
+                    <td className="py-5 px-6 text-center font-heading font-bold text-xl text-[#F29A2E]">8h a 10h</td>
+                    <td className="py-5 px-6 text-gray-400 text-xs">Potencia, salto vertical máximo & prevención</td>
+                    <td className="py-5 px-6 text-gray-400 text-xs">Sistema 5-1 de Liga, lectura de bloqueo</td>
+                  </tr>
+                  <tr className="bg-[#F29A2E]/5 border-l-4 border-[#F29A2E]">
+                    <td className="py-5 px-6 font-heading font-bold text-lg text-[#F29A2E]">Selección Élite Liga</td>
+                    <td className="py-5 px-6 text-gray-300 font-mono text-xs">Sub-18 / Mayores</td>
+                    <td className="py-5 px-6 text-center font-heading font-bold text-2xl text-[#F29A2E]">12h</td>
+                    <td className="py-5 px-6 text-gray-300 text-xs">Acondicionamiento de alto rendimiento</td>
+                    <td className="py-5 px-6 text-gray-300 text-xs">Videoanálisis, scouting rival y partidos</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
         {/* Manual de Convivencia y Compromiso */}
         <div className="p-10 md:p-14 rounded-3xl bg-[#0B1E38] border border-white/10 text-white relative overflow-hidden shadow-2xl">
           <div className="relative z-10 grid grid-cols-1 lg:grid-cols-3 gap-10 items-center">
-            <div className="lg:col-span-1">
-              <div className="inline-block px-3 py-1 rounded-md bg-[#F29A2E]/10 text-[#F29A2E] text-xs font-mono uppercase tracking-wider mb-4">
-                Normativa Oficial
-              </div>
-              <h2 className="text-3xl md:text-4xl font-heading font-bold uppercase mb-4">
-                Manual de Convivencia Zúñiga
-              </h2>
-              <p className="text-gray-300 font-sans text-sm leading-relaxed mb-6">
-                Creemos que el orden y la disciplina forjan campeones. Cada deportista y padre de familia asume el compromiso de cuidar el prestigio del club.
+            <div className="lg:col-span-2">
+              <span className="text-[#F29A2E] font-mono text-xs uppercase font-bold tracking-widest block mb-2">
+                Documento Oficial Institucional
+              </span>
+              <h3 className="text-3xl md:text-4xl font-heading font-bold uppercase mb-4 text-white">
+                Manual de Convivencia & Código de Honor
+              </h3>
+              <p className="text-gray-300 font-sans text-sm md:text-base leading-relaxed mb-6">
+                Todos nuestros atletas y padres de familia firman y acatan nuestro decálogo de convivencia: cero tolerancia al bullying, respeto irrestricto por los jueces y cuerpo técnico, y compromiso con la excelencia académica en sus colegios.
               </p>
-              <Link
-                href="/registrations"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-[#F29A2E] text-[#071426] font-bold text-xs uppercase tracking-wider rounded-xl hover:bg-white transition-all shadow-md"
-              >
-                <span>Solicitar Admisión</span>
-                <ArrowRight size={14} />
-              </Link>
+              <div className="flex flex-wrap gap-4 mb-6">
+                <a
+                  href="/logo.svg"
+                  download="Manual_de_Convivencia_Club_Voley_Zuniga_2026.pdf"
+                  className="px-6 py-3.5 bg-[#F29A2E] hover:bg-white text-[#071426] font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-lg flex items-center gap-2 cursor-pointer"
+                >
+                  <Target size={16} />
+                  <span>Descargar Manual de Convivencia (PDF)</span>
+                </a>
+              </div>
             </div>
 
-            <div className="lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-6 font-sans text-sm text-gray-300">
-              <div className="p-6 rounded-2xl bg-white/[0.03] border border-white/5">
-                <h4 className="text-white font-bold text-base mb-2">1. Puntualidad de 15 Minutos</h4>
-                <p className="text-xs text-gray-400">Llegar con anticipación para calentar previene el 80% de lesiones articulares y demuestra respeto al grupo.</p>
+            <div className="space-y-4">
+              <div className="p-5 rounded-2xl bg-white/[0.03] border border-white/5">
+                <h4 className="text-white font-bold text-sm mb-1">1. Puntualidad de 15 Minutos</h4>
+                <p className="text-xs text-gray-400">Llegar con anticipación para calentar previene el 80% de lesiones articulares.</p>
               </div>
-              <div className="p-6 rounded-2xl bg-white/[0.03] border border-white/5">
-                <h4 className="text-white font-bold text-base mb-2">2. Uniformidad Rigurosa</h4>
-                <p className="text-xs text-gray-400">El uso de la camiseta de entrenamiento oficial y rodilleras es obligatorio en todas las sesiones y partidos.</p>
+              <div className="p-5 rounded-2xl bg-white/[0.03] border border-white/5">
+                <h4 className="text-white font-bold text-sm mb-1">2. Uniformidad Rigurosa</h4>
+                <p className="text-xs text-gray-400">Camiseta de entrenamiento oficial y rodilleras obligatorias en todas las sesiones.</p>
               </div>
-              <div className="p-6 rounded-2xl bg-white/[0.03] border border-white/5">
-                <h4 className="text-white font-bold text-base mb-2">3. Prioridad Académica</h4>
-                <p className="text-xs text-gray-400">El deporte complementa los estudios. Mantener un buen promedio escolar es condición para competir en torneos.</p>
+              <div className="p-5 rounded-2xl bg-white/[0.03] border border-white/5">
+                <h4 className="text-white font-bold text-sm mb-1">3. Prioridad Académica</h4>
+                <p className="text-xs text-gray-400">El deporte complementa los estudios; buen promedio escolar para competir.</p>
               </div>
-              <div className="p-6 rounded-2xl bg-white/[0.03] border border-white/5">
-                <h4 className="text-white font-bold text-base mb-2">4. Cultura de Escenario</h4>
-                <p className="text-xs text-gray-400">Armado y desarmado de redes, recolección de balones e hidratación limpia son deberes de todo el equipo.</p>
+              <div className="p-5 rounded-2xl bg-white/[0.03] border border-white/5">
+                <h4 className="text-white font-bold text-sm mb-1">4. Cultura de Escenario</h4>
+                <p className="text-xs text-gray-400">Armado y desarmado de redes y recolección de balones en equipo.</p>
               </div>
             </div>
           </div>

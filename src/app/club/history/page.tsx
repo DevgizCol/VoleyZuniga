@@ -141,6 +141,57 @@ export default function HistoryPage() {
           />
         </div>
 
+        {/* 4. Vitrina Virtual de Trofeos (2021 a 2026) */}
+        <div className="mt-28">
+          <div className="text-center max-w-2xl mx-auto mb-16">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#F29A2E]/10 text-[#F29A2E] text-xs font-mono uppercase tracking-widest mb-3">
+              <Trophy size={14} />
+              <span>Palmarés Institucional</span>
+            </div>
+            <h2 className="text-3xl md:text-5xl font-heading font-bold uppercase text-white mb-4">
+              Vitrina Virtual de <span className="text-[#F29A2E]">Trofeos</span>
+            </h2>
+            <p className="text-gray-400 font-sans text-base">
+              Nuestros podios y consagraciones oficiales en los coliseos de Antioquia y Colombia.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[
+              { year: "2026", title: "Campeonas Liga Departamental", cat: "Sub-18 Femenina", venue: "Coliseo Yesid Santos", medal: "Oro" },
+              { year: "2025", title: "Oro Torneo Nacional Interclubes", cat: "Sub-16 Femenina", venue: "Cali / Medellín", medal: "Oro" },
+              { year: "2024", title: "Copa Medellín Metropolitana", cat: "Sub-14 Infantil", venue: "Polideportivo 3 Canchas", medal: "Oro" },
+              { year: "2023", title: "Subcampeón Departamental", cat: "Sub-18 Juvenil", venue: "Coliseo Yesid Santos", medal: "Plata" },
+              { year: "2022", title: "Festival Valle de Aburrá", cat: "Sub-12 Semillero", venue: "Envigado VC", medal: "Oro" },
+              { year: "2021", title: "Primer Título Municipal Interbarrial", cat: "Menores Libre", venue: "Buenos Aires", medal: "Oro" }
+            ].map((trophy, i) => (
+              <div 
+                key={i} 
+                className="p-8 rounded-3xl bg-gradient-to-br from-[#0B1E38] to-[#071426] border border-white/10 hover:border-[#F29A2E]/50 transition-all duration-300 shadow-xl group relative overflow-hidden"
+              >
+                <div className="absolute top-0 right-0 w-32 h-32 bg-[#F29A2E]/10 rounded-full blur-2xl pointer-events-none group-hover:scale-150 transition-transform duration-500" />
+                <div className="flex items-center justify-between mb-4">
+                  <span className="font-heading font-bold text-3xl text-[#F29A2E]">
+                    {trophy.year}
+                  </span>
+                  <span className="px-3 py-1 rounded-full bg-[#F29A2E]/20 text-[#F29A2E] text-xs font-mono font-bold uppercase tracking-wider">
+                    Medalla de {trophy.medal}
+                  </span>
+                </div>
+                <h4 className="font-heading font-bold text-xl uppercase text-white mb-2 group-hover:text-[#F29A2E] transition-colors">
+                  {trophy.title}
+                </h4>
+                <p className="text-xs font-mono uppercase tracking-wider text-gray-300 mb-1">
+                  Categoría: {trophy.cat}
+                </p>
+                <p className="text-xs text-gray-500 font-sans">
+                  Sede: {trophy.venue}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+
         {/* CTA a Inscripciones */}
         <div className="mt-20 p-10 md:p-12 rounded-3xl bg-gradient-to-r from-[#0B1E38] to-[#071426] border border-[#F29A2E]/30 flex flex-col md:flex-row items-center justify-between gap-8">
           <div>
