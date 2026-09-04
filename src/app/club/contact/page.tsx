@@ -162,11 +162,11 @@ export default function ContactPage() {
                 Para propuestas institucionales, patrocinios, convenios intercolegiados y prensa.
               </p>
               <div className="text-base font-mono font-bold text-white mb-2">
-                contacto@voleyzuniga.com
+                clubvoleyzuniga@gmail.com
               </div>
             </div>
             <a
-              href="mailto:contacto@voleyzuniga.com"
+              href="mailto:clubvoleyzuniga@gmail.com"
               className="mt-8 flex items-center justify-center gap-2 py-3.5 px-4 bg-white/10 hover:bg-white/15 text-white font-bold text-xs uppercase tracking-wider rounded-xl border border-white/10 transition-colors"
             >
               <span>Enviar Correo</span>

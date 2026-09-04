@@ -346,7 +346,7 @@ export default function AdminPage() {
               </button>
 
               <span className="text-xs text-gray-400 font-mono">
-                Visible inmediatamente en voleyzuniga.com
+                Visible inmediatamente en la web en vivo
               </span>
             </div>
           </div>

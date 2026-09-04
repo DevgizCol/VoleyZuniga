@@ -92,13 +92,14 @@ export default function NewsPage() {
   const featuredArticle = allArticles[0];
 
   const handleShareWhatsApp = (title: string) => {
-    const text = `📰 *${title}*\n\nLee la crónica completa en el portal oficial de Voley Zúñiga:\nhttps://voleyzuniga.com/news`;
+    const url = typeof window !== "undefined" ? window.location.href : "";
+    const text = `📰 *${title}*\n\nLee la crónica completa en el portal oficial de Voley Zúñiga:\n${url}`;
     window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank");
   };
 
   const handleCopyLink = (id: number) => {
     if (typeof window !== "undefined") {
-      navigator.clipboard.writeText(`https://voleyzuniga.com/news`);
+      navigator.clipboard.writeText(window.location.href);
       setCopiedId(id);
       setTimeout(() => setCopiedId(null), 2000);
     }

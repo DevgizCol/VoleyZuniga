@@ -140,7 +140,7 @@ export default function RegistrationsPage() {
       // Footer
       ctx.fillStyle = "rgba(255, 255, 255, 0.4)";
       ctx.font = "16px sans-serif";
-      ctx.fillText("Válido para una (1) sesión de cortesía y prueba técnica • voleyzuniga.com", 80, 710);
+      ctx.fillText("Válido para una (1) sesión de cortesía y prueba técnica • Club Voley Zúñiga Oficial", 80, 710);
 
       // Generar descarga
       const link = document.createElement("a");

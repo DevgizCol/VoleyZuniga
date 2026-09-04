@@ -22,8 +22,14 @@ const oswald = Oswald({
   preload: true,
 });
 
+const siteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL ||
+  (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : null) ||
+  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null) ||
+  "https://voley-zuniga.vercel.app";
+
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://voleyzuniga.com"),
+  metadataBase: new URL(siteUrl),
   title: {
     default: "Club Voley Zúñiga | Formamos Campeones",
     template: "%s | Voley Zúñiga"
@@ -47,7 +53,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "es_CO",
-    url: "https://voleyzuniga.com",
+    url: siteUrl,
     title: "Club Voley Zúñiga | Formamos Campeones",
     description: "Club deportivo premium de voleibol en Medellín, Antioquia. Formación de élite y valores competitivos.",
     siteName: "Voley Zúñiga",
@@ -70,7 +76,7 @@ const jsonLd = {
   "@context": "https://schema.org",
   "@type": "SportsClub",
   "name": "Club Voley Zúñiga",
-  "image": "https://voleyzuniga.com/logo.svg",
+  "image": `${siteUrl}/logo.svg`,
   "description": "Club deportivo premium de voleibol en Medellín, Antioquia.",
   "address": {
     "@type": "PostalAddress",
@@ -79,7 +85,7 @@ const jsonLd = {
     "addressCountry": "CO"
   },
   "telephone": "+573128459210",
-  "url": "https://voleyzuniga.com"
+  "url": siteUrl
 };
 
 export default function RootLayout({

@@ -72,7 +72,7 @@ export default function Footer() {
               </li>
               <li className="flex items-center gap-3">
                 <Mail size={18} className="text-[#F29A2E] shrink-0" />
-                <span>contacto@voleyzuniga.com</span>
+                <span>clubvoleyzuniga@gmail.com</span>
               </li>
             </ul>
           </div>
@@ -81,7 +81,7 @@ export default function Footer() {
 
         {/* Bottom */}
         <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-sans text-gray-500">
-          <p>© 2026 Club Voley Zúñiga. Todos los derechos reservados.</p>
+          <p>Copyright © 2026 Club Voley Zúñiga. Todos los derechos reservados.</p>
           <p>Powered by <Link href="https://devgiz.vercel.app/" target="_blank" rel="noopener noreferrer"><span className="text-gray-300 font-bold">DevGiz</span></Link></p>
         </div>
       </div>
