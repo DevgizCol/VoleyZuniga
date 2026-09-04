@@ -3,6 +3,7 @@ import { Inter, Oswald } from "next/font/google";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import CartDrawer from "@/components/CartDrawer";
+import VercelAnalytics from "@/components/VercelAnalytics";
 import { CartProvider } from "@/context/CartContext";
 import "./globals.css";
 
@@ -17,6 +18,7 @@ const oswald = Oswald({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://voleyzuniga.com"),
   title: {
     default: "Club Voley Zúñiga | Formamos Campeones",
     template: "%s | Voley Zúñiga"
@@ -92,6 +94,7 @@ export default function RootLayout({
           </div>
           <Footer />
         </CartProvider>
+        <VercelAnalytics />
       </body>
     </html>
   );

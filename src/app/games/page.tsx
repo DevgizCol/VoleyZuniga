@@ -182,7 +182,7 @@ export default function GamesPage() {
   return (
     <div className="pt-28 pb-24 bg-[#071426] min-h-screen text-white">
       <div className="container mx-auto px-6">
-        
+
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
           <div>
@@ -280,31 +280,28 @@ export default function GamesPage() {
         {/* 2. Filtros Avanzados: Estado, Categoría y Torneo */}
         <div className="bg-[#0B1E38] p-6 rounded-3xl border border-white/10 mb-8 space-y-4">
           <div className="flex flex-wrap items-center justify-between gap-4">
-            
+
             {/* Estado */}
             <div className="flex items-center gap-2">
               <span className="text-xs font-mono text-gray-400 uppercase mr-1">Estado:</span>
               <button
                 onClick={() => setStatusFilter("todos")}
-                className={`py-1.5 px-3.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all ${
-                  statusFilter === "todos" ? "bg-[#F29A2E] text-[#071426]" : "bg-white/5 text-gray-400 hover:text-white"
-                }`}
+                className={`py-1.5 px-3.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all ${statusFilter === "todos" ? "bg-[#F29A2E] text-[#071426]" : "bg-white/5 text-gray-400 hover:text-white"
+                  }`}
               >
                 Todos
               </button>
               <button
                 onClick={() => setStatusFilter("proximos")}
-                className={`py-1.5 px-3.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all ${
-                  statusFilter === "proximos" ? "bg-[#F29A2E] text-[#071426]" : "bg-white/5 text-gray-400 hover:text-white"
-                }`}
+                className={`py-1.5 px-3.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all ${statusFilter === "proximos" ? "bg-[#F29A2E] text-[#071426]" : "bg-white/5 text-gray-400 hover:text-white"
+                  }`}
               >
                 Próximos
               </button>
               <button
                 onClick={() => setStatusFilter("finalizados")}
-                className={`py-1.5 px-3.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all ${
-                  statusFilter === "finalizados" ? "bg-[#F29A2E] text-[#071426]" : "bg-white/5 text-gray-400 hover:text-white"
-                }`}
+                className={`py-1.5 px-3.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all ${statusFilter === "finalizados" ? "bg-[#F29A2E] text-[#071426]" : "bg-white/5 text-gray-400 hover:text-white"
+                  }`}
               >
                 Finalizados
               </button>
@@ -317,9 +314,8 @@ export default function GamesPage() {
                 <button
                   key={cat}
                   onClick={() => setCategoryFilter(cat)}
-                  className={`py-1.5 px-3 rounded-xl font-bold text-xs uppercase tracking-wider transition-all ${
-                    categoryFilter === cat ? "bg-white text-[#071426]" : "bg-white/5 text-gray-400 hover:text-white"
-                  }`}
+                  className={`py-1.5 px-3 rounded-xl font-bold text-xs uppercase tracking-wider transition-all ${categoryFilter === cat ? "bg-white text-[#071426]" : "bg-white/5 text-gray-400 hover:text-white"
+                    }`}
                 >
                   {cat === "todas" ? "Todas" : cat}
                 </button>
@@ -359,9 +355,8 @@ export default function GamesPage() {
               >
                 <div className="md:w-1/4">
                   <div className="flex items-center gap-2 mb-2">
-                    <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider font-mono ${
-                      m.status === "proximo" ? "bg-[#F29A2E]/10 text-[#F29A2E] border border-[#F29A2E]/30" : "bg-green-500/10 text-green-400 border border-green-500/20"
-                    }`}>
+                    <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider font-mono ${m.status === "proximo" ? "bg-[#F29A2E]/10 text-[#F29A2E] border border-[#F29A2E]/30" : "bg-green-500/10 text-green-400 border border-green-500/20"
+                      }`}>
                       {m.status === "proximo" ? "Por Jugar" : "Finalizado"}
                     </span>
                     <span className="px-2 py-0.5 rounded-md bg-white/5 text-gray-300 text-[10px] font-mono">
@@ -432,7 +427,7 @@ export default function GamesPage() {
         {selectedReportMatch && selectedReportMatch.report && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fadeIn">
             <div className="relative w-full max-w-2xl rounded-3xl bg-gradient-to-b from-[#0F284B] to-[#071426] border-2 border-[#F29A2E]/60 p-8 shadow-[0_25px_70px_rgba(0,0,0,0.9)] overflow-hidden">
-              
+
               <button
                 onClick={() => setSelectedReportMatch(null)}
                 className="absolute top-6 right-6 p-2 rounded-full bg-white/10 hover:bg-white text-white hover:text-[#071426] transition-colors"
