@@ -91,10 +91,10 @@ export default function Home() {
       {/* 2. Animated Metrics Counter Section */}
       <section className="w-full py-16 bg-gradient-to-b from-[#071426] via-[#0A192F] to-[#071426] border-y border-white/5 relative overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(242,154,46,0.06),transparent_70%)] pointer-events-none" />
-        <div className="container mx-auto px-6 relative z-10">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+        <div className="container mx-auto px-4 sm:px-6 relative z-10">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 md:gap-8">
             <StatCard
-              icon={<Users size={28} className="text-[#F29A2E]" />}
+              icon={<Users size={24} className="text-[#F29A2E]" />}
               number="+450"
               label="Atletas Formados"
               desc="Desde semillero hasta juvenil"
@@ -390,18 +390,18 @@ export default function Home() {
 
 function StatCard({ icon, number, label, desc }: { icon: React.ReactNode, number: string, label: string, desc: string }) {
   return (
-    <div className="p-6 md:p-8 rounded-3xl bg-white/[0.03] border border-white/10 hover:border-[#F29A2E]/30 transition-all duration-300 flex flex-col justify-between group">
-      <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+    <div className="p-4 sm:p-6 md:p-8 rounded-2xl sm:rounded-3xl bg-white/[0.03] border border-white/10 hover:border-[#F29A2E]/30 transition-all duration-300 flex flex-col justify-between group">
+      <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-white/5 flex items-center justify-center mb-3 sm:mb-4 group-hover:scale-110 transition-transform duration-300">
         {icon}
       </div>
       <div>
-        <h3 className="text-4xl md:text-5xl font-heading font-bold text-white mb-1 tracking-tight">
+        <h3 className="text-2xl sm:text-4xl md:text-5xl font-heading font-bold text-white mb-0.5 sm:mb-1 tracking-tight">
           {number}
         </h3>
-        <p className="text-xs font-bold uppercase tracking-wider text-[#F29A2E] mb-1">
+        <p className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-[#F29A2E] mb-1">
           {label}
         </p>
-        <p className="text-xs text-gray-400 font-sans">
+        <p className="text-[11px] sm:text-xs text-gray-400 font-sans line-clamp-2 sm:line-clamp-none">
           {desc}
         </p>
       </div>

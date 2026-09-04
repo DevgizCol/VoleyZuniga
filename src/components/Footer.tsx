@@ -5,32 +5,49 @@ import { Phone, Mail, MapPin } from "lucide-react";
 
 export default function Footer() {
   return (
-    <footer className="w-full bg-[#071426] text-white pt-20 pb-10 border-t border-white/5">
-      <div className="container mx-auto px-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
+    <footer className="w-full bg-[#071426] text-white pt-16 sm:pt-20 pb-[calc(7rem+env(safe-area-inset-bottom,0px))] md:pb-12 border-t border-white/5">
+      <div className="container mx-auto px-4 sm:px-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 md:gap-12 mb-16">
 
           {/* Brand Info */}
           <div className="flex flex-col gap-6">
-            <Link href="/" className="flex items-center gap-3 group">
-              <Image src="/logo.svg" alt="Logo" width={60} height={60} />
+            <Link href="/" className="flex items-center gap-3 group select-none">
+              <Image src="/logo.svg" alt="Logo" width={52} height={52} className="w-12 h-12 object-contain" />
               <div className="flex flex-col">
                 <span className="font-heading font-bold text-2xl leading-none tracking-wide text-white">VOLEY ZÚÑIGA</span>
-                <span className="font-sans text-[10px] uppercase text-[#F29A2E] font-bold tracking-[0.2em]">Club Deportivo</span>
+                <span className="font-sans text-[10px] uppercase text-[#F29A2E] font-bold tracking-[0.2em] mt-0.5">Club Deportivo</span>
               </div>
             </Link>
-            <p className="text-gray-400 font-sans text-sm leading-relaxed">
+            <p className="text-gray-400 font-sans text-sm leading-relaxed max-w-sm">
               Formación integral de deportistas, valores de convivencia y alta competencia.
               No formamos jugadores, formamos campeones.
             </p>
-            <div className="flex gap-4">
-              <a href="#" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-[#F29A2E] hover:text-[#071426] transition-colors font-bold">
+            <div className="flex gap-3">
+              <a 
+                href="https://facebook.com" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                aria-label="Facebook"
+                className="w-11 h-11 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-[#F29A2E] hover:text-[#071426] active:scale-95 transition-all font-bold text-xs touch-manipulation"
+              >
                 FB
               </a>
-              <a href="https://www.instagram.com/voleyzuniga_oficial" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-[#F29A2E] hover:text-[#071426] transition-colors font-bold">
+              <a 
+                href="https://www.instagram.com/voleyzuniga_oficial" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                aria-label="Instagram"
+                className="w-11 h-11 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-[#F29A2E] hover:text-[#071426] active:scale-95 transition-all font-bold text-xs touch-manipulation"
+              >
                 IG
               </a>
-              {/* TikTok Icon replacement */}
-              <a href="https://www.tiktok.com/@voleyzuniga" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-[#F29A2E] hover:text-[#071426] transition-colors font-bold">
+              <a 
+                href="https://www.tiktok.com/@voleyzuniga" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                aria-label="TikTok"
+                className="w-11 h-11 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-[#F29A2E] hover:text-[#071426] active:scale-95 transition-all font-bold text-xs touch-manipulation"
+              >
                 TT
               </a>
             </div>
