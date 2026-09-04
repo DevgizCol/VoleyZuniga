@@ -3,6 +3,7 @@ import { Inter, Oswald } from "next/font/google";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import CartDrawer from "@/components/CartDrawer";
+import CourtStatusBanner from "@/components/CourtStatusBanner";
 import VercelAnalytics from "@/components/VercelAnalytics";
 import { CartProvider } from "@/context/CartContext";
 import "./globals.css";
@@ -26,6 +27,12 @@ export const metadata: Metadata = {
   title: {
     default: "Club Voley Zúñiga | Formamos Campeones",
     template: "%s | Voley Zúñiga"
+  },
+  manifest: "/manifest.webmanifest",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "Voley Zúñiga",
   },
   icons: {
     icon: [
@@ -91,6 +98,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
         <CartProvider>
+          <CourtStatusBanner />
           <Header />
           <CartDrawer />
           <div className="flex-1">
