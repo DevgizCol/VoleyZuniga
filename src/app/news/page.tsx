@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Calendar, Share2, MessageCircle, Sparkles, Check, Bookmark, X, Mail, Send, Heart, BookOpen } from "lucide-react";
+import { ArrowRight, Calendar, Share2, MessageCircle, Sparkles, Check, X, BookOpen } from "lucide-react";
 
 interface Article {
   id: number;
@@ -22,15 +22,6 @@ export default function NewsPage() {
   const [copiedId, setCopiedId] = useState<number | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>("Todas");
   const [readingArticle, setReadingArticle] = useState<Article | null>(null);
-  const [newsletterEmail, setNewsletterEmail] = useState("");
-  const [newsletterSubscribed, setNewsletterSubscribed] = useState(false);
-
-  // New comment draft in modal
-  const [newComment, setNewComment] = useState("");
-  const [comments, setComments] = useState<{ name: string; text: string; time: string }[]>([
-    { name: "Carlos Restrepo (Padre Sub-18)", text: "¡Qué partidazo vivieron las chicas en el Coliseo! Muy merecido el título después de tantos meses de entreno.", time: "Hace 2 horas" },
-    { name: "Luisa F. Gómez", text: "Excelente nivel de bloqueo y concentración. Felicitaciones al cuerpo técnico.", time: "Hace 5 horas" }
-  ]);
 
   const allArticles: Article[] = [
     {
@@ -103,25 +94,6 @@ export default function NewsPage() {
       setCopiedId(id);
       setTimeout(() => setCopiedId(null), 2000);
     }
-  };
-
-  const handleNewsletterSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newsletterEmail) return;
-    setNewsletterSubscribed(true);
-    setTimeout(() => {
-      setNewsletterEmail("");
-    }, 3000);
-  };
-
-  const handleAddComment = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newComment.trim()) return;
-    setComments([
-      { name: "Padre / Aficionado Invitado", text: newComment.trim(), time: "Ahora mismo" },
-      ...comments
-    ]);
-    setNewComment("");
   };
 
   return (
@@ -306,47 +278,7 @@ export default function NewsPage() {
           </div>
         </div>
 
-        {/* 4. Caja de Suscripción a Novedades (Boletín Oficial) */}
-        <div className="rounded-3xl bg-gradient-to-r from-[#0F284B] via-[#0B1E38] to-[#071426] border border-[#F29A2E]/30 p-8 md:p-12 shadow-2xl relative overflow-hidden">
-          <div className="max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#F29A2E]/10 border border-[#F29A2E]/30 text-[#F29A2E] text-[10px] uppercase font-mono font-bold mb-4">
-              <Mail size={12} />
-              <span>Boletín Oficial de Padres & Aficionados</span>
-            </div>
-            <h3 className="text-2xl md:text-3xl font-heading font-bold uppercase text-white mb-2">
-              Recibe las Convocatorias y Fixture en tu Correo
-            </h3>
-            <p className="text-xs md:text-sm text-gray-300 font-sans mb-6">
-              Sin spam. Te enviaremos únicamente la programación semanal de partidos, resultados de liga y noticias de matrículas.
-            </p>
-
-            {newsletterSubscribed ? (
-              <div className="flex items-center gap-3 p-4 rounded-xl bg-green-500/20 border border-green-500/30 text-green-400 text-sm font-sans">
-                <Check size={18} />
-                <span>¡Gracias por unirte a la familia Zúñiga! Tu correo ha sido suscrito con éxito.</span>
-              </div>
-            ) : (
-              <form onSubmit={handleNewsletterSubmit} className="flex flex-col sm:flex-row gap-3">
-                <input
-                  type="email"
-                  required
-                  value={newsletterEmail}
-                  onChange={(e) => setNewsletterEmail(e.target.value)}
-                  placeholder="tucorreo@ejemplo.com"
-                  className="flex-1 px-4 py-3.5 rounded-xl bg-white/[0.05] border border-white/10 text-white placeholder-gray-500 focus:border-[#F29A2E] outline-none text-sm font-sans"
-                />
-                <button
-                  type="submit"
-                  className="px-6 py-3.5 rounded-xl bg-[#F29A2E] hover:bg-white text-[#071426] font-bold text-xs uppercase tracking-wider transition-all shadow-md shrink-0 cursor-pointer"
-                >
-                  Suscribirme Gratis
-                </button>
-              </form>
-            )}
-          </div>
-        </div>
-
-        {/* 5. MODAL DE LECTURA COMPLETA DE ARTÍCULO & COMENTARIOS */}
+        {/* MODAL DE LECTURA COMPLETA DE ARTÍCULO */}
         {readingArticle && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-fade-in">
             <div className="relative w-full max-w-3xl max-h-[90vh] rounded-3xl bg-[#0B1E38] border-2 border-[#F29A2E]/50 p-6 md:p-10 shadow-2xl overflow-y-auto">
@@ -402,41 +334,6 @@ export default function NewsPage() {
                   </div>
                 </div>
               )}
-
-              {/* Sección de Comentarios */}
-              <div className="pt-6 border-t border-white/10">
-                <h4 className="text-base font-heading font-bold uppercase text-white mb-4">
-                  Comentarios de la Comunidad ({comments.length})
-                </h4>
-
-                <form onSubmit={handleAddComment} className="flex gap-2 mb-6">
-                  <input
-                    type="text"
-                    value={newComment}
-                    onChange={(e) => setNewComment(e.target.value)}
-                    placeholder="Deja un mensaje de apoyo al equipo..."
-                    className="flex-1 px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 text-xs outline-none focus:border-[#F29A2E]"
-                  />
-                  <button
-                    type="submit"
-                    className="px-4 py-2.5 rounded-xl bg-[#F29A2E] text-[#071426] font-bold text-xs uppercase tracking-wider shrink-0 cursor-pointer"
-                  >
-                    Publicar
-                  </button>
-                </form>
-
-                <div className="space-y-3">
-                  {comments.map((c, i) => (
-                    <div key={i} className="p-3.5 rounded-xl bg-white/[0.03] border border-white/5 text-xs">
-                      <div className="flex items-center justify-between text-gray-400 font-mono text-[10px] mb-1">
-                        <strong className="text-white">{c.name}</strong>
-                        <span>{c.time}</span>
-                      </div>
-                      <p className="text-gray-300 font-sans">{c.text}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
 
             </div>
           </div>
