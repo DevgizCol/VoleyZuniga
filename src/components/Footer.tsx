@@ -89,7 +89,7 @@ export default function Footer() {
 
         {/* Bottom */}
         <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-sans text-gray-500">
-          <p>Copyright © 2026 Club Voley Zúñiga. Todos los derechos reservados.</p>
+          <p>Copyright © 2026 Club Voley Zúñiga. Todos los derechos reservados. <Link href="/privacidad" className="underline underline-offset-2 hover:text-[#F29A2E]">Política de datos</Link></p>
           <p>Powered by <Link href="https://devgiz.vercel.app/" target="_blank" rel="noopener noreferrer"><span className="text-gray-300 font-bold">DevGiz</span></Link></p>
         </div>
       </div>

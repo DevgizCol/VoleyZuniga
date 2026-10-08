@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { CONTACT_TOPICS } from "@/lib/registration-options";
 import { MapPin, Phone, Mail, Clock, ExternalLink, Navigation, Compass, MessageCircle } from "lucide-react";
 
 export default function ContactPage() {
@@ -313,11 +314,33 @@ export default function ContactPage() {
 
 function ContactFormSection() {
   const [submitted, setSubmitted] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [honeypot, setHoneypot] = useState("");
   const [formData, setFormData] = useState({ name: "", email: "", phone: "", topic: "Inscripciones", message: "" });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    setError(null);
+    setSending(true);
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...formData, website: honeypot }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok && data.ok) {
+        setSubmitted(true);
+        setFormData({ name: "", email: "", phone: "", topic: "Inscripciones", message: "" });
+      } else {
+        setError(data.error || "No pudimos enviar tu mensaje. Escríbenos por WhatsApp.");
+      }
+    } catch {
+      setError("Sin conexión. Inténtalo de nuevo o escríbenos por WhatsApp.");
+    } finally {
+      setSending(false);
+    }
   };
 
   return (
@@ -331,13 +354,13 @@ function ContactFormSection() {
             Formulario de Contacto & PQRS
           </h2>
           <p className="text-gray-400 font-sans text-xs md:text-sm">
-            Déjanos tu mensaje y la coordinación deportiva te responderá en menos de 24 horas.
+            Déjanos tu mensaje y la coordinación deportiva te responderá lo antes posible.
           </p>
         </div>
 
         {submitted ? (
           <div className="p-8 rounded-2xl bg-[#25D366]/10 border border-[#25D366]/30 text-center">
-            <h4 className="font-heading font-bold text-2xl uppercase text-[#25D366] mb-2">¡Mensaje Enviado con Éxito!</h4>
+            <h4 className="font-heading font-bold text-2xl uppercase text-[#25D366] mb-2">Mensaje recibido</h4>
             <p className="text-sm text-gray-300 font-sans">
               Gracias por escribirnos. Nuestro equipo se pondrá en contacto al teléfono o correo suministrado.
             </p>
@@ -350,7 +373,7 @@ function ContactFormSection() {
             </button>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="space-y-4 font-sans text-sm">
+          <form onSubmit={handleSubmit} className="space-y-4 font-sans text-sm relative">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-bold uppercase tracking-wider text-gray-300 mb-1.5">Nombre Completo *</label>
@@ -395,11 +418,9 @@ function ContactFormSection() {
                   onChange={(e) => setFormData({ ...formData, topic: e.target.value })}
                   className="w-full px-4 py-3 rounded-xl bg-[#071426] border border-white/10 text-white focus:border-[#F29A2E] outline-none text-xs"
                 >
-                  <option value="Inscripciones">Inscripciones y Clases de Prueba</option>
-                  <option value="Sedes">Información de Sedes y Horarios</option>
-                  <option value="Torneos">Invitación a Torneos y Fogueos</option>
-                  <option value="PQRS">Peticiones, Quejas o Reclamos (PQRS)</option>
-                  <option value="Patrocinios">Patrocinios y Convenios</option>
+                  {CONTACT_TOPICS.map((o) => (
+                    <option key={o.value} value={o.value}>{o.label}</option>
+                  ))}
                 </select>
               </div>
             </div>
@@ -416,11 +437,26 @@ function ContactFormSection() {
               />
             </div>
 
+            {/* Campo trampa anti-bots: invisible para personas */}
+            <div aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 overflow-hidden">
+              <label>
+                Sitio web
+                <input type="text" tabIndex={-1} autoComplete="off" value={honeypot} onChange={(e) => setHoneypot(e.target.value)} />
+              </label>
+            </div>
+
+            {error && (
+              <p role="alert" className="text-xs text-red-400">
+                {error}
+              </p>
+            )}
+
             <button
               type="submit"
-              className="w-full py-4 bg-[#F29A2E] hover:bg-white text-[#071426] font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-lg active:scale-95"
+              disabled={sending}
+              className="w-full py-4 bg-[#F29A2E] hover:bg-white text-[#071426] font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-lg active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              Enviar Solicitud
+              {sending ? "Enviando..." : "Enviar Solicitud"}
             </button>
           </form>
         )}
