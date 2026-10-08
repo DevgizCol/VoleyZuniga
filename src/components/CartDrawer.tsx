@@ -60,7 +60,7 @@ export default function CartDrawer() {
         <div className="flex items-center justify-between p-6 border-b border-white/10">
           <div className="flex items-center gap-3">
             <ShoppingBag className="text-[#F29A2E]" />
-            <h2 className="text-xl font-bold font-oswald text-white uppercase tracking-wider">
+            <h2 className="text-xl font-bold font-heading text-white uppercase tracking-wider">
               Carrito de Compras
             </h2>
           </div>
@@ -137,7 +137,7 @@ export default function CartDrawer() {
           <div className="p-6 border-t border-white/10 bg-[#071426] flex flex-col gap-4">
             <div className="flex justify-between items-center text-lg">
               <span className="text-white/70">Subtotal:</span>
-              <span className="font-bold text-white text-2xl font-oswald">
+              <span className="font-bold text-white text-2xl font-heading">
                 ${cartTotal.toLocaleString("es-CO")}
               </span>
             </div>

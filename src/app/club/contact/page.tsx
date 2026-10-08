@@ -188,7 +188,7 @@ export default function ContactPage() {
               <div className="space-y-3 font-sans text-sm">
                 <div className="flex items-center justify-between text-gray-300">
                   <span>Instagram Oficial:</span>
-                  <span className="font-bold text-[#F29A2E]">@voleyzuniga_oficial</span>
+                  <span className="font-bold text-[#F29A2E]">@voleyzuniga</span>
                 </div>
                 <div className="flex items-center justify-between text-gray-300">
                   <span>Facebook:</span>
@@ -201,7 +201,7 @@ export default function ContactPage() {
               </div>
             </div>
             <a
-              href="https://www.instagram.com/voleyzuniga_oficial"
+              href="https://www.instagram.com/voleyzuniga"
               target="_blank"
               rel="noopener noreferrer"
               className="mt-8 flex items-center justify-center gap-2 py-3.5 px-4 bg-white/10 hover:bg-white/15 text-white font-bold text-xs uppercase tracking-wider rounded-xl border border-white/10 transition-colors"

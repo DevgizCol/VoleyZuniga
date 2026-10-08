@@ -248,13 +248,13 @@ export default function Home() {
               </h2>
             </div>
             <a
-              href="https://instagram.com"
+              href="https://www.instagram.com/voleyzuniga"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white/5 hover:bg-[#F29A2E] hover:text-[#071426] text-white text-xs font-bold uppercase tracking-wider transition-all border border-white/10"
             >
               <Camera size={16} />
-              <span>Seguir @voley_zuniga</span>
+              <span>Seguir @voleyzuniga</span>
             </a>
           </div>
 

@@ -348,7 +348,7 @@ export default function NewsPage() {
 
         {/* 5. MODAL DE LECTURA COMPLETA DE ARTÍCULO & COMENTARIOS */}
         {readingArticle && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-fadeIn">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-fade-in">
             <div className="relative w-full max-w-3xl max-h-[90vh] rounded-3xl bg-[#0B1E38] border-2 border-[#F29A2E]/50 p-6 md:p-10 shadow-2xl overflow-y-auto">
               
               <button

@@ -7,13 +7,13 @@ import MagneticButton from "@/components/MagneticButton";
 
 export default function RegistrationsPage() {
   const [formData, setFormData] = useState({
-    name: "Valentina Morales",
-    age: "14",
-    category: "Sub-16 Menores",
-    level: "Competitivo",
-    phone: "312 845 9210",
+    name: "",
+    age: "",
+    category: "Infantil Sub-14",
+    level: "Iniciación Formativa",
+    phone: "",
     sede: "Polideportivo 3 Canchas",
-    horario: "Martes y Jueves (4:00 PM – 6:00 PM)"
+    horario: "Lunes, Miércoles y Viernes (4:30 PM – 6:30 PM)"
   });
 
   const [downloading, setDownloading] = useState(false);
@@ -23,11 +23,19 @@ export default function RegistrationsPage() {
   const [quizAge, setQuizAge] = useState<number>(14);
   const [quizGoal, setQuizGoal] = useState<"iniciacion" | "competencia">("competencia");
 
+  // Los valores devueltos coinciden EXACTAMENTE con las <option> de los selects del formulario.
+  const HORARIOS = {
+    semillero: "Martes y Jueves (4:00 PM – 6:00 PM)",
+    infantil: "Lunes, Miércoles y Viernes (4:30 PM – 6:30 PM)",
+    tarde: "Lunes a Jueves (6:00 PM – 8:00 PM)",
+  } as const;
+
   const getRecommendedCategory = () => {
-    if (quizAge <= 11) return { cat: "Semillero Sub-12", schedule: "Mar y Jue: 4:00 PM - 5:30 PM", sede: "Polideportivo 3 Canchas" };
-    if (quizAge <= 14) return { cat: "Infantil Sub-14", schedule: "Lun, Mié y Vie: 4:30 PM - 6:30 PM", sede: "Polideportivo 3 Canchas" };
-    if (quizAge <= 16) return { cat: "Menores Sub-16", schedule: "Mar y Jue: 6:00 PM - 8:00 PM", sede: "Polideportivo 3 Canchas" };
-    return { cat: "Juvenil / Mayores Sub-18+", schedule: "Lun a Vie: 6:30 PM - 8:30 PM", sede: "Coliseo Yesid Santos" };
+    if (quizAge <= 11) return { cat: "Semillero Sub-12", schedule: HORARIOS.semillero, sede: "Polideportivo 3 Canchas" };
+    if (quizAge <= 13) return { cat: "Infantil Sub-14", schedule: HORARIOS.infantil, sede: "Polideportivo 3 Canchas" };
+    if (quizAge <= 15) return { cat: "Menores Sub-16", schedule: HORARIOS.tarde, sede: "Polideportivo 3 Canchas" };
+    if (quizAge <= 17) return { cat: "Juvenil Sub-18", schedule: HORARIOS.tarde, sede: "Coliseo Yesid Santos" };
+    return { cat: "Mayores Élite", schedule: HORARIOS.tarde, sede: "Coliseo Yesid Santos" };
   };
 
   const recommendation = getRecommendedCategory();
@@ -104,7 +112,7 @@ export default function RegistrationsPage() {
 
       ctx.fillStyle = "#FFFFFF";
       ctx.font = "bold 56px sans-serif";
-      ctx.fillText(formData.name.toUpperCase(), 80, 320);
+      ctx.fillText((formData.name.trim() || "NOMBRE DEL DEPORTISTA").toUpperCase(), 80, 320);
 
       // Categoría & Edad
       ctx.fillStyle = "#F29A2E";
@@ -113,7 +121,7 @@ export default function RegistrationsPage() {
 
       ctx.fillStyle = "#CBD5E1";
       ctx.font = "24px sans-serif";
-      ctx.fillText(`EDAD: ${formData.age} AÑOS  •  NIVEL: ${formData.level.toUpperCase()}`, 80, 435);
+      ctx.fillText(`EDAD: ${formData.age || "—"} AÑOS  •  NIVEL: ${formData.level.toUpperCase()}`, 80, 435);
 
       // Sede y Horario
       ctx.fillStyle = "#94A3B8";
@@ -144,7 +152,7 @@ export default function RegistrationsPage() {
 
       // Generar descarga
       const link = document.createElement("a");
-      link.download = `Carnet-VIP-VoleyZuniga-${formData.name.replace(/\s+/g, "_")}.png`;
+      link.download = `Carnet-VIP-VoleyZuniga-${(formData.name.trim() || "deportista").replace(/\s+/g, "_")}.png`;
       link.href = canvas.toDataURL("image/png");
       link.click();
     } catch (err) {
@@ -283,7 +291,7 @@ export default function RegistrationsPage() {
                   required
                   value={formData.name}
                   onChange={(e) => setFormData({...formData, name: e.target.value})}
-                  placeholder="Ej. Valentina Morales"
+                  placeholder="Nombre y apellido del deportista"
                   className="w-full px-4 py-3.5 rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder-gray-500 focus:border-[#F29A2E] focus:ring-1 focus:ring-[#F29A2E] outline-none transition-all font-sans text-sm"
                 />
               </div>
@@ -296,7 +304,7 @@ export default function RegistrationsPage() {
                     required
                     value={formData.age}
                     onChange={(e) => setFormData({...formData, age: e.target.value})}
-                    placeholder="14"
+                    placeholder="Ej. 14"
                     className="w-full px-4 py-3.5 rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder-gray-500 focus:border-[#F29A2E] focus:ring-1 focus:ring-[#F29A2E] outline-none transition-all font-sans text-sm"
                   />
                 </div>
@@ -369,7 +377,7 @@ export default function RegistrationsPage() {
                     required
                     value={formData.phone}
                     onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                    placeholder="312 845 9210"
+                    placeholder="Ej. 300 000 0000"
                     className="w-full px-4 py-3.5 rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder-gray-500 focus:border-[#F29A2E] outline-none font-sans text-sm"
                   />
                 </div>
@@ -383,7 +391,7 @@ export default function RegistrationsPage() {
                 <span>Reservar Cupo y Agendar Prueba por WhatsApp</span>
               </button>
               <p className="text-center text-[11px] text-gray-400 font-sans">
-                Sin costo de matrícula inicial por validación web. Cupo confirmado en menos de 2 horas.
+                Te responderemos por WhatsApp para confirmar cupo y agendar la clase de prueba.
               </p>
             </form>
           </div>
@@ -432,7 +440,7 @@ export default function RegistrationsPage() {
                   <div className="flex items-center gap-3 text-xs font-mono text-gray-300 mt-2 flex-wrap">
                     <span>CAT: <strong className="text-[#F29A2E]">{formData.category}</strong></span>
                     <span>•</span>
-                    <span>EDAD: <strong className="text-white">{formData.age} Años</strong></span>
+                    <span>EDAD: <strong className="text-white">{formData.age ? `${formData.age} Años` : "—"}</strong></span>
                   </div>
                 </div>
 
