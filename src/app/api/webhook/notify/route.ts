@@ -1,71 +1,71 @@
 import { NextResponse } from "next/server";
+import { isAdmin } from "@/lib/auth";
+
+const MAX_MESSAGE_LENGTH = 1000;
+const MAX_RECIPIENTS = 500;
 
 export async function POST(request: Request) {
+  if (!(await isAdmin())) {
+    return NextResponse.json({ success: false, error: "No autorizado" }, { status: 401 });
+  }
+
   try {
     const body = await request.json();
-    const { message, recipients, timestamp, type = "broadcast" } = body;
+    const { message, recipients, type = "broadcast" } = body ?? {};
 
-    if (!message) {
+    if (typeof message !== "string" || !message.trim()) {
       return NextResponse.json(
         { success: false, error: "El mensaje es obligatorio" },
         { status: 400 }
       );
     }
+    if (message.length > MAX_MESSAGE_LENGTH) {
+      return NextResponse.json(
+        { success: false, error: `El mensaje supera ${MAX_MESSAGE_LENGTH} caracteres` },
+        { status: 400 }
+      );
+    }
+    const list: string[] = Array.isArray(recipients)
+      ? recipients.filter((r): r is string => typeof r === "string").slice(0, MAX_RECIPIENTS)
+      : [];
 
-    // Log para auditoría en Vercel y servidor
-    console.log("[VoleyZuniga Webhook Trigger]", {
-      timestamp: timestamp || new Date().toISOString(),
+    console.log("[VoleyZuniga Webhook]", {
+      timestamp: new Date().toISOString(),
       type,
-      recipientCount: recipients?.length || 0,
-      preview: typeof message === "string" ? message.slice(0, 80) : "",
+      recipientCount: list.length,
     });
 
-    // Simulación y despacho preparado para WhatsApp Cloud API / Evolution API / Twilio
-    // Si existe una URL de webhook de terceros en variables de entorno, la reenvía
     const externalWebhookUrl = process.env.WHATSAPP_WEBHOOK_URL;
-    let externalDispatchStatus = "skipped_no_external_url";
+    let status = "skipped_no_external_url";
 
     if (externalWebhookUrl) {
       try {
-        const extRes = await fetch(externalWebhookUrl, {
+        const res = await fetch(externalWebhookUrl, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             sender: "Club Voley Zúñiga",
-            message,
-            recipients,
+            message: message.trim(),
+            recipients: list,
             timestamp: new Date().toISOString(),
           }),
         });
-        externalDispatchStatus = extRes.ok ? "dispatched_external" : `external_error_${extRes.status}`;
+        status = res.ok ? "dispatched_external" : `external_error_${res.status}`;
       } catch (err: unknown) {
-        externalDispatchStatus = `external_failed: ${err instanceof Error ? err.message : String(err)}`;
+        status = `external_failed: ${err instanceof Error ? err.message : String(err)}`;
       }
     }
 
     return NextResponse.json({
       success: true,
-      message: "Webhook procesado exitosamente.",
-      details: {
-        timestamp: new Date().toISOString(),
-        recipientsProcessed: recipients?.length || 0,
-        status: externalDispatchStatus,
-      },
+      details: { recipientsProcessed: list.length, status },
     });
   } catch (error: unknown) {
     console.error("[Webhook Error]", error);
-    return NextResponse.json(
-      { success: false, error: error instanceof Error ? error.message : "Error interno del servidor" },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, error: "Error interno del servidor" }, { status: 500 });
   }
 }
 
 export async function GET() {
-  return NextResponse.json({
-    status: "online",
-    service: "Club Voley Zúñiga Notification Webhook",
-    time: new Date().toISOString(),
-    supportedChannels: ["whatsapp", "sms", "push"],
-  });
+  return NextResponse.json({ status: "online" });
 }

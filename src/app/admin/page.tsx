@@ -10,8 +10,9 @@ import {
 export default function AdminPage() {
   // Autenticación de Acceso
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [pin, setPin] = useState("");
-  const [pinError, setPinError] = useState(false);
+  const [password, setPassword] = useState("");
+  const [authError, setAuthError] = useState<string | null>(null);
+  const [authLoading, setAuthLoading] = useState(true);
 
   // Pestaña Activa
   const [activeTab, setActiveTab] = useState<"court" | "score" | "leads" | "broadcast">("court");
@@ -51,10 +52,13 @@ export default function AdminPage() {
   const [broadcastMsg, setBroadcastMsg] = useState("Recordatorio: Mañana sábado entrenamiento intensivo en Polideportivo 3 Canchas a las 8:00 AM. Asistir con uniforme oficial.");
   const [broadcastSent, setBroadcastSent] = useState(false);
 
-  // Cargar credenciales guardadas en sesión
+  // Verificar sesión real en el servidor (cookie httpOnly firmada)
   useEffect(() => {
-    const auth = sessionStorage.getItem("vz_admin_auth");
-    if (auth === "true") setIsAuthenticated(true);
+    fetch("/api/admin/session", { cache: "no-store" })
+      .then((r) => r.json())
+      .then((d) => setIsAuthenticated(Boolean(d.authenticated)))
+      .catch(() => setIsAuthenticated(false))
+      .finally(() => setAuthLoading(false));
 
     const savedStatus = localStorage.getItem("vz_court_status");
     if (savedStatus) {
@@ -66,22 +70,31 @@ export default function AdminPage() {
     }
   }, []);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    // PIN por defecto: 1926 (Año de fundación simbólico o Zúñiga)
-    if (pin === "1926" || pin === "2026") {
-      setIsAuthenticated(true);
-      sessionStorage.setItem("vz_admin_auth", "true");
-      setPinError(false);
-    } else {
-      setPinError(true);
+    setAuthError(null);
+    try {
+      const res = await fetch("/api/admin/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok && data.ok) {
+        setIsAuthenticated(true);
+        setPassword("");
+      } else {
+        setAuthError(data.error || "No se pudo iniciar sesión");
+      }
+    } catch {
+      setAuthError("Error de conexión. Intenta de nuevo.");
     }
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    await fetch("/api/admin/logout", { method: "POST" }).catch(() => {});
     setIsAuthenticated(false);
-    sessionStorage.removeItem("vz_admin_auth");
-    setPin("");
+    setPassword("");
   };
 
   // Guardar estado de la cancha en vivo (se refleja en el banner de la web)
@@ -121,7 +134,11 @@ export default function AdminPage() {
     window.open(`https://wa.me/57${lead.phone}?text=${encodeURIComponent(text)}`, "_blank");
   };
 
-  // PANTALLA DE BLOQUEO / LOGIN CON PIN
+  if (authLoading) {
+    return <div className="min-h-screen bg-[#071426]" aria-busy="true" />;
+  }
+
+  // PANTALLA DE LOGIN
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen bg-[#071426] text-white flex items-center justify-center p-6 pt-24">
@@ -140,16 +157,17 @@ export default function AdminPage() {
             <div>
               <input
                 type="password"
-                maxLength={4}
                 autoFocus
-                value={pin}
-                onChange={(e) => setPin(e.target.value)}
-                placeholder="Ingresa tu PIN (1926)"
-                className="w-full text-center text-2xl tracking-[0.4em] font-mono py-3.5 rounded-xl bg-white/[0.05] border border-white/20 text-white placeholder-gray-500 focus:border-[#F29A2E] outline-none"
+                autoComplete="current-password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Contraseña"
+                aria-label="Contraseña del panel"
+                className="w-full text-center text-base font-mono py-3.5 rounded-xl bg-white/[0.05] border border-white/20 text-white placeholder-gray-500 focus:border-[#F29A2E] outline-none"
               />
-              {pinError && (
-                <span className="text-xs text-red-400 font-sans mt-2 block">
-                  PIN incorrecto. Prueba con el PIN oficial 1926.
+              {authError && (
+                <span role="alert" className="text-xs text-red-400 font-sans mt-2 block">
+                  {authError}
                 </span>
               )}
             </div>
