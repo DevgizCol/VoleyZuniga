@@ -68,7 +68,7 @@ export default function Footer() {
           <div>
             <h4 className="font-heading font-bold text-xl uppercase tracking-wider mb-6 text-white/90">El Club</h4>
             <ul className="flex flex-col gap-3 font-sans text-sm text-gray-400">
-              <li><Link href="/club" className="hover:text-[#F29A2E] transition-colors">Historia y Visión</Link></li>
+              <li><Link href="/club/history" className="hover:text-[#F29A2E] transition-colors">Historia y Visión</Link></li>
               <li><Link href="/club/methodology" className="hover:text-[#F29A2E] transition-colors">Metodología de Entrenamiento</Link></li>
               <li><Link href="/registrations" className="hover:text-[#F29A2E] transition-colors">Inscripciones Abiertas</Link></li>
               <li><Link href="/news" className="hover:text-[#F29A2E] transition-colors">Noticias y Actualidad</Link></li>

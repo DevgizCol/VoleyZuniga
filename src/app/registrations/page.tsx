@@ -3,17 +3,18 @@
 import React, { useState, useRef } from "react";
 import Image from "next/image";
 import { UserCheck, Calendar, Trophy, ChevronRight, Sparkles, QrCode, Shield, Check, MessageCircle, HelpCircle, Download, Smartphone, Clock, MapPin } from "lucide-react";
-import MagneticButton from "@/components/MagneticButton";
+import { CATEGORIES, HORARIOS, NIVELES, SEDES, categoryForAge } from "@/data/registration";
 
 export default function RegistrationsPage() {
+  const initialCategory = categoryForAge(14);
   const [formData, setFormData] = useState({
-    name: "Valentina Morales",
+    name: "",
     age: "14",
-    category: "Sub-16 Menores",
-    level: "Competitivo",
-    phone: "312 845 9210",
-    sede: "Polideportivo 3 Canchas",
-    horario: "Martes y Jueves (4:00 PM – 6:00 PM)"
+    category: initialCategory.value,
+    level: NIVELES[0] as string,
+    phone: "",
+    sede: initialCategory.sede as string,
+    horario: initialCategory.horario as string,
   });
 
   const [downloading, setDownloading] = useState(false);
@@ -23,23 +24,16 @@ export default function RegistrationsPage() {
   const [quizAge, setQuizAge] = useState<number>(14);
   const [quizGoal, setQuizGoal] = useState<"iniciacion" | "competencia">("competencia");
 
-  const getRecommendedCategory = () => {
-    if (quizAge <= 11) return { cat: "Semillero Sub-12", schedule: "Mar y Jue: 4:00 PM - 5:30 PM", sede: "Polideportivo 3 Canchas" };
-    if (quizAge <= 14) return { cat: "Infantil Sub-14", schedule: "Lun, Mié y Vie: 4:30 PM - 6:30 PM", sede: "Polideportivo 3 Canchas" };
-    if (quizAge <= 16) return { cat: "Menores Sub-16", schedule: "Mar y Jue: 6:00 PM - 8:00 PM", sede: "Polideportivo 3 Canchas" };
-    return { cat: "Juvenil / Mayores Sub-18+", schedule: "Lun a Vie: 6:30 PM - 8:30 PM", sede: "Coliseo Yesid Santos" };
-  };
-
-  const recommendation = getRecommendedCategory();
+  const recommendation = categoryForAge(quizAge);
 
   const handleApplyRecommendation = () => {
     setFormData({
       ...formData,
       age: quizAge.toString(),
-      category: recommendation.cat,
-      level: quizGoal === "iniciacion" ? "Iniciación Formativa" : "Alta Competencia",
+      category: recommendation.value,
+      level: quizGoal === "iniciacion" ? NIVELES[0] : NIVELES[2],
       sede: recommendation.sede,
-      horario: recommendation.schedule
+      horario: recommendation.horario
     });
   };
 
@@ -104,7 +98,7 @@ export default function RegistrationsPage() {
 
       ctx.fillStyle = "#FFFFFF";
       ctx.font = "bold 56px sans-serif";
-      ctx.fillText(formData.name.toUpperCase(), 80, 320);
+      ctx.fillText((formData.name || "TU NOMBRE").toUpperCase(), 80, 320);
 
       // Categoría & Edad
       ctx.fillStyle = "#F29A2E";
@@ -144,7 +138,7 @@ export default function RegistrationsPage() {
 
       // Generar descarga
       const link = document.createElement("a");
-      link.download = `Carnet-VIP-VoleyZuniga-${formData.name.replace(/\s+/g, "_")}.png`;
+      link.download = `Carnet-VIP-VoleyZuniga-${(formData.name || "atleta").trim().replace(/\s+/g, "_")}.png`;
       link.href = canvas.toDataURL("image/png");
       link.click();
     } catch (err) {
@@ -258,10 +252,10 @@ export default function RegistrationsPage() {
             <div className="p-5 rounded-2xl bg-[#F29A2E]/10 border border-[#F29A2E]/30">
               <span className="text-[10px] uppercase tracking-widest text-[#F29A2E] font-bold block mb-1">Categoría Recomendada:</span>
               <h4 className="text-xl font-heading font-bold text-white uppercase mb-1">
-                {recommendation.cat}
+                {recommendation.value}
               </h4>
               <p className="text-xs text-gray-300 font-sans">
-                {recommendation.schedule} • {recommendation.sede}
+                {recommendation.horario} • {recommendation.sede}
               </p>
             </div>
           </div>
@@ -294,6 +288,8 @@ export default function RegistrationsPage() {
                   <input 
                     type="number" 
                     required
+                    min={5}
+                    max={60}
                     value={formData.age}
                     onChange={(e) => setFormData({...formData, age: e.target.value})}
                     placeholder="14"
@@ -307,11 +303,9 @@ export default function RegistrationsPage() {
                     onChange={(e) => setFormData({...formData, category: e.target.value})}
                     className="w-full px-4 py-3.5 rounded-xl bg-[#0B1E38] border border-white/10 text-white focus:border-[#F29A2E] outline-none transition-all font-sans text-sm"
                   >
-                    <option value="Semillero Sub-12">Semillero Sub-12 (8-11 años)</option>
-                    <option value="Infantil Sub-14">Infantil Sub-14 (12-13 años)</option>
-                    <option value="Menores Sub-16">Menores Sub-16 (14-15 años)</option>
-                    <option value="Juvenil Sub-18">Juvenil Sub-18 (16-17 años)</option>
-                    <option value="Mayores Élite">Mayores Élite (18+ años)</option>
+                    {CATEGORIES.map((c) => (
+                      <option key={c.value} value={c.value}>{c.label}</option>
+                    ))}
                   </select>
                 </div>
               </div>
@@ -327,9 +321,9 @@ export default function RegistrationsPage() {
                     onChange={(e) => setFormData({...formData, sede: e.target.value})}
                     className="w-full px-4 py-3.5 rounded-xl bg-[#0B1E38] border border-white/10 text-white focus:border-[#F29A2E] outline-none transition-all font-sans text-sm"
                   >
-                    <option value="Polideportivo 3 Canchas">Polideportivo 3 Canchas (Belén)</option>
-                    <option value="Coliseo Yesid Santos">Coliseo Yesid Santos (Atanasio Girardot)</option>
-                    <option value="Sede Buenos Aires">Sede Buenos Aires</option>
+                    {SEDES.map((x) => (
+                      <option key={x.value} value={x.value}>{x.label}</option>
+                    ))}
                   </select>
                 </div>
                 <div>
@@ -341,10 +335,9 @@ export default function RegistrationsPage() {
                     onChange={(e) => setFormData({...formData, horario: e.target.value})}
                     className="w-full px-4 py-3.5 rounded-xl bg-[#0B1E38] border border-white/10 text-white focus:border-[#F29A2E] outline-none transition-all font-sans text-sm"
                   >
-                    <option value="Martes y Jueves (4:00 PM – 6:00 PM)">Mar & Jue (4:00 PM – 6:00 PM)</option>
-                    <option value="Lunes, Miércoles y Viernes (4:30 PM – 6:30 PM)">Lun, Mié & Vie (4:30 PM – 6:30 PM)</option>
-                    <option value="Lunes a Jueves (6:00 PM – 8:00 PM)">Lun a Jue (6:00 PM – 8:00 PM)</option>
-                    <option value="Sábados Intensivos (8:00 AM – 12:00 M)">Sábados Intensivos (8:00 AM – 12:00 M)</option>
+                    {HORARIOS.map((h) => (
+                      <option key={h.value} value={h.value}>{h.label}</option>
+                    ))}
                   </select>
                 </div>
               </div>
@@ -357,9 +350,9 @@ export default function RegistrationsPage() {
                     onChange={(e) => setFormData({...formData, level: e.target.value})}
                     className="w-full px-4 py-3.5 rounded-xl bg-[#0B1E38] border border-white/10 text-white focus:border-[#F29A2E] outline-none transition-all font-sans text-sm"
                   >
-                    <option value="Iniciación Formativa">Iniciación Formativa</option>
-                    <option value="Intermedio en Desarrollo">Intermedio en Desarrollo</option>
-                    <option value="Alta Competencia">Alta Competencia</option>
+                    {NIVELES.map((n) => (
+                      <option key={n} value={n}>{n}</option>
+                    ))}
                   </select>
                 </div>
                 <div>
@@ -369,7 +362,7 @@ export default function RegistrationsPage() {
                     required
                     value={formData.phone}
                     onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                    placeholder="312 845 9210"
+                    placeholder="300 000 0000"
                     className="w-full px-4 py-3.5 rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder-gray-500 focus:border-[#F29A2E] outline-none font-sans text-sm"
                   />
                 </div>
@@ -432,7 +425,7 @@ export default function RegistrationsPage() {
                   <div className="flex items-center gap-3 text-xs font-mono text-gray-300 mt-2 flex-wrap">
                     <span>CAT: <strong className="text-[#F29A2E]">{formData.category}</strong></span>
                     <span>•</span>
-                    <span>EDAD: <strong className="text-white">{formData.age} Años</strong></span>
+                    <span>EDAD: <strong className="text-white">{formData.age ? `${formData.age} Años` : "—"}</strong></span>
                   </div>
                 </div>
 
