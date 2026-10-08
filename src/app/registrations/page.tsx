@@ -4,30 +4,44 @@ import React, { useState, useRef } from "react";
 import Image from "next/image";
 import { UserCheck, Calendar, Trophy, ChevronRight, Sparkles, QrCode, Shield, Check, MessageCircle, HelpCircle, Download, Smartphone, Clock, MapPin } from "lucide-react";
 import MagneticButton from "@/components/MagneticButton";
+import Link from "next/link";
+import { CATEGORIES, HORARIOS as HORARIO_OPTIONS, LEVELS, SEDES } from "@/lib/registration-options";
 
 export default function RegistrationsPage() {
   const [formData, setFormData] = useState({
-    name: "Valentina Morales",
-    age: "14",
-    category: "Sub-16 Menores",
-    level: "Competitivo",
-    phone: "312 845 9210",
+    name: "",
+    age: "",
+    category: "Infantil Sub-14",
+    level: "Iniciación Formativa",
+    phone: "",
     sede: "Polideportivo 3 Canchas",
-    horario: "Martes y Jueves (4:00 PM – 6:00 PM)"
+    horario: "Lunes, Miércoles y Viernes (4:30 PM – 6:30 PM)"
   });
 
   const [downloading, setDownloading] = useState(false);
+  const [consent, setConsent] = useState(false);
+  const [honeypot, setHoneypot] = useState("");
+  const [sending, setSending] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
   const cardRef = useRef<HTMLDivElement>(null);
 
   // 2-Click Assistant State
   const [quizAge, setQuizAge] = useState<number>(14);
   const [quizGoal, setQuizGoal] = useState<"iniciacion" | "competencia">("competencia");
 
+  // Los valores devueltos coinciden EXACTAMENTE con las <option> de los selects del formulario.
+  const HORARIOS = {
+    semillero: HORARIO_OPTIONS[0].value,
+    infantil: HORARIO_OPTIONS[1].value,
+    tarde: HORARIO_OPTIONS[2].value,
+  } as const;
+
   const getRecommendedCategory = () => {
-    if (quizAge <= 11) return { cat: "Semillero Sub-12", schedule: "Mar y Jue: 4:00 PM - 5:30 PM", sede: "Polideportivo 3 Canchas" };
-    if (quizAge <= 14) return { cat: "Infantil Sub-14", schedule: "Lun, Mié y Vie: 4:30 PM - 6:30 PM", sede: "Polideportivo 3 Canchas" };
-    if (quizAge <= 16) return { cat: "Menores Sub-16", schedule: "Mar y Jue: 6:00 PM - 8:00 PM", sede: "Polideportivo 3 Canchas" };
-    return { cat: "Juvenil / Mayores Sub-18+", schedule: "Lun a Vie: 6:30 PM - 8:30 PM", sede: "Coliseo Yesid Santos" };
+    if (quizAge <= 11) return { cat: "Semillero Sub-12", schedule: HORARIOS.semillero, sede: "Polideportivo 3 Canchas" };
+    if (quizAge <= 13) return { cat: "Infantil Sub-14", schedule: HORARIOS.infantil, sede: "Polideportivo 3 Canchas" };
+    if (quizAge <= 15) return { cat: "Menores Sub-16", schedule: HORARIOS.tarde, sede: "Polideportivo 3 Canchas" };
+    if (quizAge <= 17) return { cat: "Juvenil Sub-18", schedule: HORARIOS.tarde, sede: "Coliseo Yesid Santos" };
+    return { cat: "Mayores Élite", schedule: HORARIOS.tarde, sede: "Coliseo Yesid Santos" };
   };
 
   const recommendation = getRecommendedCategory();
@@ -104,7 +118,7 @@ export default function RegistrationsPage() {
 
       ctx.fillStyle = "#FFFFFF";
       ctx.font = "bold 56px sans-serif";
-      ctx.fillText(formData.name.toUpperCase(), 80, 320);
+      ctx.fillText((formData.name.trim() || "NOMBRE DEL DEPORTISTA").toUpperCase(), 80, 320);
 
       // Categoría & Edad
       ctx.fillStyle = "#F29A2E";
@@ -113,7 +127,7 @@ export default function RegistrationsPage() {
 
       ctx.fillStyle = "#CBD5E1";
       ctx.font = "24px sans-serif";
-      ctx.fillText(`EDAD: ${formData.age} AÑOS  •  NIVEL: ${formData.level.toUpperCase()}`, 80, 435);
+      ctx.fillText(`EDAD: ${formData.age || "—"} AÑOS  •  NIVEL: ${formData.level.toUpperCase()}`, 80, 435);
 
       // Sede y Horario
       ctx.fillStyle = "#94A3B8";
@@ -144,7 +158,7 @@ export default function RegistrationsPage() {
 
       // Generar descarga
       const link = document.createElement("a");
-      link.download = `Carnet-VIP-VoleyZuniga-${formData.name.replace(/\s+/g, "_")}.png`;
+      link.download = `Carnet-VIP-VoleyZuniga-${(formData.name.trim() || "deportista").replace(/\s+/g, "_")}.png`;
       link.href = canvas.toDataURL("image/png");
       link.click();
     } catch (err) {
@@ -154,8 +168,29 @@ export default function RegistrationsPage() {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setFormError(null);
+    setSending(true);
+    try {
+      // Se guarda la solicitud en la hoja del club. Si el servicio no responde, la
+      // inscripción sigue por WhatsApp, que es el canal principal.
+      const res = await fetch("/api/registrations", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...formData, consent, website: honeypot }),
+      });
+      if (res.status === 400 || res.status === 429) {
+        const data = await res.json().catch(() => ({}));
+        setFormError(data.error || "Revisa los datos del formulario.");
+        return;
+      }
+    } catch {
+      // sin conexión con el servicio: se continúa por WhatsApp
+    } finally {
+      setSending(false);
+    }
+
     const text = `🏐 *SOLICITUD DE INSCRIPCIÓN - CLUB VOLEY ZÚÑIGA*\n\n` +
       `👤 *Atleta:* ${formData.name}\n` +
       `🎂 *Edad:* ${formData.age} años\n` +
@@ -164,7 +199,7 @@ export default function RegistrationsPage() {
       `📍 *Sede de Preferencia:* ${formData.sede}\n` +
       `⏰ *Horario Elegido:* ${formData.horario}\n` +
       `📱 *Contacto WhatsApp:* ${formData.phone}\n\n` +
-      `_He generado y descargado mi Carnet Digital VIP desde la web y deseo confirmar la fecha de mi clase de cortesía._`;
+      `_Deseo confirmar la fecha de mi clase de cortesía._`;
 
     window.open(`https://wa.me/573128459210?text=${encodeURIComponent(text)}`, "_blank");
   };
@@ -275,7 +310,7 @@ export default function RegistrationsPage() {
             <h3 className="text-2xl font-heading font-bold uppercase mb-6 flex items-center gap-3 text-white">
               <span>Personaliza tu Ficha de Admisión</span>
             </h3>
-            <form onSubmit={handleSubmit} className="space-y-5">
+            <form onSubmit={handleSubmit} className="space-y-5 relative">
               <div>
                 <label className="block text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">Nombre y Apellido del Deportista</label>
                 <input 
@@ -283,7 +318,7 @@ export default function RegistrationsPage() {
                   required
                   value={formData.name}
                   onChange={(e) => setFormData({...formData, name: e.target.value})}
-                  placeholder="Ej. Valentina Morales"
+                  placeholder="Nombre y apellido del deportista"
                   className="w-full px-4 py-3.5 rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder-gray-500 focus:border-[#F29A2E] focus:ring-1 focus:ring-[#F29A2E] outline-none transition-all font-sans text-sm"
                 />
               </div>
@@ -296,7 +331,7 @@ export default function RegistrationsPage() {
                     required
                     value={formData.age}
                     onChange={(e) => setFormData({...formData, age: e.target.value})}
-                    placeholder="14"
+                    placeholder="Ej. 14"
                     className="w-full px-4 py-3.5 rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder-gray-500 focus:border-[#F29A2E] focus:ring-1 focus:ring-[#F29A2E] outline-none transition-all font-sans text-sm"
                   />
                 </div>
@@ -307,11 +342,9 @@ export default function RegistrationsPage() {
                     onChange={(e) => setFormData({...formData, category: e.target.value})}
                     className="w-full px-4 py-3.5 rounded-xl bg-[#0B1E38] border border-white/10 text-white focus:border-[#F29A2E] outline-none transition-all font-sans text-sm"
                   >
-                    <option value="Semillero Sub-12">Semillero Sub-12 (8-11 años)</option>
-                    <option value="Infantil Sub-14">Infantil Sub-14 (12-13 años)</option>
-                    <option value="Menores Sub-16">Menores Sub-16 (14-15 años)</option>
-                    <option value="Juvenil Sub-18">Juvenil Sub-18 (16-17 años)</option>
-                    <option value="Mayores Élite">Mayores Élite (18+ años)</option>
+                    {CATEGORIES.map((o) => (
+                      <option key={o.value} value={o.value}>{o.label}</option>
+                    ))}
                   </select>
                 </div>
               </div>
@@ -327,9 +360,9 @@ export default function RegistrationsPage() {
                     onChange={(e) => setFormData({...formData, sede: e.target.value})}
                     className="w-full px-4 py-3.5 rounded-xl bg-[#0B1E38] border border-white/10 text-white focus:border-[#F29A2E] outline-none transition-all font-sans text-sm"
                   >
-                    <option value="Polideportivo 3 Canchas">Polideportivo 3 Canchas (Belén)</option>
-                    <option value="Coliseo Yesid Santos">Coliseo Yesid Santos (Atanasio Girardot)</option>
-                    <option value="Sede Buenos Aires">Sede Buenos Aires</option>
+                    {SEDES.map((o) => (
+                      <option key={o.value} value={o.value}>{o.label}</option>
+                    ))}
                   </select>
                 </div>
                 <div>
@@ -341,10 +374,9 @@ export default function RegistrationsPage() {
                     onChange={(e) => setFormData({...formData, horario: e.target.value})}
                     className="w-full px-4 py-3.5 rounded-xl bg-[#0B1E38] border border-white/10 text-white focus:border-[#F29A2E] outline-none transition-all font-sans text-sm"
                   >
-                    <option value="Martes y Jueves (4:00 PM – 6:00 PM)">Mar & Jue (4:00 PM – 6:00 PM)</option>
-                    <option value="Lunes, Miércoles y Viernes (4:30 PM – 6:30 PM)">Lun, Mié & Vie (4:30 PM – 6:30 PM)</option>
-                    <option value="Lunes a Jueves (6:00 PM – 8:00 PM)">Lun a Jue (6:00 PM – 8:00 PM)</option>
-                    <option value="Sábados Intensivos (8:00 AM – 12:00 M)">Sábados Intensivos (8:00 AM – 12:00 M)</option>
+                    {HORARIO_OPTIONS.map((o) => (
+                      <option key={o.value} value={o.value}>{o.label}</option>
+                    ))}
                   </select>
                 </div>
               </div>
@@ -357,9 +389,9 @@ export default function RegistrationsPage() {
                     onChange={(e) => setFormData({...formData, level: e.target.value})}
                     className="w-full px-4 py-3.5 rounded-xl bg-[#0B1E38] border border-white/10 text-white focus:border-[#F29A2E] outline-none transition-all font-sans text-sm"
                   >
-                    <option value="Iniciación Formativa">Iniciación Formativa</option>
-                    <option value="Intermedio en Desarrollo">Intermedio en Desarrollo</option>
-                    <option value="Alta Competencia">Alta Competencia</option>
+                    {LEVELS.map((o) => (
+                      <option key={o.value} value={o.value}>{o.label}</option>
+                    ))}
                   </select>
                 </div>
                 <div>
@@ -369,21 +401,53 @@ export default function RegistrationsPage() {
                     required
                     value={formData.phone}
                     onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                    placeholder="312 845 9210"
+                    placeholder="Ej. 300 000 0000"
                     className="w-full px-4 py-3.5 rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder-gray-500 focus:border-[#F29A2E] outline-none font-sans text-sm"
                   />
                 </div>
               </div>
 
+              {/* Campo trampa anti-bots: invisible para personas */}
+              <div aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 overflow-hidden">
+                <label>
+                  Sitio web
+                  <input type="text" tabIndex={-1} autoComplete="off" value={honeypot} onChange={(e) => setHoneypot(e.target.value)} />
+                </label>
+              </div>
+
+              <label className="flex items-start gap-3 text-xs text-gray-300 font-sans leading-relaxed cursor-pointer">
+                <input
+                  type="checkbox"
+                  required
+                  checked={consent}
+                  onChange={(e) => setConsent(e.target.checked)}
+                  className="mt-0.5 h-4 w-4 shrink-0 accent-[#F29A2E]"
+                />
+                <span>
+                  Soy el padre, madre o acudiente del deportista (o soy mayor de edad) y autorizo el tratamiento de sus datos personales para gestionar la inscripción, según la{" "}
+                  <Link href="/privacidad" className="text-[#F29A2E] underline underline-offset-2" target="_blank">
+                    Política de tratamiento de datos
+                  </Link>
+                  .
+                </span>
+              </label>
+
+              {formError && (
+                <p role="alert" className="text-xs text-red-400 font-sans">
+                  {formError}
+                </p>
+              )}
+
               <button 
                 type="submit"
-                className="w-full flex items-center justify-center gap-2 py-4 mt-6 bg-gradient-to-r from-[#F29A2E] to-[#FF8008] hover:from-[#FF8008] hover:to-[#F29A2E] text-[#071426] rounded-xl font-bold uppercase tracking-wider text-sm shadow-[0_0_25px_rgba(242,154,46,0.4)] active:scale-95 transition-all"
+                disabled={sending}
+                className="w-full flex items-center justify-center gap-2 py-4 mt-2 bg-gradient-to-r from-[#F29A2E] to-[#FF8008] hover:from-[#FF8008] hover:to-[#F29A2E] text-[#071426] rounded-xl font-bold uppercase tracking-wider text-sm shadow-[0_0_25px_rgba(242,154,46,0.4)] active:scale-95 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 <MessageCircle size={18} />
-                <span>Reservar Cupo y Agendar Prueba por WhatsApp</span>
+                <span>{sending ? "Enviando..." : "Reservar Cupo y Agendar Prueba por WhatsApp"}</span>
               </button>
               <p className="text-center text-[11px] text-gray-400 font-sans">
-                Sin costo de matrícula inicial por validación web. Cupo confirmado en menos de 2 horas.
+                Te responderemos por WhatsApp para confirmar cupo y agendar la clase de prueba.
               </p>
             </form>
           </div>
@@ -432,7 +496,7 @@ export default function RegistrationsPage() {
                   <div className="flex items-center gap-3 text-xs font-mono text-gray-300 mt-2 flex-wrap">
                     <span>CAT: <strong className="text-[#F29A2E]">{formData.category}</strong></span>
                     <span>•</span>
-                    <span>EDAD: <strong className="text-white">{formData.age} Años</strong></span>
+                    <span>EDAD: <strong className="text-white">{formData.age ? `${formData.age} Años` : "—"}</strong></span>
                   </div>
                 </div>
 

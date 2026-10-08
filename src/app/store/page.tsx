@@ -78,7 +78,7 @@ export default function StorePage() {
 
   const handleAddCustomJersey = () => {
     addToCart({
-      id: `jersey-custom-${selectedSize}-${customDorsal}`,
+      id: `jersey-custom-${selectedSize}-${customDorsal}-${(customName || "sin-nombre").trim().toLowerCase().replace(/[^a-z0-9áéíóúñ]+/gi, "-")}`,
       name: `Camiseta Oficial (${selectedSize}) - #${customDorsal} ${customName || "SIN NOMBRE"}`,
       price: 95000,
       image: "https://images.unsplash.com/photo-1581655353564-df123a1eb820?q=80&w=800&auto=format&fit=crop",
@@ -153,7 +153,7 @@ export default function StorePage() {
 
                 {/* VISTA 1: ESPALDA */}
                 {activeAngle === "back" && (
-                  <div className="text-center z-10 my-auto animate-fadeIn">
+                  <div className="text-center z-10 my-auto animate-fade-in">
                     <div className="text-xs uppercase font-mono tracking-[0.3em] text-white font-bold mb-2 drop-shadow">
                       {customName || "TU APELLIDO"}
                     </div>
@@ -168,7 +168,7 @@ export default function StorePage() {
 
                 {/* VISTA 2: FRENTE */}
                 {activeAngle === "front" && (
-                  <div className="text-center z-10 my-auto animate-fadeIn flex flex-col items-center">
+                  <div className="text-center z-10 my-auto animate-fade-in flex flex-col items-center">
                     <div className="w-20 h-20 rounded-2xl bg-white/10 p-3 border border-[#F29A2E]/50 mb-3 shadow-[0_0_20px_rgba(242,154,46,0.3)]">
                       <Image src="/logo.svg" alt="Escudo Voley Zúñiga" width={80} height={80} />
                     </div>
@@ -186,7 +186,7 @@ export default function StorePage() {
 
                 {/* VISTA 3: DETALLE ESCUDO */}
                 {activeAngle === "detail" && (
-                  <div className="text-center z-10 my-auto animate-fadeIn flex flex-col items-center">
+                  <div className="text-center z-10 my-auto animate-fade-in flex flex-col items-center">
                     <div className="w-28 h-28 rounded-full bg-gradient-to-tr from-[#F29A2E]/30 to-white/10 p-5 border-2 border-[#F29A2E] mb-3 flex items-center justify-center">
                       <Image src="/logo.svg" alt="Escudo Detalle" width={90} height={90} />
                     </div>

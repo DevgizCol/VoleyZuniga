@@ -167,12 +167,13 @@ export default function MethodologyPage() {
               </p>
               <div className="flex flex-wrap gap-4 mb-6">
                 <a
-                  href="/logo.svg"
-                  download="Manual_de_Convivencia_Club_Voley_Zuniga_2026.pdf"
+                  href="https://wa.me/573128459210?text=Hola,%20quisiera%20recibir%20el%20Manual%20de%20Convivencia%20del%20club"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="px-6 py-3.5 bg-[#F29A2E] hover:bg-white text-[#071426] font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-lg flex items-center gap-2 cursor-pointer"
                 >
                   <Target size={16} />
-                  <span>Descargar Manual de Convivencia (PDF)</span>
+                  <span>Solicitar el Manual por WhatsApp</span>
                 </a>
               </div>
             </div>
@@ -180,7 +181,7 @@ export default function MethodologyPage() {
             <div className="space-y-4">
               <div className="p-5 rounded-2xl bg-white/[0.03] border border-white/5">
                 <h4 className="text-white font-bold text-sm mb-1">1. Puntualidad de 15 Minutos</h4>
-                <p className="text-xs text-gray-400">Llegar con anticipación para calentar previene el 80% de lesiones articulares.</p>
+                <p className="text-xs text-gray-400">Llegar con anticipación para calentar ayuda a prevenir lesiones articulares.</p>
               </div>
               <div className="p-5 rounded-2xl bg-white/[0.03] border border-white/5">
                 <h4 className="text-white font-bold text-sm mb-1">2. Uniformidad Rigurosa</h4>

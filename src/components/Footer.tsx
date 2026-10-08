@@ -24,16 +24,7 @@ export default function Footer() {
             </p>
             <div className="flex gap-3">
               <a 
-                href="https://facebook.com" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                aria-label="Facebook"
-                className="w-11 h-11 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-[#F29A2E] hover:text-[#071426] active:scale-95 transition-all font-bold text-xs touch-manipulation"
-              >
-                FB
-              </a>
-              <a 
-                href="https://www.instagram.com/voleyzuniga_oficial" 
+                href="https://www.instagram.com/voleyzuniga" 
                 target="_blank" 
                 rel="noopener noreferrer" 
                 aria-label="Instagram"
@@ -68,7 +59,7 @@ export default function Footer() {
           <div>
             <h4 className="font-heading font-bold text-xl uppercase tracking-wider mb-6 text-white/90">El Club</h4>
             <ul className="flex flex-col gap-3 font-sans text-sm text-gray-400">
-              <li><Link href="/club" className="hover:text-[#F29A2E] transition-colors">Historia y Visión</Link></li>
+              <li><Link href="/club/history" className="hover:text-[#F29A2E] transition-colors">Historia y Visión</Link></li>
               <li><Link href="/club/methodology" className="hover:text-[#F29A2E] transition-colors">Metodología de Entrenamiento</Link></li>
               <li><Link href="/registrations" className="hover:text-[#F29A2E] transition-colors">Inscripciones Abiertas</Link></li>
               <li><Link href="/news" className="hover:text-[#F29A2E] transition-colors">Noticias y Actualidad</Link></li>
@@ -98,7 +89,7 @@ export default function Footer() {
 
         {/* Bottom */}
         <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-sans text-gray-500">
-          <p>Copyright © 2026 Club Voley Zúñiga. Todos los derechos reservados.</p>
+          <p>Copyright © 2026 Club Voley Zúñiga. Todos los derechos reservados. <Link href="/privacidad" className="underline underline-offset-2 hover:text-[#F29A2E]">Política de datos</Link></p>
           <p>Powered by <Link href="https://devgiz.vercel.app/" target="_blank" rel="noopener noreferrer"><span className="text-gray-300 font-bold">DevGiz</span></Link></p>
         </div>
       </div>
