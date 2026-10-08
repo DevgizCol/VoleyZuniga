@@ -425,7 +425,7 @@ export default function GamesPage() {
 
         {/* 4. MODAL DETALLADO MATCH REPORT (MVP & Stats) */}
         {selectedReportMatch && selectedReportMatch.report && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fadeIn">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
             <div className="relative w-full max-w-2xl rounded-3xl bg-gradient-to-b from-[#0F284B] to-[#071426] border-2 border-[#F29A2E]/60 p-8 shadow-[0_25px_70px_rgba(0,0,0,0.9)] overflow-hidden">
 
               <button

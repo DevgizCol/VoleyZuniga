@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { appendToSheet, sheetsConfigured } from "@/lib/sheets";
 import { clientIp, isRateLimited } from "@/lib/rate-limit";
-import { CONTACT_TOPICS, isValidOption } from "@/lib/registration-options";
+import { CONTACT_TOPICS, isOneOf } from "@/data/contact";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const PHONE_RE = /^[+\d][\d\s().-]{6,19}$/;
@@ -35,7 +35,7 @@ export async function POST(request: Request) {
   if (name.length < 2) return bad("Escribe tu nombre completo.");
   if (!EMAIL_RE.test(email)) return bad("Revisa el correo electrónico.");
   if (!PHONE_RE.test(phone)) return bad("Revisa el número de teléfono o WhatsApp.");
-  if (!isValidOption(CONTACT_TOPICS, topic)) return bad("Elige un motivo de contacto.");
+  if (!isOneOf(CONTACT_TOPICS, topic)) return bad("Elige un motivo de contacto.");
   if (message.length < 5) return bad("Escribe tu mensaje.");
 
   if (!sheetsConfigured()) {

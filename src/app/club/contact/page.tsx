@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { CONTACT_TOPICS } from "@/lib/registration-options";
+import { CONTACT_TOPICS } from "@/data/contact";
 import { MapPin, Phone, Mail, Clock, ExternalLink, Navigation, Compass, MessageCircle } from "lucide-react";
 
 export default function ContactPage() {

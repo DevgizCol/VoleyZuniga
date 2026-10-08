@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { appendToSheet, sheetsConfigured } from "@/lib/sheets";
 import { clientIp, isRateLimited } from "@/lib/rate-limit";
-import { CATEGORIES, HORARIOS, LEVELS, SEDES, isValidOption } from "@/lib/registration-options";
+import { CATEGORIES, HORARIOS, NIVELES, SEDES } from "@/data/registration";
+import { isOneOf } from "@/data/contact";
 
 const PHONE_RE = /^[+\d][\d\s().-]{6,19}$/;
 
@@ -31,10 +32,10 @@ export async function POST(request: Request) {
 
   if (name.length < 2) return bad("Escribe el nombre del deportista.");
   if (!Number.isInteger(age) || age < 5 || age > 60) return bad("Revisa la edad del deportista.");
-  if (!isValidOption(CATEGORIES, body.category)) return bad("Elige una categoría válida.");
-  if (!isValidOption(LEVELS, body.level)) return bad("Elige un nivel válido.");
-  if (!isValidOption(SEDES, body.sede)) return bad("Elige una sede válida.");
-  if (!isValidOption(HORARIOS, body.horario)) return bad("Elige un horario válido.");
+  if (!isOneOf(CATEGORIES, body.category)) return bad("Elige una categoría válida.");
+  if (typeof body.level !== "string" || !(NIVELES as readonly string[]).includes(body.level)) return bad("Elige un nivel válido.");
+  if (!isOneOf(SEDES, body.sede)) return bad("Elige una sede válida.");
+  if (!isOneOf(HORARIOS, body.horario)) return bad("Elige un horario válido.");
   if (!PHONE_RE.test(phone)) return bad("Revisa el número de WhatsApp.");
   if (body.consent !== true) {
     return bad("Debes aceptar el tratamiento de datos personales para continuar.");

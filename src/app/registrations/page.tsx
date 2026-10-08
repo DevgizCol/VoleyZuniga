@@ -2,20 +2,20 @@
 
 import React, { useState, useRef } from "react";
 import Image from "next/image";
-import { UserCheck, Calendar, Trophy, ChevronRight, Sparkles, QrCode, Shield, Check, MessageCircle, HelpCircle, Download, Smartphone, Clock, MapPin } from "lucide-react";
-import MagneticButton from "@/components/MagneticButton";
 import Link from "next/link";
-import { CATEGORIES, HORARIOS as HORARIO_OPTIONS, LEVELS, SEDES } from "@/lib/registration-options";
+import { UserCheck, Calendar, Trophy, ChevronRight, Sparkles, QrCode, Shield, Check, MessageCircle, HelpCircle, Download, Smartphone, Clock, MapPin } from "lucide-react";
+import { CATEGORIES, HORARIOS, NIVELES, SEDES, categoryForAge } from "@/data/registration";
 
 export default function RegistrationsPage() {
+  const initialCategory = categoryForAge(14);
   const [formData, setFormData] = useState({
     name: "",
-    age: "",
-    category: "Infantil Sub-14",
-    level: "Iniciación Formativa",
+    age: "14",
+    category: initialCategory.value,
+    level: NIVELES[0] as string,
     phone: "",
-    sede: "Polideportivo 3 Canchas",
-    horario: "Lunes, Miércoles y Viernes (4:30 PM – 6:30 PM)"
+    sede: initialCategory.sede as string,
+    horario: initialCategory.horario as string,
   });
 
   const [downloading, setDownloading] = useState(false);
@@ -29,31 +29,16 @@ export default function RegistrationsPage() {
   const [quizAge, setQuizAge] = useState<number>(14);
   const [quizGoal, setQuizGoal] = useState<"iniciacion" | "competencia">("competencia");
 
-  // Los valores devueltos coinciden EXACTAMENTE con las <option> de los selects del formulario.
-  const HORARIOS = {
-    semillero: HORARIO_OPTIONS[0].value,
-    infantil: HORARIO_OPTIONS[1].value,
-    tarde: HORARIO_OPTIONS[2].value,
-  } as const;
-
-  const getRecommendedCategory = () => {
-    if (quizAge <= 11) return { cat: "Semillero Sub-12", schedule: HORARIOS.semillero, sede: "Polideportivo 3 Canchas" };
-    if (quizAge <= 13) return { cat: "Infantil Sub-14", schedule: HORARIOS.infantil, sede: "Polideportivo 3 Canchas" };
-    if (quizAge <= 15) return { cat: "Menores Sub-16", schedule: HORARIOS.tarde, sede: "Polideportivo 3 Canchas" };
-    if (quizAge <= 17) return { cat: "Juvenil Sub-18", schedule: HORARIOS.tarde, sede: "Coliseo Yesid Santos" };
-    return { cat: "Mayores Élite", schedule: HORARIOS.tarde, sede: "Coliseo Yesid Santos" };
-  };
-
-  const recommendation = getRecommendedCategory();
+  const recommendation = categoryForAge(quizAge);
 
   const handleApplyRecommendation = () => {
     setFormData({
       ...formData,
       age: quizAge.toString(),
-      category: recommendation.cat,
-      level: quizGoal === "iniciacion" ? "Iniciación Formativa" : "Alta Competencia",
+      category: recommendation.value,
+      level: quizGoal === "iniciacion" ? NIVELES[0] : NIVELES[2],
       sede: recommendation.sede,
-      horario: recommendation.schedule
+      horario: recommendation.horario
     });
   };
 
@@ -118,7 +103,7 @@ export default function RegistrationsPage() {
 
       ctx.fillStyle = "#FFFFFF";
       ctx.font = "bold 56px sans-serif";
-      ctx.fillText((formData.name.trim() || "NOMBRE DEL DEPORTISTA").toUpperCase(), 80, 320);
+      ctx.fillText((formData.name || "TU NOMBRE").toUpperCase(), 80, 320);
 
       // Categoría & Edad
       ctx.fillStyle = "#F29A2E";
@@ -158,7 +143,7 @@ export default function RegistrationsPage() {
 
       // Generar descarga
       const link = document.createElement("a");
-      link.download = `Carnet-VIP-VoleyZuniga-${(formData.name.trim() || "deportista").replace(/\s+/g, "_")}.png`;
+      link.download = `Carnet-VIP-VoleyZuniga-${(formData.name || "atleta").trim().replace(/\s+/g, "_")}.png`;
       link.href = canvas.toDataURL("image/png");
       link.click();
     } catch (err) {
@@ -293,10 +278,10 @@ export default function RegistrationsPage() {
             <div className="p-5 rounded-2xl bg-[#F29A2E]/10 border border-[#F29A2E]/30">
               <span className="text-[10px] uppercase tracking-widest text-[#F29A2E] font-bold block mb-1">Categoría Recomendada:</span>
               <h4 className="text-xl font-heading font-bold text-white uppercase mb-1">
-                {recommendation.cat}
+                {recommendation.value}
               </h4>
               <p className="text-xs text-gray-300 font-sans">
-                {recommendation.schedule} • {recommendation.sede}
+                {recommendation.horario} • {recommendation.sede}
               </p>
             </div>
           </div>
@@ -318,7 +303,7 @@ export default function RegistrationsPage() {
                   required
                   value={formData.name}
                   onChange={(e) => setFormData({...formData, name: e.target.value})}
-                  placeholder="Nombre y apellido del deportista"
+                  placeholder="Ej. Valentina Morales"
                   className="w-full px-4 py-3.5 rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder-gray-500 focus:border-[#F29A2E] focus:ring-1 focus:ring-[#F29A2E] outline-none transition-all font-sans text-sm"
                 />
               </div>
@@ -329,9 +314,11 @@ export default function RegistrationsPage() {
                   <input 
                     type="number" 
                     required
+                    min={5}
+                    max={60}
                     value={formData.age}
                     onChange={(e) => setFormData({...formData, age: e.target.value})}
-                    placeholder="Ej. 14"
+                    placeholder="14"
                     className="w-full px-4 py-3.5 rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder-gray-500 focus:border-[#F29A2E] focus:ring-1 focus:ring-[#F29A2E] outline-none transition-all font-sans text-sm"
                   />
                 </div>
@@ -342,8 +329,8 @@ export default function RegistrationsPage() {
                     onChange={(e) => setFormData({...formData, category: e.target.value})}
                     className="w-full px-4 py-3.5 rounded-xl bg-[#0B1E38] border border-white/10 text-white focus:border-[#F29A2E] outline-none transition-all font-sans text-sm"
                   >
-                    {CATEGORIES.map((o) => (
-                      <option key={o.value} value={o.value}>{o.label}</option>
+                    {CATEGORIES.map((c) => (
+                      <option key={c.value} value={c.value}>{c.label}</option>
                     ))}
                   </select>
                 </div>
@@ -360,8 +347,8 @@ export default function RegistrationsPage() {
                     onChange={(e) => setFormData({...formData, sede: e.target.value})}
                     className="w-full px-4 py-3.5 rounded-xl bg-[#0B1E38] border border-white/10 text-white focus:border-[#F29A2E] outline-none transition-all font-sans text-sm"
                   >
-                    {SEDES.map((o) => (
-                      <option key={o.value} value={o.value}>{o.label}</option>
+                    {SEDES.map((x) => (
+                      <option key={x.value} value={x.value}>{x.label}</option>
                     ))}
                   </select>
                 </div>
@@ -374,8 +361,8 @@ export default function RegistrationsPage() {
                     onChange={(e) => setFormData({...formData, horario: e.target.value})}
                     className="w-full px-4 py-3.5 rounded-xl bg-[#0B1E38] border border-white/10 text-white focus:border-[#F29A2E] outline-none transition-all font-sans text-sm"
                   >
-                    {HORARIO_OPTIONS.map((o) => (
-                      <option key={o.value} value={o.value}>{o.label}</option>
+                    {HORARIOS.map((h) => (
+                      <option key={h.value} value={h.value}>{h.label}</option>
                     ))}
                   </select>
                 </div>
@@ -389,8 +376,8 @@ export default function RegistrationsPage() {
                     onChange={(e) => setFormData({...formData, level: e.target.value})}
                     className="w-full px-4 py-3.5 rounded-xl bg-[#0B1E38] border border-white/10 text-white focus:border-[#F29A2E] outline-none transition-all font-sans text-sm"
                   >
-                    {LEVELS.map((o) => (
-                      <option key={o.value} value={o.value}>{o.label}</option>
+                    {NIVELES.map((n) => (
+                      <option key={n} value={n}>{n}</option>
                     ))}
                   </select>
                 </div>
@@ -401,7 +388,7 @@ export default function RegistrationsPage() {
                     required
                     value={formData.phone}
                     onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                    placeholder="Ej. 300 000 0000"
+                    placeholder="300 000 0000"
                     className="w-full px-4 py-3.5 rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder-gray-500 focus:border-[#F29A2E] outline-none font-sans text-sm"
                   />
                 </div>

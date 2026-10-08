@@ -77,9 +77,11 @@ export default function StorePage() {
   ];
 
   const handleAddCustomJersey = () => {
+    const dorsal = customDorsal || "10";
+    const nameKey = customName.trim() || "SIN NOMBRE";
     addToCart({
-      id: `jersey-custom-${selectedSize}-${customDorsal}-${(customName || "sin-nombre").trim().toLowerCase().replace(/[^a-z0-9áéíóúñ]+/gi, "-")}`,
-      name: `Camiseta Oficial (${selectedSize}) - #${customDorsal} ${customName || "SIN NOMBRE"}`,
+      id: `jersey-custom-${selectedSize}-${dorsal}-${nameKey.replace(/\s+/g, "_")}`,
+      name: `Camiseta Oficial (${selectedSize}) - #${dorsal} ${nameKey}`,
       price: 95000,
       image: "https://images.unsplash.com/photo-1581655353564-df123a1eb820?q=80&w=800&auto=format&fit=crop",
       quantity: 1
@@ -386,7 +388,7 @@ export default function StorePage() {
 
         {/* 3. MODAL GUÍA INTERACTIVA DE TALLAS */}
         {isSizeGuideOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fadeIn">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
             <div className="relative w-full max-w-xl rounded-3xl bg-[#0B1E38] border-2 border-[#F29A2E]/50 p-8 shadow-2xl">
               <button
                 onClick={() => setIsSizeGuideOpen(false)}
@@ -467,7 +469,7 @@ export default function StorePage() {
 
         {/* 4. MODAL DE PAGO DIRECTO (Pasarelas Colombianas: Wompi, Nequi, PSE, Bold) */}
         {isDirectCheckoutOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fadeIn">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
             <div className="relative w-full max-w-lg rounded-3xl bg-[#0B1E38] border-2 border-[#F29A2E]/60 p-8 shadow-2xl">
               <button
                 onClick={() => {
