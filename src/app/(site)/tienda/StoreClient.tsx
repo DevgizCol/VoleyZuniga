@@ -1,15 +1,22 @@
 "use client";
 
 import { useState } from "react";
+import dynamic from "next/dynamic";
 import Image from "next/image";
 import clsx from "clsx";
-import { Check, Plus, ShoppingCart, MessageCircle, RotateCcw } from "lucide-react";
+import { Check, Plus, ShoppingCart, MessageCircle, RotateCcw, Rotate3d } from "lucide-react";
 import { useCart } from "@/context/CartContext";
+import { useContact } from "@/components/ContactProvider";
 import JerseyArt from "@/components/store/JerseyArt";
+import type { ViewerSelection } from "@/components/store/ProductViewer";
 import { PRODUCTS, SIZES, cop, type Product } from "@/data/products";
+import { JERSEY_COLORWAYS, productKind, sizeScale, type ProductKind } from "@/data/store3d";
 
 const FALLBACK_JERSEY = PRODUCTS[0];
-import { useContact } from "@/components/ContactProvider";
+
+// three.js y el probador solo se descargan en el navegador, cuando hacen falta.
+const Product3D = dynamic(() => import("@/components/store/three/Product3D"), { ssr: false });
+const ProductViewer = dynamic(() => import("@/components/store/ProductViewer"), { ssr: false });
 
 export default function StoreClient({ products }: { products: Product[] }) {
   const { wa } = useContact();
@@ -20,6 +27,9 @@ export default function StoreClient({ products }: { products: Product[] }) {
   const [name, setName] = useState("");
   const [number, setNumber] = useState("10");
   const [added, setAdded] = useState<string | null>(null);
+  const [no3d, setNo3d] = useState(false);
+  const [ready3d, setReady3d] = useState(false);
+  const [viewer, setViewer] = useState<{ product: Product; kind: ProductKind } | null>(null);
 
   const jersey = products.find((p) => p.customizable === variant) ?? products.find((p) => p.customizable) ?? FALLBACK_JERSEY;
   const hasLibero = products.some((p) => p.customizable === "libero");
@@ -52,6 +62,14 @@ export default function StoreClient({ products }: { products: Product[] }) {
     flash(p.id);
   };
 
+  // Desde el probador 3D: el color y la talla elegidos quedan en el pedido.
+  const addFromViewer = (p: Product, { color, size: chosen }: ViewerSelection) => {
+    const extra = [color, chosen && `Talla ${chosen}`].filter(Boolean);
+    const slug = extra.join("-").toLowerCase().replace(/[^a-z0-9]+/g, "-");
+    setViewer(null);
+    addToCart({ id: slug ? `${p.id}-${slug}` : p.id, name: [p.name, ...extra].join(" · "), price: p.price, image: p.image, quantity: 1 });
+  };
+
   const directMessage =
     `Hola, quiero pedir la ${jersey.name.toLowerCase()}: talla ${size}, número ${number || "10"}` +
     `${cleanName ? `, nombre ${cleanName}` : ", sin nombre"}. Precio ${cop(jersey.price)}. ¿Cómo hago el pago?`;
@@ -66,13 +84,33 @@ export default function StoreClient({ products }: { products: Product[] }) {
             <div className="relative">
               <div className="relative aspect-square max-w-[460px] mx-auto">
                 <div className="absolute inset-6 rounded-full bg-[radial-gradient(circle,rgba(242,154,46,0.22),transparent_65%)]" aria-hidden="true" />
-                <JerseyArt key={`${variant}-${side}`} name={cleanName} number={number} variant={variant} side={side} className="relative w-full h-auto animate-fade-in" />
+                {no3d ? (
+                  <JerseyArt key={`${variant}-${side}`} name={cleanName} number={number} variant={variant} side={side} className="relative w-full h-auto animate-fade-in" />
+                ) : (
+                  <>
+                    {/* La ilustración se ve mientras carga el modelo 3D. */}
+                    {!ready3d ? <JerseyArt name={cleanName} number={number} variant={variant} side={side} className="absolute inset-0 w-full h-auto opacity-30" /> : null}
+                    <Product3D
+                      kind="jersey"
+                      colorway={JERSEY_COLORWAYS[variant]}
+                      jersey={{ name: cleanName, number }}
+                      view={side}
+                      scale={sizeScale("jersey", size)}
+                      autoRotate={false}
+                      onUnsupported={() => setNo3d(true)}
+                      onReady={() => setReady3d(true)}
+                      label={`Camiseta ${variant === "home" ? "titular" : "de líbero"} en 3D, vista ${side === "back" ? "trasera" : "frontal"}, talla ${size}`}
+                      className="absolute inset-0"
+                    />
+                  </>
+                )}
               </div>
               <div className="mt-2 flex justify-center gap-2">
                 <button type="button" onClick={() => setSide((s) => (s === "back" ? "front" : "back"))} className="h-10 px-4 inline-flex items-center gap-2 rounded-full border border-white/20 hover:border-white text-sm font-semibold">
                   <RotateCcw size={16} /> Ver {side === "back" ? "frente" : "espalda"}
                 </button>
               </div>
+              {!no3d ? <p className="mt-2 text-center text-sm text-[#8FA3BF]">Arrastra la camiseta para girarla en 3D</p> : null}
             </div>
 
             <div className="relative">
@@ -148,11 +186,22 @@ export default function StoreClient({ products }: { products: Product[] }) {
             </button>
           </div>
           <ul className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {products.map((p) => (
+            {products.map((p) => {
+              const kind = productKind(p);
+              return (
               <li key={p.id} className="group rounded-2xl bg-white overflow-hidden shadow-[0_1px_0_rgba(15,35,71,0.06),0_24px_48px_-28px_rgba(15,35,71,0.45)] flex flex-col">
                 <div className="relative aspect-[4/3] overflow-hidden bg-[#0B1E38]">
                   <Image src={p.image} alt="" fill sizes="(min-width:1024px) 33vw, (min-width:640px) 50vw, 100vw" unoptimized className="object-contain transition-transform duration-500 group-hover:scale-105" />
                   <span className="absolute top-3 left-3 h-7 px-3 inline-flex items-center rounded-full bg-white/90 text-xs font-semibold">{p.category}</span>
+                  {kind && !p.customizable ? (
+                    <button
+                      type="button"
+                      onClick={() => setViewer({ product: p, kind })}
+                      className="absolute bottom-3 right-3 h-10 px-3.5 inline-flex items-center gap-1.5 rounded-full bg-[#F29A2E] hover:bg-[#FFB14A] text-[#071426] text-sm font-bold shadow-lg"
+                    >
+                      <Rotate3d size={16} /> Ver en 3D
+                    </button>
+                  ) : null}
                 </div>
                 <div className="p-5 flex flex-col flex-1">
                   <h3 className="font-heading font-extrabold text-2xl leading-tight">{p.name}</h3>
@@ -165,10 +214,21 @@ export default function StoreClient({ products }: { products: Product[] }) {
                   </div>
                 </div>
               </li>
-            ))}
+              );
+            })}
           </ul>
         </div>
       </section>
+
+      {viewer ? (
+        <ProductViewer
+          key={viewer.product.id}
+          product={viewer.product}
+          kind={viewer.kind}
+          onClose={() => setViewer(null)}
+          onAdd={(selection) => addFromViewer(viewer.product, selection)}
+        />
+      ) : null}
     </>
   );
 }

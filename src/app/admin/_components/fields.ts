@@ -59,6 +59,14 @@ export const PRODUCT_FIELDS: FieldDef[] = [
   { name: "Precio", label: "Precio (pesos)", type: "text", placeholder: "95000", required: true, help: "Solo números, sin puntos ni $." },
   { name: "Descripción", label: "Descripción", type: "textarea", rows: 3, wide: true },
   { name: "Imagen", label: "Imagen (enlace de Drive o https)", type: "text", wide: true, placeholder: "https://drive.google.com/file/d/…", help: "Déjala como está para usar la ilustración del club." },
+  {
+    name: "Colores",
+    label: "Colores del probador 3D",
+    type: "text",
+    wide: true,
+    placeholder: "Azul:#0F2347, Negro:#16181D",
+    help: "Opcional. Nombre y código de color separados por comas. Requiere la columna Colores en la hoja.",
+  },
   { name: "Personalizable", label: "Camiseta personalizable", type: "select", options: CUSTOMIZABLE, help: "Titular o Líbero activa el editor de nombre y número." },
   { name: "Activo", label: "Visible en la tienda", type: "checkbox" },
 ];

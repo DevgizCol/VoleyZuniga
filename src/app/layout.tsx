@@ -46,16 +46,7 @@ export const metadata: Metadata = {
     statusBarStyle: "black-translucent",
     title: "Voley Zúñiga",
   },
-  icons: {
-    icon: [
-      { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
-      { url: "/icon-512.png", sizes: "512x512", type: "image/png" },
-    ],
-    shortcut: "/icon-192.png",
-    apple: [
-      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
-    ],
-  },
+  // Íconos: app/favicon.ico, app/icon.svg y app/apple-icon.png (convenciones de Next).
   description: "Club de voleibol en Medellín para niños, jóvenes y adultos desde los 7 años. Cinco categorías, dos sedes y clase de prueba sin costo.",
   keywords: ["voleibol", "medellin", "club deportivo", "voley", "antioquia", "entrenamiento", "deporte"],
   openGraph: {

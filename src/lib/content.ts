@@ -5,6 +5,7 @@ import { imageUrl } from "./images";
 import { DEFAULT_CONTACT, phoneToDigits, prettyPhone, type Contact } from "@/config/contact";
 import { SESSIONS, formatTime, type Session } from "@/data/schedule";
 import { PRODUCTS, type Product } from "@/data/products";
+import { parseColors } from "@/data/store3d";
 import { CATEGORIES, HORARIOS } from "@/data/registration";
 
 // Contenido que el club edita desde el panel (pestañas Ajustes, Horarios y Productos).
@@ -117,6 +118,7 @@ export const getProducts = cache(async (): Promise<Product[]> => {
         description: (r["Descripción"] || "").trim(),
         image: image || "/placeholder-club.svg",
         customizable: CUSTOM[(r["Personalizable"] || "").trim().toLowerCase()],
+        colors: parseColors(r["Colores"] || ""),
       };
     })
     .filter((p): p is Product => p !== null);

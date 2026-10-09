@@ -86,6 +86,13 @@ export const productSchema = z.object({
     z.string().trim().regex(/^\//, "Usa una ruta del sitio (/store/...) o un enlace https."),
     z.string().trim().startsWith("https://", "La imagen debe empezar por https://"),
   ]),
+  Colores: z
+    .string()
+    .trim()
+    .max(200, "Colores: máximo 200 caracteres.")
+    .regex(/^$|^[^:,;]+:\s*#[0-9a-fA-F]{6}(\s*[,;]\s*[^:,;]+:\s*#[0-9a-fA-F]{6})*$/, "Escribe los colores así: Azul:#0F2347, Negro:#16181D")
+    .optional()
+    .default(""),
   Personalizable: z.enum(CUSTOMIZABLE),
   Activo: active,
 });

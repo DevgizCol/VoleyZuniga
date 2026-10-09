@@ -1,3 +1,5 @@
+import type { Colorway } from "./store3d";
+
 // Catálogo de la tienda. Los precios están en pesos colombianos; confírmalos con el club antes de publicar cambios.
 
 export type Product = {
@@ -8,6 +10,8 @@ export type Product = {
   image: string;
   description: string;
   customizable?: "home" | "libero";
+  /** Colores del probador 3D (columna "Colores" de la hoja). Sin ella se usan los de muestra. */
+  colors?: Colorway[];
 };
 
 export const PRODUCTS: Product[] = [
