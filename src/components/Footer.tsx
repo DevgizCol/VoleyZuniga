@@ -66,6 +66,10 @@ export default function Footer() {
             <Link href="/privacidad" className="underline underline-offset-2 hover:text-[#F29A2E]">
               Política de datos
             </Link>
+            {" · "}
+            <Link href="/admin" className="underline underline-offset-2 hover:text-[#F29A2E]">
+              Acceso entrenadores
+            </Link>
           </p>
           <p>
             Sitio web por{" "}

@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { Menu, X, ShoppingCart, MessageCircle, Phone } from "lucide-react";
+import { Menu, X, ShoppingCart, MessageCircle, Phone, Shield } from "lucide-react";
 import clsx from "clsx";
 import { useCart } from "@/context/CartContext";
 import CourtStatusBanner from "./CourtStatusBanner";
@@ -171,6 +171,13 @@ export default function Header({ notices = [] }: { notices?: CourtNotice[] }) {
               <Phone size={18} className="text-[#F29A2E]" /> Llamar
             </a>
           </div>
+          <Link
+            href="/admin"
+            onClick={() => setMenuOpen(false)}
+            className="mt-2 h-11 flex items-center justify-center gap-2 text-sm text-[#8FA3BF] hover:text-white"
+          >
+            <Shield size={16} /> Acceso entrenadores
+          </Link>
         </div>
       </div>
     </>
