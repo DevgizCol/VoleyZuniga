@@ -3,7 +3,8 @@
 import { useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import clsx from "clsx";
-import { ArrowLeft, ArrowRight, Check, Minus, Plus, MessageCircle, Loader2, Clock, MapPin } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, Minus, Plus, MessageCircle, Loader2, Clock, MapPin, Download, Share2 } from "lucide-react";
+import { downloadPass, makeCode, passQrText, qrMatrix, sharePass, type PassData } from "@/lib/pass";
 import { CATEGORIES, HORARIOS, NIVELES, SEDES, categoryForAge } from "@/data/registration";
 import { whatsappUrl } from "@/config/site";
 import { ChoiceCard, Field, Honeypot, inputCls } from "@/components/forms/fields";
@@ -32,12 +33,19 @@ export default function RegistrationForm() {
   const [touched, setTouched] = useState(false);
   const [status, setStatus] = useState<Status>("idle");
   const [serverError, setServerError] = useState<string | null>(null);
+  const [code, setCode] = useState("");
+  const [passBusy, setPassBusy] = useState<"download" | "share" | null>(null);
+  const [canShare, setCanShare] = useState(false);
 
   const formRef = useRef<HTMLFormElement>(null);
   const goTo = (n: number) => {
     setStep(n);
     formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
+
+  // Lleva la vista al resultado (la pantalla de confirmación reemplaza al formulario).
+  const showResult = () =>
+    requestAnimationFrame(() => document.getElementById("inscripcion")?.scrollIntoView({ behavior: "smooth", block: "start" }));
 
   const cat = useMemo(() => CATEGORIES.find((c) => c.value === category) ?? CATEGORIES[0], [category]);
 
@@ -80,29 +88,43 @@ export default function RegistrationForm() {
     if (!stepValid) return;
     setServerError(null);
     setStatus("sending");
+    setCode((c) => c || makeCode(category));
+    // Solo los celulares que pueden compartir imágenes muestran el botón de compartir.
+    try {
+      setCanShare(Boolean(navigator.canShare?.({ files: [new File([""], "x.png", { type: "image/png" })] })));
+    } catch {
+      setCanShare(false);
+    }
     try {
       const res = await fetch("/api/registrations", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, age, category, level, sede, horario, phone, consent, website: honeypot }),
       });
-      if (res.ok) return setStatus("saved");
+      if (res.ok) {
+        setStatus("saved");
+        return showResult();
+      }
       if (res.status === 400 || res.status === 429) {
         const data = await res.json().catch(() => ({}));
         setServerError(data.error || "Revisa los datos del formulario.");
         return setStatus("idle");
       }
       setStatus("offline");
+      showResult();
     } catch {
       setStatus("offline");
+      showResult();
     }
   };
 
   const waMessage =
-    `Hola, acabo de inscribir a ${name.trim()} en la web del Club Voley Zúñiga.\n` +
+    `Hola, acabo de inscribir a ${name.trim()} en la web del Club Voley Zúñiga (código ${code}).\n` +
     `Edad: ${age} años · ${category} · ${level}\n` +
     `Sede: ${sede}\nHorario: ${horario}\n` +
     `¿Cuándo puede asistir a la clase de prueba?`;
+
+  const passData: PassData = { name, age, category, level, sede, horario, code };
 
   if (status === "saved" || status === "offline") {
     return (
@@ -127,6 +149,42 @@ export default function RegistrationForm() {
           >
             <MessageCircle size={20} /> Agendar por WhatsApp
           </a>
+          <div className="mt-8 pt-8 border-t border-white/10">
+            <p className="font-heading font-extrabold text-2xl">Tu pase de clase de prueba</p>
+            <p className="text-[#B7C4D8] mt-1">Descárgalo o compártelo en tus historias. En la cancha, el QR abre el chat del club con tus datos.</p>
+            <div className="mt-4 flex flex-wrap gap-3">
+              <button
+                type="button"
+                onClick={async () => {
+                  setPassBusy("download");
+                  try { await downloadPass(passData); } finally { setPassBusy(null); }
+                }}
+                disabled={passBusy !== null}
+                className="h-12 px-5 inline-flex items-center gap-2 rounded-md bg-[#F29A2E] hover:bg-[#FFB14A] disabled:opacity-60 text-[#071426] font-bold"
+              >
+                {passBusy === "download" ? <Loader2 size={18} className="animate-spin" /> : <Download size={18} />} Descargar pase
+              </button>
+              {canShare && (
+                <button
+                  type="button"
+                  onClick={async () => {
+                    setPassBusy("share");
+                    try {
+                      if (!(await sharePass(passData))) await downloadPass(passData);
+                    } catch {
+                      /* el usuario canceló el menú de compartir */
+                    } finally {
+                      setPassBusy(null);
+                    }
+                  }}
+                  disabled={passBusy !== null}
+                  className="h-12 px-5 inline-flex items-center gap-2 rounded-md border border-white/25 hover:border-white disabled:opacity-60 font-semibold"
+                >
+                  {passBusy === "share" ? <Loader2 size={18} className="animate-spin" /> : <Share2 size={18} />} Compartir
+                </button>
+              )}
+            </div>
+          </div>
           <p className="mt-6 text-sm text-[#8FA3BF]">
             ¿Te equivocaste en algo?{" "}
             <button type="button" onClick={() => { setStatus("idle"); setStep(0); }} className="underline underline-offset-2 hover:text-white">
@@ -135,7 +193,7 @@ export default function RegistrationForm() {
           </p>
         </div>
         <div className="lg:col-span-5">
-          <Pass name={name} age={age} category={category} level={level} sede={sede} horario={horario} confirmed />
+          <Pass name={name} age={age} category={category} level={level} sede={sede} horario={horario} confirmed code={code} />
         </div>
       </div>
     );
@@ -330,6 +388,7 @@ function Pass({
   sede,
   horario,
   confirmed = false,
+  code = "",
 }: {
   name: string;
   age: number;
@@ -338,7 +397,9 @@ function Pass({
   sede: string;
   horario: string;
   confirmed?: boolean;
+  code?: string;
 }) {
+  const matrix = confirmed && code ? qrMatrix(passQrText({ name, age, category, level, sede, horario, code })) : null;
   return (
     <div className="relative rounded-2xl overflow-hidden bg-[#F3F6FB] text-[#0F2347] shadow-[0_40px_80px_-30px_rgba(0,0,0,0.7)]">
       <div className="relative bg-[#0F2347] text-white px-6 py-5 overflow-hidden">
@@ -376,8 +437,19 @@ function Pass({
       <div className="px-6 pt-3 pb-6 space-y-2 text-sm">
         <p className="flex gap-2"><Clock size={16} className="text-[#C46F0A] shrink-0 mt-0.5" /> {horario}</p>
         <p className="flex gap-2"><MapPin size={16} className="text-[#C46F0A] shrink-0 mt-0.5" /> {sede}</p>
-        <p className="pt-3 font-heading font-black uppercase text-[#C46F0A] text-xl">Clase de prueba · sin costo</p>
+        {matrix ? (
+          <div className="pt-4 flex items-end justify-between gap-4">
+            <div>
+              <p className="text-xs text-[#5B6B85]">Código</p>
+              <p className="font-heading font-black text-3xl tracking-wide">{code}</p>
+            </div>
+            <svg viewBox={`0 0 ${matrix.length + 2} ${matrix.length + 2}`} className="w-28 h-28 bg-white rounded-md shrink-0" role="img" aria-label="Código QR para escribir al club por WhatsApp" shapeRendering="crispEdges">
+              {matrix.flatMap((row, y) => row.map((on, x) => (on ? <rect key={`${x}-${y}`} x={x + 1} y={y + 1} width="1" height="1" fill="#0F2347" /> : null)))}
+            </svg>
+          </div>
+        ) : null}
       </div>
+      <div className="bg-[#F29A2E] text-[#071426] text-center py-3 font-heading font-black uppercase text-xl">Clase de prueba sin costo</div>
     </div>
   );
 }
