@@ -88,7 +88,8 @@ export default function RegistrationForm() {
     if (!stepValid) return;
     setServerError(null);
     setStatus("sending");
-    setCode((c) => c || makeCode(category));
+    const passCode = code || makeCode(category);
+    setCode(passCode);
     // Solo los celulares que pueden compartir imágenes muestran el botón de compartir.
     try {
       setCanShare(Boolean(navigator.canShare?.({ files: [new File([""], "x.png", { type: "image/png" })] })));
@@ -99,7 +100,7 @@ export default function RegistrationForm() {
       const res = await fetch("/api/registrations", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, age, category, level, sede, horario, phone, consent, website: honeypot }),
+        body: JSON.stringify({ name, age, category, level, sede, horario, phone, consent, code: passCode, website: honeypot }),
       });
       if (res.ok) {
         setStatus("saved");

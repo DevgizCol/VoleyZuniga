@@ -9,8 +9,9 @@ import clsx from "clsx";
 import { useCart } from "@/context/CartContext";
 import CourtStatusBanner from "./CourtStatusBanner";
 import { NAV_LINKS, SITE, telUrl, whatsappUrl } from "@/config/site";
+import type { CourtNotice } from "@/lib/court";
 
-export default function Header() {
+export default function Header({ notices = [] }: { notices?: CourtNotice[] }) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const { itemCount, setIsCartOpen } = useCart();
@@ -48,7 +49,7 @@ export default function Header() {
           isScrolled ? "shadow-[0_1px_0_rgba(143,163,191,0.2)]" : ""
         )}
       >
-        <CourtStatusBanner />
+        <CourtStatusBanner notices={notices} />
 
         <div className="container mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-6">
           <Link href="/" className="flex items-center gap-3 shrink-0" aria-label={`${SITE.name}, inicio`}>

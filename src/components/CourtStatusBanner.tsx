@@ -1,75 +1,36 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { CloudRain, CheckCircle, AlertTriangle, X, ChevronRight } from "lucide-react";
+import { useState } from "react";
+import { CloudRain, AlertTriangle, Info, X } from "lucide-react";
+import type { CourtNotice } from "@/lib/court";
 
-export default function CourtStatusBanner() {
-  const [status, setStatus] = useState<{
-    type: "normal" | "rain" | "special";
-    message: string;
-    venue: string;
-    active: boolean;
-  }>({
-    type: "normal",
-    message: "Entrenamientos habilitados con normalidad en todas las sedes.",
-    venue: "Polideportivo 3 Canchas & Yesid Santos",
-    active: true,
-  });
-
+// Aviso del estado de las canchas. Lo controla la pestaña "Cancha" de la hoja del club.
+export default function CourtStatusBanner({ notices }: { notices: CourtNotice[] }) {
   const [dismissed, setDismissed] = useState(false);
+  if (dismissed || notices.length === 0) return null;
 
-  useEffect(() => {
-    // Escuchar cambios de estado guardados desde el Panel de Administración
-    const saved = localStorage.getItem("vz_court_status");
-    if (saved) {
-      try {
-        setStatus(JSON.parse(saved));
-      } catch (e) {
-        console.error(e);
-      }
-    }
-  }, []);
-
-  const isAlert = status.type === "rain" || status.type === "special";
-  // Solo se muestra cuando hay un aviso real (lluvia o novedad); en días normales no ocupa espacio.
-  if (!status.active || dismissed || !isAlert) return null;
+  const main = notices[0];
+  const Icon = main.tipo === "rain" ? CloudRain : main.tipo === "cancel" ? AlertTriangle : Info;
 
   return (
-    <aside
-      role="alert"
-      className={`w-full pt-[max(0.375rem,env(safe-area-inset-top,0px))] pb-1.5 px-3 sm:px-4 transition-all duration-300 text-[11px] sm:text-xs font-sans flex items-center justify-between gap-2 border-b ${
-        isAlert
-          ? "bg-gradient-to-r from-amber-600 via-[#F29A2E] to-amber-700 text-[#071426] font-bold border-amber-400/50 shadow-md"
-          : "bg-[#071426]/95 text-gray-200 border-white/10"
-      }`}
-    >
-      <div className="container mx-auto flex items-center justify-center gap-1.5 sm:gap-2 text-center flex-wrap leading-tight">
-        {status.type === "rain" ? (
-          <CloudRain size={14} className="text-[#071426] animate-pulse shrink-0" />
-        ) : isAlert ? (
-          <AlertTriangle size={14} className="text-[#071426] shrink-0" />
-        ) : (
-          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping inline-block mr-1 shrink-0" />
-        )}
-
-        <span className="break-words">
-          <strong>{isAlert ? "AVISO EN VIVO:" : "ESTADO DE CANCHAS:"}</strong> {status.message}
-        </span>
-
-        <span className={`hidden sm:inline px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-mono uppercase tracking-wider shrink-0 ${
-          isAlert ? "bg-[#071426] text-[#F29A2E]" : "bg-white/10 text-[#F29A2E]"
-        }`}>
-          {status.venue}
-        </span>
+    <aside role="status" className="w-full bg-[#F29A2E] text-[#071426]" style={{ paddingTop: "env(safe-area-inset-top, 0px)" }}>
+      <div className="container mx-auto px-4 sm:px-6 py-2 flex items-center gap-3">
+        <Icon size={18} className="shrink-0" />
+        <p className="flex-1 text-sm leading-snug">
+          {notices.map((n, i) => (
+            <span key={n.sede + i} className="block sm:inline sm:mr-4">
+              <strong>
+                {n.estado}
+                {n.sede ? ` · ${n.sede}` : ""}:
+              </strong>{" "}
+              {n.mensaje || "Revisa los detalles por WhatsApp."}
+            </span>
+          ))}
+        </p>
+        <button onClick={() => setDismissed(true)} aria-label="Cerrar aviso" className="w-9 h-9 shrink-0 flex items-center justify-center rounded-md hover:bg-black/10">
+          <X size={16} />
+        </button>
       </div>
-
-      <button
-        onClick={() => setDismissed(true)}
-        className="p-1.5 rounded-lg opacity-70 hover:opacity-100 active:scale-90 transition-all shrink-0 cursor-pointer min-w-[32px] min-h-[32px] flex items-center justify-center"
-        aria-label="Cerrar aviso"
-      >
-        <X size={14} />
-      </button>
     </aside>
   );
 }

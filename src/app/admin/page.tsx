@@ -1,576 +1,203 @@
-"use client";
+import Link from "next/link";
+import { MessageCircle, ExternalLink, CloudRain, CheckCircle2, Inbox, Users, Mail, CalendarDays, AlertTriangle } from "lucide-react";
+import { isAdmin } from "@/lib/auth";
+import { readSheet, type Row } from "@/lib/sheets";
+import { getMatches, bogotaToday, dateParts, time12 } from "@/lib/matches";
+import { getCourtNotices } from "@/lib/court";
+import { siteUrl } from "@/lib/site-url";
+import AdminLogin from "./AdminLogin";
+import { GroupMessage, LogoutButton } from "./AdminTools";
 
-import React, { useState, useEffect } from "react";
-import { 
-  ShieldCheck, Lock, Activity, Trophy, CloudRain, AlertTriangle, 
-  Users, MessageCircle, Send, CheckCircle, Smartphone, RefreshCw, 
-  Plus, Trash2, Calendar, Star, ChevronRight, LogOut 
-} from "lucide-react";
+export const dynamic = "force-dynamic";
 
-export default function AdminPage() {
-  // Autenticación de Acceso
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [password, setPassword] = useState("");
-  const [authError, setAuthError] = useState<string | null>(null);
-  const [authLoading, setAuthLoading] = useState(true);
+const daysAgo = (n: number) =>
+  new Intl.DateTimeFormat("en-CA", { timeZone: "America/Bogota" }).format(new Date(Date.now() - n * 86_400_000));
 
-  // Pestaña Activa
-  const [activeTab, setActiveTab] = useState<"court" | "score" | "leads" | "broadcast">("court");
+function waLink(raw: string, text: string) {
+  const d = (raw || "").replace(/\D/g, "");
+  const num = d.length === 10 && d.startsWith("3") ? `57${d}` : d.length === 12 && d.startsWith("57") ? d : "";
+  return num ? `https://wa.me/${num}?text=${encodeURIComponent(text)}` : null;
+}
 
-  // 1. Estado de Cancha & Clima
-  const [courtStatus, setCourtStatus] = useState({
-    type: "normal" as "normal" | "rain" | "special",
-    message: "Entrenamientos habilitados con normalidad en todas las sedes.",
-    venue: "Polideportivo 3 Canchas & Yesid Santos",
-    active: true,
-  });
-  const [courtSaved, setCourtSaved] = useState(false);
+const statusChip = (estado: string) => {
+  const e = (estado || "").toLowerCase();
+  if (e === "nuevo") return "bg-[#F29A2E] text-[#071426]";
+  if (e.startsWith("contact")) return "bg-[#3B82F6]/20 text-[#93C5FD]";
+  if (e.startsWith("matric")) return "bg-[#25D366]/20 text-[#6EE7A0]";
+  return "bg-white/10 text-[#C9D5E6]";
+};
 
-  // 2. Marcador en Cancha (Live Scorekeeper)
-  const [matchScore, setMatchScore] = useState({
-    team1: "Club Voley Zúñiga",
-    team2: "Envigado VC",
-    category: "Sub-18 Femenina",
-    tournament: "Liga Departamental de Antioquia",
-    points1: 25,
-    points2: 22,
-    sets1: 2,
-    sets2: 1,
-    mvp: "Valentina Morales (#7)",
-    status: "En Juego (4to Set)"
-  });
-  const [scorePublished, setScorePublished] = useState(false);
+export default async function AdminPage() {
+  if (!(await isAdmin())) return <AdminLogin />;
 
-  // 3. CRM Prospectos / Carnets VIP
-  const [leads, setLeads] = useState([
-    { id: 1, name: "Valentina Morales", age: "14", category: "Sub-16 Menores", phone: "3128459210", sede: "Polideportivo 3 Canchas", horario: "Martes y Jueves 4:00 PM", status: "Prueba Confirmada", date: "Hoy 18:30" },
-    { id: 2, name: "Mariana Restrepo", age: "16", category: "Sub-18 Juvenil", phone: "3004567890", sede: "Coliseo Yesid Santos", horario: "Lunes a Jueves 6:00 PM", status: "Pendiente Contactar", date: "Ayer" },
-    { id: 3, name: "Sofía Arismendy", age: "12", category: "Sub-14 Infantil", phone: "3109876543", sede: "Polideportivo 3 Canchas", horario: "Sábados 8:00 AM", status: "Matriculada", date: "Hace 2 días" }
+  const [regsRaw, msgsRaw, matches, notices] = await Promise.all([
+    readSheet("Inscripciones", 0),
+    readSheet("Contacto", 0),
+    getMatches(),
+    getCourtNotices(),
   ]);
+  const privateOk = regsRaw !== null;
+  const regs: Row[] = (regsRaw ?? []).slice().reverse();
+  const msgs: Row[] = (msgsRaw ?? []).slice().reverse();
+  const weekAgo = daysAgo(7);
+  const pending = regs.filter((r) => (r["Estado"] || "").toLowerCase() === "nuevo");
+  const regsWeek = regs.filter((r) => (r["Fecha"] || "").slice(0, 10) >= weekAgo);
+  const msgsWeek = msgs.filter((r) => (r["Fecha"] || "").slice(0, 10) >= weekAgo);
+  const nextMatch = (matches ?? []).find((m) => !m.finished && m.date >= bogotaToday());
+  const sheetUrl = process.env.SHEET_URL;
 
-  // 4. Notificaciones Masivas (Webhook Trigger)
-  const [broadcastMsg, setBroadcastMsg] = useState("Recordatorio: Mañana sábado entrenamiento intensivo en Polideportivo 3 Canchas a las 8:00 AM. Asistir con uniforme oficial.");
-  const [broadcastSent, setBroadcastSent] = useState(false);
-
-  // Verificar sesión real en el servidor (cookie httpOnly firmada)
-  useEffect(() => {
-    fetch("/api/admin/session", { cache: "no-store" })
-      .then((r) => r.json())
-      .then((d) => setIsAuthenticated(Boolean(d.authenticated)))
-      .catch(() => setIsAuthenticated(false))
-      .finally(() => setAuthLoading(false));
-
-    const savedStatus = localStorage.getItem("vz_court_status");
-    if (savedStatus) {
-      try {
-        setCourtStatus(JSON.parse(savedStatus));
-      } catch (e) {
-        console.error(e);
-      }
-    }
-  }, []);
-
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setAuthError(null);
-    try {
-      const res = await fetch("/api/admin/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ password }),
-      });
-      const data = await res.json().catch(() => ({}));
-      if (res.ok && data.ok) {
-        setIsAuthenticated(true);
-        setPassword("");
-      } else {
-        setAuthError(data.error || "No se pudo iniciar sesión");
-      }
-    } catch {
-      setAuthError("Error de conexión. Intenta de nuevo.");
-    }
-  };
-
-  const handleLogout = async () => {
-    await fetch("/api/admin/logout", { method: "POST" }).catch(() => {});
-    setIsAuthenticated(false);
-    setPassword("");
-  };
-
-  // Guardar estado de la cancha en vivo (se refleja en el banner de la web)
-  const handleSaveCourtStatus = () => {
-    localStorage.setItem("vz_court_status", JSON.stringify(courtStatus));
-    setCourtSaved(true);
-    setTimeout(() => setCourtSaved(false), 2500);
-  };
-
-  // Disparar Webhook de Notificación
-  const handleTriggerWebhook = async () => {
-    setBroadcastSent(true);
-    try {
-      await fetch("/api/webhook/notify", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          message: broadcastMsg,
-          recipients: leads.map(l => l.phone),
-          timestamp: new Date().toISOString()
-        })
-      });
-    } catch (e) {
-      console.error(e);
-    }
-    setTimeout(() => setBroadcastSent(false), 3000);
-  };
-
-  // Generar Recordatorio de WhatsApp Individual
-  const handleSendLeadWhatsApp = (lead: typeof leads[0]) => {
-    const text = `🏐 *HOLA ${lead.name.toUpperCase()}* - CLUB VOLEY ZÚÑIGA\n\n` +
-      `Te saludamos del cuerpo técnico oficial. Tu *Pase VIP de Prueba Técnica* para la categoría *${lead.category}* está activo:\n\n` +
-      `📍 *Sede:* ${lead.sede}\n` +
-      `⏰ *Horario:* ${lead.horario}\n\n` +
-      `¿Nos confirmas tu asistencia con ropa deportiva y rodilleras? ¡Te esperamos en la cancha!`;
-
-    window.open(`https://wa.me/57${lead.phone}?text=${encodeURIComponent(text)}`, "_blank");
-  };
-
-  if (authLoading) {
-    return <div className="min-h-screen bg-[#071426]" aria-busy="true" />;
-  }
-
-  // PANTALLA DE LOGIN
-  if (!isAuthenticated) {
-    return (
-      <div className="min-h-screen bg-[#071426] text-white flex items-center justify-center p-6 pt-24">
-        <div className="w-full max-w-sm rounded-3xl bg-gradient-to-b from-[#0F284B] to-[#071426] border-2 border-[#F29A2E]/50 p-8 shadow-2xl text-center">
-          <div className="w-16 h-16 rounded-2xl bg-[#F29A2E]/20 text-[#F29A2E] flex items-center justify-center mx-auto mb-4 border border-[#F29A2E]/40">
-            <Lock size={28} />
-          </div>
-          <h2 className="text-2xl font-heading font-bold uppercase text-white mb-1">
-            Panel de Control
-          </h2>
-          <span className="text-xs font-mono text-[#F29A2E] uppercase tracking-widest block mb-6">
-            Cuerpo Técnico & Secretaría
-          </span>
-
-          <form onSubmit={handleLogin} className="space-y-4">
-            <div>
-              <input
-                type="password"
-                autoFocus
-                autoComplete="current-password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Contraseña"
-                aria-label="Contraseña del panel"
-                className="w-full text-center text-base font-mono py-3.5 rounded-xl bg-white/[0.05] border border-white/20 text-white placeholder-gray-500 focus:border-[#F29A2E] outline-none"
-              />
-              {authError && (
-                <span role="alert" className="text-xs text-red-400 font-sans mt-2 block">
-                  {authError}
-                </span>
-              )}
-            </div>
-
-            <button
-              type="submit"
-              className="w-full py-3.5 rounded-xl bg-gradient-to-r from-[#F29A2E] to-[#FF8008] text-[#071426] font-bold text-xs uppercase tracking-wider shadow-lg hover:shadow-[0_0_20px_rgba(242,154,46,0.5)] transition-all cursor-pointer"
-            >
-              Acceder al Panel
-            </button>
-          </form>
-
-          <p className="text-[11px] text-gray-400 font-sans mt-6">
-            Acceso restringido para entrenadores y directivas de Club Voley Zúñiga.
-          </p>
-        </div>
-      </div>
-    );
-  }
-
-  // PANEL DE ADMINISTRACIÓN AUTENTICADO
   return (
-    <div className="pt-28 pb-24 bg-[#071426] min-h-screen text-white">
-      <div className="container mx-auto px-6 max-w-5xl">
-        
-        {/* Header del Dashboard */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8 pb-6 border-b border-white/10">
+    <div className="bg-[#071426] text-white min-h-screen pt-36 sm:pt-40 pb-24">
+      <div className="container mx-auto px-4 sm:px-6">
+        <div className="flex flex-wrap items-end justify-between gap-4 mb-8">
           <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#F29A2E]/10 border border-[#F29A2E]/30 text-[#F29A2E] text-xs font-mono font-bold uppercase tracking-wider mb-2">
-              <ShieldCheck size={14} />
-              <span>Coach Command Center • Voley Zúñiga</span>
-            </div>
-            <h1 className="text-3xl md:text-4xl font-heading font-bold uppercase text-white">
-              Panel Operativo en Cancha
-            </h1>
+            <p className="text-[#F29A2E] font-semibold">Panel del club</p>
+            <h1 className="font-heading font-black uppercase text-5xl sm:text-6xl leading-none mt-1">Hoy en el club</h1>
           </div>
-
-          <button
-            onClick={handleLogout}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white text-xs font-mono font-bold uppercase tracking-wider border border-white/10 transition-colors cursor-pointer"
-          >
-            <LogOut size={14} />
-            <span>Cerrar Sesión</span>
-          </button>
+          <div className="flex flex-wrap gap-3">
+            {sheetUrl ? (
+              <a href={sheetUrl} target="_blank" rel="noopener noreferrer" className="h-11 px-4 inline-flex items-center gap-2 rounded-md bg-[#F29A2E] hover:bg-[#FFB14A] text-[#071426] font-bold">
+                <ExternalLink size={18} /> Abrir la hoja
+              </a>
+            ) : null}
+            <LogoutButton />
+          </div>
         </div>
 
-        {/* Barra de Pestañas Móviles */}
-        <div className="flex gap-2 overflow-x-auto pb-4 mb-8">
-          <button
-            onClick={() => setActiveTab("court")}
-            className={`flex items-center gap-2 py-3 px-5 rounded-2xl font-bold text-xs uppercase tracking-wider shrink-0 transition-all cursor-pointer ${
-              activeTab === "court" ? "bg-[#F29A2E] text-[#071426] shadow-lg" : "bg-white/5 text-gray-400 hover:text-white"
-            }`}
-          >
-            <CloudRain size={16} />
-            <span>Estado de Cancha & Lluvia</span>
-          </button>
+        {!privateOk && (
+          <div className="mb-8 rounded-xl border border-[#F29A2E]/40 bg-[#F29A2E]/10 p-5 flex gap-3">
+            <AlertTriangle className="text-[#F29A2E] shrink-0" />
+            <p className="text-[#E6EDF7]">
+              Para ver aquí las inscripciones y los mensajes, publica la versión nueva del Apps Script
+              (Implementar → Administrar implementaciones → lápiz → Nueva versión).
+            </p>
+          </div>
+        )}
 
-          <button
-            onClick={() => setActiveTab("score")}
-            className={`flex items-center gap-2 py-3 px-5 rounded-2xl font-bold text-xs uppercase tracking-wider shrink-0 transition-all cursor-pointer ${
-              activeTab === "score" ? "bg-[#F29A2E] text-[#071426] shadow-lg" : "bg-white/5 text-gray-400 hover:text-white"
-            }`}
-          >
-            <Trophy size={16} />
-            <span>Marcador en Cancha</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab("leads")}
-            className={`flex items-center gap-2 py-3 px-5 rounded-2xl font-bold text-xs uppercase tracking-wider shrink-0 transition-all cursor-pointer ${
-              activeTab === "leads" ? "bg-[#F29A2E] text-[#071426] shadow-lg" : "bg-white/5 text-gray-400 hover:text-white"
-            }`}
-          >
-            <Users size={16} />
-            <span>Prospectos Carnet VIP ({leads.length})</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab("broadcast")}
-            className={`flex items-center gap-2 py-3 px-5 rounded-2xl font-bold text-xs uppercase tracking-wider shrink-0 transition-all cursor-pointer ${
-              activeTab === "broadcast" ? "bg-[#F29A2E] text-[#071426] shadow-lg" : "bg-white/5 text-gray-400 hover:text-white"
-            }`}
-          >
-            <Send size={16} />
-            <span>Avisos & Webhook</span>
-          </button>
+        {/* Resumen */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-10">
+          <Stat icon={<Inbox size={20} />} label="Inscripciones sin atender" value={privateOk ? pending.length : "—"} accent={pending.length > 0} />
+          <Stat icon={<Users size={20} />} label="Inscripciones en 7 días" value={privateOk ? regsWeek.length : "—"} />
+          <Stat icon={<Mail size={20} />} label="Mensajes en 7 días" value={privateOk ? msgsWeek.length : "—"} />
+          <Stat
+            icon={<CalendarDays size={20} />}
+            label="Próximo partido"
+            value={nextMatch ? `${dateParts(nextMatch.date).day} ${dateParts(nextMatch.date).month}` : "—"}
+            detail={nextMatch ? `${nextMatch.category} · ${time12(nextMatch.time)}` : "Agrega partidos en Fixture"}
+          />
         </div>
 
-        {/* 1. TAB: ESTADO DE CANCHA & AVISO DE LLUVIA */}
-        {activeTab === "court" && (
-          <div className="p-8 rounded-3xl bg-[#0B1E38] border border-white/10 shadow-2xl space-y-6">
-            <div>
-              <h3 className="text-2xl font-heading font-bold uppercase text-white mb-2 flex items-center gap-2">
-                <CloudRain size={22} className="text-[#F29A2E]" />
-                <span>Switch Operativo de Cancha en Tiempo Real</span>
-              </h3>
-              <p className="text-xs text-gray-300 font-sans leading-relaxed">
-                Cambia el estado de la sede en 1 toque. El aviso se mostrará automáticamente a todos los padres de familia en la parte superior de la página web.
+        <div className="grid lg:grid-cols-12 gap-8">
+          <div className="lg:col-span-8 space-y-10">
+            <section>
+              <h2 className="font-heading font-black uppercase text-3xl mb-4">Inscripciones recientes</h2>
+              {regs.length === 0 ? (
+                <p className="rounded-xl border border-dashed border-white/15 p-6 text-[#B7C4D8]">{privateOk ? "Todavía no hay inscripciones." : "Disponible cuando actualices el Apps Script."}</p>
+              ) : (
+                <ul className="space-y-3">
+                  {regs.slice(0, 15).map((r, i) => {
+                    const wa = waLink(r["WhatsApp"], `Hola, te escribimos del Club Voley Zúñiga sobre la inscripción de ${r["Nombre"]}${r["Código"] ? ` (código ${r["Código"]})` : ""}. ¿Cuándo podemos agendar la clase de prueba?`);
+                    return (
+                      <li key={i} className="rounded-xl border border-white/10 bg-white/[0.03] p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-5">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <p className="font-heading font-extrabold text-2xl leading-tight">{r["Nombre"]}</p>
+                            <span className={`h-6 px-2.5 inline-flex items-center rounded-full text-xs font-bold ${statusChip(r["Estado"])}`}>{r["Estado"] || "Sin estado"}</span>
+                            {r["Código"] ? <span className="text-xs font-semibold text-[#8FA3BF] tracking-wide">{r["Código"]}</span> : null}
+                          </div>
+                          <p className="text-sm text-[#B7C4D8] mt-1">
+                            {r["Edad"]} años · {r["Categoría"]} · {r["Nivel"]}
+                          </p>
+                          <p className="text-xs text-[#8FA3BF] mt-0.5">{r["Fecha"]} · {r["Horario"]}</p>
+                        </div>
+                        {wa ? (
+                          <a href={wa} target="_blank" rel="noopener noreferrer" className="shrink-0 h-11 px-4 inline-flex items-center gap-2 rounded-md bg-[#25D366] text-[#071426] font-bold">
+                            <MessageCircle size={18} /> Escribir
+                          </a>
+                        ) : (
+                          <span className="text-sm text-[#8FA3BF]">{r["WhatsApp"]}</span>
+                        )}
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
+              <p className="mt-3 text-sm text-[#8FA3BF]">Cuando le escribas, cambia el Estado en la hoja a “Contactado” y luego a “Matriculado”.</p>
+            </section>
+
+            <section>
+              <h2 className="font-heading font-black uppercase text-3xl mb-4">Mensajes de contacto</h2>
+              {msgs.length === 0 ? (
+                <p className="rounded-xl border border-dashed border-white/15 p-6 text-[#B7C4D8]">{privateOk ? "No hay mensajes." : "Disponible cuando actualices el Apps Script."}</p>
+              ) : (
+                <ul className="space-y-3">
+                  {msgs.slice(0, 8).map((m, i) => (
+                    <li key={i} className="rounded-xl border border-white/10 bg-white/[0.03] p-5">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <p className="font-semibold">{m["Nombre"]}</p>
+                        <span className="h-6 px-2.5 inline-flex items-center rounded-full bg-white/10 text-xs font-semibold">{m["Asunto"]}</span>
+                        <span className="text-xs text-[#8FA3BF]">{m["Fecha"]}</span>
+                      </div>
+                      <p className="text-[#C9D5E6] mt-2 whitespace-pre-line line-clamp-4">{m["Mensaje"]}</p>
+                      <p className="text-sm text-[#8FA3BF] mt-2">{m["Contacto"]}</p>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </section>
+          </div>
+
+          <aside className="lg:col-span-4 space-y-6">
+            <section className="rounded-2xl border border-white/10 bg-[#0B1E38] p-6">
+              <h2 className="font-heading font-black uppercase text-2xl">Estado de canchas</h2>
+              {notices.length === 0 ? (
+                <p className="mt-3 flex items-center gap-2 text-[#6EE7A0]"><CheckCircle2 size={18} /> Todo normal. No se muestra aviso.</p>
+              ) : (
+                <ul className="mt-3 space-y-2">
+                  {notices.map((n, i) => (
+                    <li key={i} className="flex gap-2 text-[#FFD9A8]"><CloudRain size={18} className="shrink-0 mt-0.5" /> <span><strong>{n.estado}</strong>{n.sede ? ` · ${n.sede}` : ""}: {n.mensaje}</span></li>
+                  ))}
+                </ul>
+              )}
+              <p className="mt-4 text-sm text-[#B7C4D8]">
+                Para cambiarlo, edita la pestaña <strong>Cancha</strong> de la hoja: Estado “Normal”, “Lluvia”, “Cancelado” o “Cambio de sede”, con un mensaje. La web se actualiza en unos 2 minutos.
               </p>
-            </div>
+            </section>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <button
-                type="button"
-                onClick={() => setCourtStatus({
-                  type: "normal",
-                  message: "Entrenamientos habilitados con normalidad en todas las sedes.",
-                  venue: "Polideportivo 3 Canchas & Yesid Santos",
-                  active: true
-                })}
-                className={`p-5 rounded-2xl border text-left transition-all cursor-pointer ${
-                  courtStatus.type === "normal"
-                    ? "bg-emerald-500/20 border-emerald-400 text-white shadow-lg"
-                    : "bg-white/[0.03] border-white/10 text-gray-400 hover:border-white/30"
-                }`}
-              >
-                <div className="flex items-center justify-between mb-2">
-                  <span className="font-bold text-sm">🟢 Normal / Habilitado</span>
-                  {courtStatus.type === "normal" && <CheckCircle size={18} className="text-emerald-400" />}
-                </div>
-                <p className="text-xs text-gray-300 font-sans">
-                  Clima despejado. Entrenamientos en curso según horario habitual.
-                </p>
-              </button>
+            <section className="rounded-2xl border border-white/10 bg-[#0B1E38] p-6">
+              <h2 className="font-heading font-black uppercase text-2xl mb-1">Mensaje al grupo</h2>
+              <p className="text-sm text-[#B7C4D8] mb-4">Escribe el aviso y elige el grupo de familias al abrir WhatsApp.</p>
+              <GroupMessage gamesUrl={`${siteUrl}/games`} />
+            </section>
 
-              <button
-                type="button"
-                onClick={() => setCourtStatus({
-                  type: "rain",
-                  message: "Lluvia en Polideportivo 3 Canchas. Sesión vespertina trasladada al Coliseo Yesid Santos.",
-                  venue: "Traslado a Yesid Santos",
-                  active: true
-                })}
-                className={`p-5 rounded-2xl border text-left transition-all cursor-pointer ${
-                  courtStatus.type === "rain"
-                    ? "bg-amber-500/25 border-amber-400 text-white shadow-lg"
-                    : "bg-white/[0.03] border-white/10 text-gray-400 hover:border-white/30"
-                }`}
-              >
-                <div className="flex items-center justify-between mb-2">
-                  <span className="font-bold text-sm">🌧️ Alerta por Lluvia</span>
-                  {courtStatus.type === "rain" && <CheckCircle size={18} className="text-amber-400" />}
-                </div>
-                <p className="text-xs text-gray-300 font-sans">
-                  Cancha mojada. Se activa traslado inmediato a escenario cubierto.
-                </p>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setCourtStatus({
-                  type: "special",
-                  message: "Fecha oficial de Liga este fin de semana. No habrá entrenamientos formativos el sábado.",
-                  venue: "Coliseo Central",
-                  active: true
-                })}
-                className={`p-5 rounded-2xl border text-left transition-all cursor-pointer ${
-                  courtStatus.type === "special"
-                    ? "bg-[#F29A2E]/25 border-[#F29A2E] text-white shadow-lg"
-                    : "bg-white/[0.03] border-white/10 text-gray-400 hover:border-white/30"
-                }`}
-              >
-                <div className="flex items-center justify-between mb-2">
-                  <span className="font-bold text-sm">🏆 Jornada de Torneo</span>
-                  {courtStatus.type === "special" && <CheckCircle size={18} className="text-[#F29A2E]" />}
-                </div>
-                <p className="text-xs text-gray-300 font-sans">
-                  Aviso para padres sobre fixture competitivo y suspensión formativa.
-                </p>
-              </button>
-            </div>
-
-            <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/10">
-              <label className="block text-xs font-mono uppercase text-gray-400 mb-2 font-bold">
-                Mensaje Personalizado del Aviso:
-              </label>
-              <input
-                type="text"
-                value={courtStatus.message}
-                onChange={(e) => setCourtStatus({ ...courtStatus, message: e.target.value })}
-                className="w-full px-4 py-3 rounded-xl bg-black/40 border border-white/15 text-white text-xs font-sans outline-none focus:border-[#F29A2E]"
-              />
-            </div>
-
-            <div className="flex items-center justify-between pt-4">
-              <button
-                type="button"
-                onClick={handleSaveCourtStatus}
-                className="px-6 py-3.5 rounded-xl bg-gradient-to-r from-[#F29A2E] to-[#FF8008] text-[#071426] font-bold text-xs uppercase tracking-wider shadow-lg hover:shadow-[0_0_20px_rgba(242,154,46,0.4)] transition-all cursor-pointer flex items-center gap-2"
-              >
-                <RefreshCw size={16} />
-                <span>{courtSaved ? "¡Aviso Publicado con Éxito!" : "Actualizar Estado en la Web en Vivo"}</span>
-              </button>
-
-              <span className="text-xs text-gray-400 font-mono">
-                Visible inmediatamente en la web en vivo
-              </span>
-            </div>
-          </div>
-        )}
-
-        {/* 2. TAB: MARCADOR EN CANCHA (TACTICAL LIVE SCOREKEEPER) */}
-        {activeTab === "score" && (
-          <div className="p-8 rounded-3xl bg-[#0B1E38] border border-white/10 shadow-2xl space-y-6">
-            <div>
-              <h3 className="text-2xl font-heading font-bold uppercase text-white mb-2 flex items-center gap-2">
-                <Trophy size={22} className="text-[#F29A2E]" />
-                <span>Marcador en Vivo desde la Cancha</span>
-              </h3>
-              <p className="text-xs text-gray-300 font-sans">
-                Diseñado con botones grandes para que el DT o asistente actualice los puntos del set con el pulgar.
-              </p>
-            </div>
-
-            {/* Marcador Táctil */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
-              
-              {/* Equipo Local (Zúñiga) */}
-              <div className="p-6 rounded-3xl bg-gradient-to-b from-[#0F284B] to-[#071426] border-2 border-[#F29A2E]/50 text-center">
-                <span className="text-xs font-mono uppercase text-[#F29A2E] font-bold tracking-widest block mb-1">LOCAL</span>
-                <h4 className="text-2xl font-heading font-bold uppercase text-white mb-3">{matchScore.team1}</h4>
-                
-                {/* Contador de Puntos */}
-                <div className="text-7xl font-heading font-bold text-[#F29A2E] my-4">
-                  {matchScore.points1}
-                </div>
-
-                <div className="flex justify-center gap-3">
-                  <button
-                    onClick={() => setMatchScore({ ...matchScore, points1: Math.max(0, matchScore.points1 - 1) })}
-                    className="w-12 h-12 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xl flex items-center justify-center cursor-pointer"
-                  >
-                    -
-                  </button>
-                  <button
-                    onClick={() => setMatchScore({ ...matchScore, points1: matchScore.points1 + 1 })}
-                    className="w-20 h-12 rounded-xl bg-[#F29A2E] hover:bg-white text-[#071426] font-bold text-xl flex items-center justify-center shadow-lg cursor-pointer"
-                  >
-                    +1
-                  </button>
-                </div>
-
-                <div className="mt-4 pt-3 border-t border-white/10 text-xs font-mono text-gray-300">
-                  Sets Ganados: <strong className="text-white text-base ml-1">{matchScore.sets1}</strong>
-                </div>
-              </div>
-
-              {/* Equipo Rival */}
-              <div className="p-6 rounded-3xl bg-gradient-to-b from-[#0F284B] to-[#071426] border border-white/15 text-center">
-                <span className="text-xs font-mono uppercase text-gray-400 font-bold tracking-widest block mb-1">VISITANTE</span>
-                <h4 className="text-2xl font-heading font-bold uppercase text-white mb-3">{matchScore.team2}</h4>
-                
-                {/* Contador de Puntos */}
-                <div className="text-7xl font-heading font-bold text-white/80 my-4">
-                  {matchScore.points2}
-                </div>
-
-                <div className="flex justify-center gap-3">
-                  <button
-                    onClick={() => setMatchScore({ ...matchScore, points2: Math.max(0, matchScore.points2 - 1) })}
-                    className="w-12 h-12 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xl flex items-center justify-center cursor-pointer"
-                  >
-                    -
-                  </button>
-                  <button
-                    onClick={() => setMatchScore({ ...matchScore, points2: matchScore.points2 + 1 })}
-                    className="w-20 h-12 rounded-xl bg-white/20 hover:bg-white text-white hover:text-[#071426] font-bold text-xl flex items-center justify-center shadow-lg cursor-pointer"
-                  >
-                    +1
-                  </button>
-                </div>
-
-                <div className="mt-4 pt-3 border-t border-white/10 text-xs font-mono text-gray-300">
-                  Sets Ganados: <strong className="text-white text-base ml-1">{matchScore.sets2}</strong>
-                </div>
-              </div>
-
-            </div>
-
-            {/* Asignar Jugadora MVP */}
-            <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <Star className="text-[#F29A2E]" size={20} />
-                <div>
-                  <span className="text-[10px] font-mono text-gray-400 uppercase block">MVP Asignado:</span>
-                  <span className="text-sm font-bold text-white">{matchScore.mvp}</span>
-                </div>
-              </div>
-
-              <button
-                onClick={() => {
-                  setScorePublished(true);
-                  setTimeout(() => setScorePublished(false), 2500);
-                }}
-                className="px-6 py-3 rounded-xl bg-[#F29A2E] text-[#071426] font-bold text-xs uppercase tracking-wider shadow-md hover:bg-white transition-all cursor-pointer"
-              >
-                {scorePublished ? "¡Marcador Actualizado en /games!" : "Publicar Marcador a la Web"}
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* 3. TAB: CRM PROSPECTOS / CARNETS VIP */}
-        {activeTab === "leads" && (
-          <div className="p-8 rounded-3xl bg-[#0B1E38] border border-white/10 shadow-2xl space-y-6">
-            <div className="flex items-center justify-between flex-wrap gap-4">
-              <div>
-                <h3 className="text-2xl font-heading font-bold uppercase text-white flex items-center gap-2">
-                  <Users size={22} className="text-[#F29A2E]" />
-                  <span>Atletas Inscritos & Carnets VIP Generados</span>
-                </h3>
-                <p className="text-xs text-gray-300 font-sans">
-                  Padres y deportistas que han personalizado su pase de admisión desde la web.
-                </p>
-              </div>
-
-              <span className="px-3.5 py-1.5 rounded-full bg-[#F29A2E]/10 border border-[#F29A2E]/30 text-[#F29A2E] font-mono text-xs font-bold">
-                {leads.length} Atletas en Espera
-              </span>
-            </div>
-
-            <div className="space-y-3">
-              {leads.map((lead) => (
-                <div
-                  key={lead.id}
-                  className="p-5 rounded-2xl bg-white/[0.02] border border-white/10 hover:border-[#F29A2E]/30 transition-all flex flex-col md:flex-row md:items-center justify-between gap-4"
-                >
-                  <div>
-                    <div className="flex items-center gap-2 mb-1">
-                      <h4 className="font-heading font-bold text-lg text-white uppercase">{lead.name}</h4>
-                      <span className="text-xs font-mono text-[#F29A2E]">({lead.age} Años)</span>
-                      <span className="px-2 py-0.5 rounded-md bg-white/10 text-gray-300 font-mono text-[10px]">
-                        {lead.status}
-                      </span>
-                    </div>
-                    <div className="text-xs text-gray-400 font-sans space-x-3">
-                      <span>Cat: <strong className="text-gray-200">{lead.category}</strong></span>
-                      <span>•</span>
-                      <span>Sede: <strong className="text-gray-200">{lead.sede}</strong></span>
-                      <span>•</span>
-                      <span>Horario: <strong className="text-gray-200">{lead.horario}</strong></span>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-2 shrink-0">
-                    <button
-                      onClick={() => handleSendLeadWhatsApp(lead)}
-                      className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#25D366] hover:bg-[#20ba59] text-[#071426] font-bold text-xs uppercase tracking-wider transition-all shadow-md cursor-pointer active:scale-95"
-                    >
-                      <MessageCircle size={15} />
-                      <span>Enviar Recordatorio</span>
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* 4. TAB: AVISOS & WEBHOOK */}
-        {activeTab === "broadcast" && (
-          <div className="p-8 rounded-3xl bg-[#0B1E38] border border-white/10 shadow-2xl space-y-6">
-            <div>
-              <h3 className="text-2xl font-heading font-bold uppercase text-white mb-2 flex items-center gap-2">
-                <Send size={22} className="text-[#F29A2E]" />
-                <span>Notificación Masiva & Webhook Automático</span>
-              </h3>
-              <p className="text-xs text-gray-300 font-sans">
-                Envía avisos de último minuto a los grupos de WhatsApp y dispara webhooks a la API de automatización.
-              </p>
-            </div>
-
-            <div className="space-y-4">
-              <div>
-                <label className="block text-xs font-bold uppercase text-gray-400 mb-2">Mensaje del Aviso:</label>
-                <textarea
-                  rows={4}
-                  value={broadcastMsg}
-                  onChange={(e) => setBroadcastMsg(e.target.value)}
-                  className="w-full p-4 rounded-xl bg-black/40 border border-white/15 text-white text-xs font-sans outline-none focus:border-[#F29A2E]"
-                />
-              </div>
-
-              <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2">
-                <button
-                  type="button"
-                  onClick={handleTriggerWebhook}
-                  className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-gradient-to-r from-[#F29A2E] to-[#FF8008] text-[#071426] font-bold text-xs uppercase tracking-wider shadow-lg hover:shadow-[0_0_20px_rgba(242,154,46,0.4)] transition-all cursor-pointer flex items-center justify-center gap-2"
-                >
-                  <Send size={16} />
-                  <span>{broadcastSent ? "¡Webhook Disparado!" : "Disparar Webhook de Notificación"}</span>
-                </button>
-
-                <span className="text-xs font-mono text-gray-400">
-                  Endpoint: <code className="text-[#F29A2E]">/api/webhook/notify</code>
-                </span>
-              </div>
-            </div>
-          </div>
-        )}
-
+            <section className="rounded-2xl border border-white/10 bg-[#0B1E38] p-6">
+              <h2 className="font-heading font-black uppercase text-2xl mb-3">Ver la web</h2>
+              <ul className="grid grid-cols-2 gap-2 text-sm">
+                {[
+                  ["Partidos", "/games"],
+                  ["Posiciones", "/standings"],
+                  ["Noticias", "/news"],
+                  ["Inscripción", "/registrations"],
+                ].map(([label, href]) => (
+                  <li key={href}>
+                    <Link href={href} className="h-10 px-3 flex items-center rounded-md border border-white/10 hover:border-white/40">{label}</Link>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          </aside>
+        </div>
       </div>
+    </div>
+  );
+}
+
+function Stat({ icon, label, value, detail, accent = false }: { icon: React.ReactNode; label: string; value: string | number; detail?: string; accent?: boolean }) {
+  return (
+    <div className={`rounded-xl p-5 border ${accent ? "bg-[#F29A2E] border-[#F29A2E] text-[#071426]" : "bg-white/[0.04] border-white/10"}`}>
+      <div className={`flex items-center gap-2 text-sm ${accent ? "text-[#071426]/80" : "text-[#8FA3BF]"}`}>{icon}{label}</div>
+      <p className="font-heading font-black text-4xl sm:text-5xl leading-none mt-2 tabular-nums">{value}</p>
+      {detail ? <p className={`text-xs mt-1 ${accent ? "text-[#071426]/80" : "text-[#8FA3BF]"}`}>{detail}</p> : null}
     </div>
   );
 }

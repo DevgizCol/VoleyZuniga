@@ -2,11 +2,6 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   ...(process.env.VERCEL ? {} : { output: "standalone" }),
-  experimental: {
-    optimizePackageImports: [
-      "lucide-react",
-    ],
-  },
   images: {
     formats: ["image/avif", "image/webp"],
     remotePatterns: [
@@ -46,15 +41,6 @@ const nextConfig: NextConfig = {
     },
     {
       source: "/logo.svg",
-      headers: [
-        {
-          key: "Cache-Control",
-          value: "public, max-age=31536000, immutable",
-        },
-      ],
-    },
-    {
-      source: "/icon.svg",
       headers: [
         {
           key: "Cache-Control",

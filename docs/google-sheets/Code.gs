@@ -12,6 +12,9 @@
  * Propiedades del script (Configuración del proyecto > Propiedades de la secuencia de comandos):
  *   SHARED_SECRET : cadena larga y aleatoria. La MISMA va en Vercel como SHEETS_SECRET.
  *   NOTIFY_EMAIL  : correo(s) que reciben el aviso de cada inscripción/mensaje (opcional).
+ *
+ * Resumen semanal por correo (opcional): ejecuta una vez la función instalarResumenSemanal()
+ * desde el editor (botón Ejecutar). Cada lunes a las 7 a. m. llegará un resumen a NOTIFY_EMAIL.
  *   SITE_URL      : dirección pública de la web, sin "/" final (p. ej. https://tudominio.com). Se usa para
  *                   mostrar el logo en el correo (opcional; sin ella el correo sale sin logo).
  */
@@ -20,13 +23,21 @@ var WRITABLE = {
   Inscripciones: ["Nombre", "Edad", "Categoría", "Nivel", "Sede", "Horario", "WhatsApp", "Consentimiento"],
   Contacto: ["Nombre", "Contacto", "Asunto", "Mensaje"]
 };
+// Columnas que van después de "Estado" (se agregaron más tarde; así las filas viejas no se desordenan).
+var AFTER_STATE = {
+  Inscripciones: ["Código"],
+  Contacto: []
+};
 var READABLE = ["Fixture", "Tabla", "Noticias", "Cancha"];
+// Solo para el panel de administración (la web las pide desde el servidor con la clave secreta).
+var PRIVATE_READABLE = ["Inscripciones", "Contacto"];
+var PRIVATE_MAX_ROWS = 100;
 var MAX_LEN = 2000;
 var TZ = "America/Bogota";
 
 // Etiquetas que se muestran en el correo (la hoja conserva los nombres de columna).
 var LABELS = {
-  Inscripciones: { Nombre: "Deportista", Edad: "Edad", Categoría: "Categoría", Nivel: "Nivel", Sede: "Sede", Horario: "Horario", WhatsApp: "WhatsApp", Consentimiento: "Consentimiento" },
+  Inscripciones: { Nombre: "Deportista", Edad: "Edad", Categoría: "Categoría", Nivel: "Nivel", Sede: "Sede", Horario: "Horario", WhatsApp: "WhatsApp", Consentimiento: "Consentimiento", Código: "Código del pase" },
   Contacto: { Nombre: "Nombre", Contacto: "Contacto", Asunto: "Asunto", Mensaje: "Mensaje" }
 };
 
@@ -57,8 +68,14 @@ function doPost(e) {
     var fields = WRITABLE[name];
     var stamp = Utilities.formatDate(new Date(), TZ, "yyyy-MM-dd HH:mm:ss");
     var row = [stamp];
+    var after = AFTER_STATE[name] || [];
     fields.forEach(function (f) { row.push(clean_(data[f])); });
     row.push("Nuevo"); // Estado
+    after.forEach(function (f) { row.push(clean_(data[f])); });
+
+    var values = {};
+    fields.forEach(function (f) { values[f] = unquote_(clean_(data[f])); });
+    after.forEach(function (f) { values[f] = unquote_(clean_(data[f])); });
 
     var rowNumber;
     var sheetUrl;
@@ -77,7 +94,7 @@ function doPost(e) {
 
     // El aviso por correo nunca debe impedir que la fila quede guardada.
     try {
-      notify_(name, fields, row, stamp, sheetUrl);
+      notify_(name, fields.concat(after), values, stamp, sheetUrl);
     } catch (mailErr) {
       console.error("No se pudo enviar el aviso: " + mailErr);
     }
@@ -119,13 +136,13 @@ function button_(href, label, bg, color) {
     esc_(label) + "</a>";
 }
 
-function notify_(sheetName, fields, row, stamp, sheetUrl) {
+function notify_(sheetName, fields, values, stamp, sheetUrl) {
   var to = PropertiesService.getScriptProperties().getProperty("NOTIFY_EMAIL");
   if (!to) return;
 
   var labels = LABELS[sheetName];
-  var values = {};
-  fields.forEach(function (f, i) { values[f] = unquote_(row[i + 1]); });
+  // Sin código (inscripciones antiguas) no se muestra esa fila.
+  fields = fields.filter(function (f) { return f !== "Código" || values[f]; });
 
   var isRegistration = sheetName === "Inscripciones";
   var title, subject, headline, subline;
@@ -140,6 +157,7 @@ function notify_(sheetName, fields, row, stamp, sheetUrl) {
     var wa = whatsappNumber_(values["WhatsApp"]);
     if (wa) {
       var greeting = "Hola, te escribimos del Club Voley Zúñiga sobre la inscripción de " + values["Nombre"] +
+        (values["Código"] ? " (código " + values["Código"] + ")" : "") +
         ". ¿Cuándo podemos agendar la clase de prueba?";
       buttons += button_("https://wa.me/" + wa + "?text=" + encodeURIComponent(greeting), "Responder por WhatsApp", "#25D366", "#0B1E38");
     }
@@ -206,7 +224,8 @@ function doGet(e) {
   try {
     var p = e.parameter || {};
     if (!secretOk_(p.secret)) return json_({ ok: false, error: "unauthorized" });
-    if (READABLE.indexOf(p.sheet) === -1) return json_({ ok: false, error: "sheet_not_allowed" });
+    var isPrivate = PRIVATE_READABLE.indexOf(p.sheet) !== -1;
+    if (READABLE.indexOf(p.sheet) === -1 && !isPrivate) return json_({ ok: false, error: "sheet_not_allowed" });
 
     var sh = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(p.sheet);
     if (!sh) return json_({ ok: false, error: "sheet_missing" });
@@ -221,8 +240,73 @@ function doGet(e) {
         headers.forEach(function (h, i) { o[h] = r[i]; });
         return o;
       });
+    // Para el panel: solo las filas más recientes.
+    if (isPrivate) rows = rows.slice(-PRIVATE_MAX_ROWS);
     return json_({ ok: true, rows: rows });
   } catch (err) {
     return json_({ ok: false, error: "server_error" });
   }
+}
+
+// ---------- Resumen semanal ----------
+
+// Ejecútala UNA vez desde el editor para programar el resumen de cada lunes a las 7 a. m.
+function instalarResumenSemanal() {
+  ScriptApp.getProjectTriggers().forEach(function (t) {
+    if (t.getHandlerFunction() === "resumenSemanal") ScriptApp.deleteTrigger(t);
+  });
+  ScriptApp.newTrigger("resumenSemanal").timeBased().onWeekDay(ScriptApp.WeekDay.MONDAY).atHour(7).inTimezone(TZ).create();
+  resumenSemanal(); // envía uno de prueba ahora mismo
+}
+
+function rowsOf_(name) {
+  var sh = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(name);
+  if (!sh) return [];
+  var values = sh.getDataRange().getDisplayValues();
+  var headers = values.shift();
+  return values.filter(function (r) { return r.join("") !== ""; }).map(function (r) {
+    var o = {};
+    headers.forEach(function (h, i) { o[h] = r[i]; });
+    return o;
+  });
+}
+
+function resumenSemanal() {
+  var to = PropertiesService.getScriptProperties().getProperty("NOTIFY_EMAIL");
+  if (!to) return;
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var now = new Date();
+  var since = Utilities.formatDate(new Date(now.getTime() - 7 * 86400000), TZ, "yyyy-MM-dd");
+  var today = Utilities.formatDate(now, TZ, "yyyy-MM-dd");
+  var in7 = Utilities.formatDate(new Date(now.getTime() + 7 * 86400000), TZ, "yyyy-MM-dd");
+
+  var regs = rowsOf_("Inscripciones").filter(function (r) { return String(r["Fecha"]).slice(0, 10) >= since; });
+  var pending = rowsOf_("Inscripciones").filter(function (r) { return String(r["Estado"]).toLowerCase() === "nuevo"; });
+  var msgs = rowsOf_("Contacto").filter(function (r) { return String(r["Fecha"]).slice(0, 10) >= since; });
+  var matches = rowsOf_("Fixture").filter(function (r) {
+    var d = String(r["Fecha"]);
+    return String(r["Activo"]).toUpperCase() !== "NO" && d >= today && d <= in7;
+  });
+
+  var li = function (items, fn) {
+    return items.length ? "<ul style=\"padding-left:18px;margin:8px 0;\">" + items.map(function (x) { return "<li style=\"margin:4px 0;\">" + fn(x) + "</li>"; }).join("") + "</ul>" : "<p style=\"color:#64748B;margin:8px 0;\">Nada esta semana.</p>";
+  };
+  var block = function (title, count, body) {
+    return '<tr><td style="padding:16px 24px;border-bottom:1px solid #E5E9F0;"><div style="font-size:13px;color:#64748B;text-transform:uppercase;letter-spacing:.06em;">' + esc_(title) + '</div><div style="font-size:28px;font-weight:bold;color:#0B1E38;">' + count + "</div>" + body + "</td></tr>";
+  };
+
+  var html =
+    '<div style="background:#F4F6FA;padding:24px 12px;font-family:Arial,Helvetica,sans-serif;">' +
+    '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;margin:0 auto;background:#FFFFFF;border-radius:12px;overflow:hidden;">' +
+    '<tr><td style="background:#0F284B;padding:20px 24px;border-bottom:4px solid #F29A2E;"><div style="color:#F29A2E;font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:bold;">Club Voley Zúñiga</div>' +
+    '<div style="color:#FFFFFF;font-size:22px;font-weight:bold;margin-top:4px;">Resumen de la semana</div></td></tr>' +
+    block("Inscripciones nuevas (7 días)", regs.length, li(regs, function (r) { return esc_(r["Nombre"]) + " · " + esc_(r["Categoría"]) + " · " + esc_(r["WhatsApp"]); })) +
+    block("Inscripciones sin atender", pending.length, pending.length ? '<p style="color:#64748B;margin:8px 0;">Cambia el Estado a "Contactado" cuando les escribas.</p>' : "") +
+    block("Mensajes de contacto (7 días)", msgs.length, li(msgs, function (r) { return esc_(r["Nombre"]) + " · " + esc_(r["Asunto"]); })) +
+    block("Partidos de los próximos 7 días", matches.length, li(matches, function (r) { return esc_(r["Fecha"]) + " " + esc_(r["Hora"]) + " · " + esc_(r["Local"]) + " vs " + esc_(r["Visitante"]) + " (" + esc_(r["Categoría"]) + ")"; })) +
+    '<tr><td style="padding:20px 24px;">' + button_(ss.getUrl(), "Abrir la hoja del club", "#F29A2E", "#0B1E38") + "</td></tr>" +
+    "</table></div>";
+
+  var plain = "Resumen semanal\nInscripciones nuevas: " + regs.length + "\nSin atender: " + pending.length + "\nMensajes: " + msgs.length + "\nPartidos próximos: " + matches.length + "\n" + ss.getUrl();
+  MailApp.sendEmail(to, "[Voley Zúñiga] Resumen de la semana: " + regs.length + " inscripciones nuevas", plain, { htmlBody: html, name: "Club Voley Zúñiga (sitio web)" });
 }

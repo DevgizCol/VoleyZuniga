@@ -28,21 +28,30 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
 
+  // El carrito guardado se lee después de hidratar (localStorage no existe en el servidor).
   useEffect(() => {
-    setIsMounted(true);
-    const savedCart = localStorage.getItem("voley_zuniga_cart");
-    if (savedCart) {
-      try {
-        setItems(JSON.parse(savedCart));
-      } catch (e) {
-        console.error("Failed to parse cart", e);
-      }
+    let saved: CartItem[] = [];
+    try {
+      const raw = localStorage.getItem("voley_zuniga_cart");
+      const parsed = raw ? JSON.parse(raw) : [];
+      saved = Array.isArray(parsed)
+        ? parsed.filter((i) => i && typeof i.id === "string" && typeof i.price === "number" && typeof i.quantity === "number")
+        : [];
+    } catch {
+      saved = [];
     }
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- sincroniza con localStorage una sola vez al montar
+    setItems(saved);
+    setIsMounted(true);
   }, []);
 
   useEffect(() => {
     if (isMounted) {
-      localStorage.setItem("voley_zuniga_cart", JSON.stringify(items));
+      try {
+        localStorage.setItem("voley_zuniga_cart", JSON.stringify(items));
+      } catch {
+        /* navegación privada o almacenamiento lleno: el carrito sigue en memoria */
+      }
     }
   }, [items, isMounted]);
 

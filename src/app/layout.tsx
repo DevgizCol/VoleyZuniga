@@ -1,31 +1,40 @@
 import type { Metadata, Viewport } from "next";
-import { Figtree, Big_Shoulders } from "next/font/google";
+import localFont from "next/font/local";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import MobileBar from "@/components/MobileBar";
+import { getCourtNotices } from "@/lib/court";
+import { siteUrl } from "@/lib/site-url";
 import CartDrawer from "@/components/CartDrawer";
 import VercelAnalytics from "@/components/VercelAnalytics";
 import { CartProvider } from "@/context/CartContext";
 import "./globals.css";
 
-const figtree = Figtree({
+// Fuentes servidas desde el propio sitio (licencia SIL OFL): más rápido y sin depender de Google Fonts.
+const figtree = localFont({
   variable: "--font-figtree",
-  subsets: ["latin"],
   display: "swap",
+  src: [
+    { path: "../assets/fonts/figtree-latin-400-normal.woff2", weight: "400", style: "normal" },
+    { path: "../assets/fonts/figtree-latin-500-normal.woff2", weight: "500", style: "normal" },
+    { path: "../assets/fonts/figtree-latin-600-normal.woff2", weight: "600", style: "normal" },
+    { path: "../assets/fonts/figtree-latin-700-normal.woff2", weight: "700", style: "normal" },
+  ],
+  fallback: ["system-ui", "Arial", "sans-serif"],
 });
 
-const display = Big_Shoulders({
+const display = localFont({
   variable: "--font-display",
-  subsets: ["latin"],
-  weight: ["600", "700", "800", "900"],
   display: "swap",
+  src: [
+    { path: "../assets/fonts/big-shoulders-display-latin-600-normal.woff2", weight: "600", style: "normal" },
+    { path: "../assets/fonts/big-shoulders-display-latin-700-normal.woff2", weight: "700", style: "normal" },
+    { path: "../assets/fonts/big-shoulders-display-latin-800-normal.woff2", weight: "800", style: "normal" },
+    { path: "../assets/fonts/big-shoulders-display-latin-900-normal.woff2", weight: "900", style: "normal" },
+  ],
+  fallback: ["Arial Narrow", "Arial", "sans-serif"],
 });
 
-const siteUrl =
-  process.env.NEXT_PUBLIC_SITE_URL ||
-  (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : null) ||
-  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null) ||
-  "https://voley-zuniga.vercel.app";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -43,34 +52,26 @@ export const metadata: Metadata = {
     icon: [
       { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
       { url: "/icon-512.png", sizes: "512x512", type: "image/png" },
-      { url: "/pwa-icon.svg", type: "image/svg+xml" },
     ],
     shortcut: "/icon-192.png",
     apple: [
       { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
     ],
   },
-  description: "Club deportivo premium de voleibol en Medellín, Antioquia. Formación de élite, desarrollo atlético y valores competitivos.",
+  description: "Club de voleibol en Medellín para niños, jóvenes y adultos desde los 7 años. Cinco categorías, dos sedes y clase de prueba sin costo.",
   keywords: ["voleibol", "medellin", "club deportivo", "voley", "antioquia", "entrenamiento", "deporte"],
   openGraph: {
     type: "website",
     locale: "es_CO",
     url: siteUrl,
     title: "Club Voley Zúñiga | Formamos Campeones",
-    description: "Club deportivo premium de voleibol en Medellín, Antioquia. Formación de élite y valores competitivos.",
+    description: "Voleibol en Medellín desde los 7 años. Reserva tu clase de prueba sin costo.",
     siteName: "Voley Zúñiga",
-    images: [{
-      url: "/logo.svg",
-      width: 800,
-      height: 600,
-      alt: "Club Voley Zúñiga"
-    }],
   },
   twitter: {
     card: "summary_large_image",
     title: "Club Voley Zúñiga | Formamos Campeones",
-    description: "Club deportivo premium de voleibol en Medellín, Antioquia.",
-    images: ["/logo.svg"],
+    description: "Voleibol en Medellín desde los 7 años. Reserva tu clase de prueba sin costo.",
   },
 };
 
@@ -78,8 +79,10 @@ const jsonLd = {
   "@context": "https://schema.org",
   "@type": "SportsClub",
   "name": "Club Voley Zúñiga",
-  "image": `${siteUrl}/logo.svg`,
-  "description": "Club deportivo premium de voleibol en Medellín, Antioquia.",
+  "image": `${siteUrl}/logo-trim.png`,
+  "logo": `${siteUrl}/logo-trim.png`,
+  "sameAs": ["https://www.instagram.com/voleyzuniga"],
+  "description": "Club de voleibol en Medellín para niños, jóvenes y adultos.",
   "address": {
     "@type": "PostalAddress",
     "addressLocality": "Medellín",
@@ -101,11 +104,12 @@ export const viewport: Viewport = {
   viewportFit: "cover",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const notices = await getCourtNotices();
   return (
     <html
       lang="es"
@@ -117,7 +121,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
         <CartProvider>
-          <Header />
+          <Header notices={notices} />
           <CartDrawer />
           <main id="contenido" className="flex-1">
             {children}
