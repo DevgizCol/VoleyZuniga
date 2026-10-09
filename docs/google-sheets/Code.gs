@@ -12,6 +12,8 @@
  * Propiedades del script (Configuración del proyecto > Propiedades de la secuencia de comandos):
  *   SHARED_SECRET : cadena larga y aleatoria. La MISMA va en Vercel como SHEETS_SECRET.
  *   NOTIFY_EMAIL  : correo(s) que reciben el aviso de cada inscripción/mensaje (opcional).
+ *   SITE_URL      : dirección pública de la web, sin "/" final (p. ej. https://tudominio.com). Se usa para
+ *                   mostrar el logo en el correo (opcional; sin ella el correo sale sin logo).
  */
 
 var WRITABLE = {
@@ -170,9 +172,15 @@ function notify_(sheetName, fields, row, stamp, sheetUrl) {
       '<td style="padding:10px 0;border-bottom:1px solid #E5E9F0;vertical-align:top;font-size:15px;color:#0B1E38;">' + v + "</td></tr>";
   }).join("");
 
+  var siteUrl = String(PropertiesService.getScriptProperties().getProperty("SITE_URL") || "").replace(/\/+$/, "");
+  var logoRow = /^https:\/\//.test(siteUrl)
+    ? '<tr><td align="center" style="background:#FFFFFF;padding:16px 24px 8px 24px;">' +
+      '<img src="' + esc_(siteUrl) + '/email-logo.png" width="180" alt="Club Voley Zúñiga" style="display:block;border:0;height:auto;max-width:180px;"></td></tr>'
+    : "";
+
   var html =
     '<div style="background:#F4F6FA;padding:24px 12px;font-family:Arial,Helvetica,sans-serif;">' +
-    '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;margin:0 auto;background:#FFFFFF;border-radius:12px;overflow:hidden;">' +
+    '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;margin:0 auto;background:#FFFFFF;border-radius:12px;overflow:hidden;">' + logoRow +
     '<tr><td style="background:#0F284B;padding:20px 24px;border-bottom:4px solid #F29A2E;">' +
     '<div style="color:#F29A2E;font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:bold;">Club Voley Zúñiga</div>' +
     '<div style="color:#FFFFFF;font-size:22px;font-weight:bold;margin-top:4px;">' + esc_(title) + "</div></td></tr>" +
