@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Loader2, Lock } from "lucide-react";
+import { ArrowLeft, Loader2, Lock } from "lucide-react";
 
 export default function AdminLogin() {
   const router = useRouter();
@@ -59,6 +60,9 @@ export default function AdminLogin() {
             {busy ? <Loader2 size={18} className="animate-spin" /> : null} Entrar
           </button>
         </form>
+        <Link href="/" className="mt-6 h-12 w-full inline-flex items-center justify-center gap-2 rounded-md border border-white/20 hover:border-white text-white font-semibold">
+          <ArrowLeft size={18} /> Volver a la página principal
+        </Link>
       </div>
     </section>
   );

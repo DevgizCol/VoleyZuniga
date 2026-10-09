@@ -1,6 +1,6 @@
 import { CATEGORIES } from "@/data/registration";
 import { VENUES } from "@/data/venues";
-import { COURT_STATES, CUSTOMIZABLE, MATCH_STATES, NEWS_CATEGORIES, PRODUCT_CATEGORIES, WEEKDAYS } from "@/lib/admin/schemas";
+import { COURT_STATES, CUSTOMIZABLE, MATCH_STATES, NEWS_CATEGORIES, PRODUCT_CATEGORIES, WEEKDAYS } from "@/lib/admin/options";
 import type { FieldDef } from "./types";
 
 const categories = CATEGORIES.map((c) => c.value);

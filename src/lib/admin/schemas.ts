@@ -1,13 +1,14 @@
 import { z } from "zod";
+import {
+  COURT_STATES,
+  CUSTOMIZABLE,
+  MATCH_STATES,
+  WEEKDAYS,
+} from "./options";
+
+export * from "./options";
 
 // Reglas de cada pestaña editable desde el panel. Se usan en el servidor antes de escribir en la hoja.
-
-export const MATCH_STATES = ["Programado", "Finalizado", "Aplazado", "Cancelado"] as const;
-export const COURT_STATES = ["Normal", "Lluvia", "Cancelado", "Cambio de sede", "Aviso"] as const;
-export const WEEKDAYS = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"] as const;
-export const REGISTRATION_STATES = ["Nuevo", "Contactado", "Matriculado", "Descartado"] as const;
-export const MESSAGE_STATES = ["Nuevo", "Respondido", "Archivado"] as const;
-export const NEWS_CATEGORIES = ["Crónica de partido", "Convocatorias", "Vida en el club", "Torneos", "Comunicados"] as const;
 
 const text = (max: number, label: string) => z.string().trim().max(max, `${label}: máximo ${max} caracteres.`);
 const required = (max: number, label: string) => text(max, label).min(1, `${label} es obligatorio.`);
@@ -70,8 +71,6 @@ export const scheduleSchema = z
   })
   .refine((v) => v.Fin > v.Inicio, { message: "La hora de fin debe ser después del inicio.", path: ["Fin"] });
 
-export const PRODUCT_CATEGORIES = ["Indumentaria", "Equipamiento", "Protección", "Accesorios"] as const;
-export const CUSTOMIZABLE = ["", "Titular", "Líbero"] as const;
 
 export const productSchema = z.object({
   Nombre: required(80, "El nombre"),
@@ -124,9 +123,3 @@ export const SCHEMAS = {
 } as const;
 
 export type EditableSheet = keyof typeof SCHEMAS;
-
-export const STATUS_OPTIONS = {
-  Inscripciones: REGISTRATION_STATES,
-  Contacto: MESSAGE_STATES,
-} as const;
-export type StatusSheet = keyof typeof STATUS_OPTIONS;

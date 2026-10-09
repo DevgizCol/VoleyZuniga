@@ -4,7 +4,7 @@ import { useRef, useState, useTransition } from "react";
 import { toast } from "sonner";
 import { Loader2, NotebookPen, Save } from "lucide-react";
 import { saveNote } from "../actions";
-import type { StatusSheet } from "@/lib/admin/schemas";
+import type { StatusSheet } from "@/lib/admin/options";
 import { btn } from "./ui";
 import type { RowData } from "./types";
 
