@@ -1,5 +1,7 @@
 "use client";
 
+import { whatsappUrl } from "@/config/site";
+
 import React, { useEffect } from "react";
 import { X, ShoppingBag, Trash2 } from "lucide-react";
 import { useCart } from "@/context/CartContext";
@@ -41,8 +43,7 @@ export default function CartDrawer() {
     });
     message += `\nTotal: $${cartTotal.toLocaleString("es-CO")}\n\nPor favor envíenme los pasos de pago.`;
     
-    const whatsappUrl = `https://wa.me/573128459210?text=${encodeURIComponent(message)}`;
-    window.open(whatsappUrl, "_blank");
+    window.open(whatsappUrl(message), "_blank", "noopener");
   };
 
   return (
@@ -60,8 +61,8 @@ export default function CartDrawer() {
         <div className="flex items-center justify-between p-6 border-b border-white/10">
           <div className="flex items-center gap-3">
             <ShoppingBag className="text-[#F29A2E]" />
-            <h2 className="text-xl font-bold font-heading text-white uppercase tracking-wider">
-              Carrito de Compras
+            <h2 className="text-3xl font-black font-heading text-white uppercase">
+              Tu pedido
             </h2>
           </div>
           <button 
@@ -80,15 +81,15 @@ export default function CartDrawer() {
               <p className="text-lg">Tu carrito está vacío</p>
               <button 
                 onClick={() => setIsCartOpen(false)}
-                className="mt-6 px-6 py-2 border border-white/20 rounded-full hover:bg-white hover:text-black transition-colors"
+                className="mt-6 h-11 px-6 border border-white/25 rounded-md hover:border-white transition-colors"
               >
-                Continuar Comprando
+                Seguir viendo productos
               </button>
             </div>
           ) : (
             items.map((item) => (
               <div key={item.id} className="flex gap-4 p-4 rounded-xl bg-white/5 border border-white/5 relative group">
-                <div className="w-20 h-24 rounded-lg bg-black/40 overflow-hidden relative flex-shrink-0">
+                <div className="w-20 h-20 rounded-lg bg-[#0B1E38] overflow-hidden relative flex-shrink-0">
                   <Image 
                     src={item.image} 
                     alt={item.name} 
@@ -98,7 +99,7 @@ export default function CartDrawer() {
                 </div>
                 <div className="flex-1 flex flex-col justify-between py-1">
                   <div>
-                    <h4 className="font-bold text-white text-lg leading-tight line-clamp-1">{item.name}</h4>
+                    <h4 className="font-semibold text-white text-base leading-snug pr-6 line-clamp-2">{item.name}</h4>
                     <p className="text-[#F29A2E] font-medium mt-1">
                       ${item.price.toLocaleString("es-CO")}
                     </p>
@@ -136,16 +137,16 @@ export default function CartDrawer() {
         {items.length > 0 && (
           <div className="p-6 border-t border-white/10 bg-[#071426] flex flex-col gap-4">
             <div className="flex justify-between items-center text-lg">
-              <span className="text-white/70">Subtotal:</span>
-              <span className="font-bold text-white text-2xl font-heading">
+              <span className="text-white/70">Total</span>
+              <span className="font-black text-white text-3xl font-heading tabular-nums">
                 ${cartTotal.toLocaleString("es-CO")}
               </span>
             </div>
             <button 
               onClick={handleCheckout}
-              className="w-full py-4 rounded-xl bg-[#F29A2E] hover:bg-white text-[#071426] font-bold text-lg uppercase tracking-wider transition-all duration-300 transform hover:scale-[1.02]"
+              className="w-full h-14 rounded-md bg-[#25D366] hover:brightness-110 text-[#071426] font-bold text-lg transition-all"
             >
-              Comprar por WhatsApp
+              Enviar pedido por WhatsApp
             </button>
           </div>
         )}
