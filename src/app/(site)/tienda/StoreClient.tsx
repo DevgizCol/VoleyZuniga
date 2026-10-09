@@ -5,7 +5,7 @@ import Image from "next/image";
 import clsx from "clsx";
 import { Check, Plus, ShoppingCart, MessageCircle, RotateCcw } from "lucide-react";
 import { useCart } from "@/context/CartContext";
-import JerseyArt from "@/components/store/JerseyArt";
+import ProductViewer from "@/components/store/ProductViewer";
 import { PRODUCTS, SIZES, cop, type Product } from "@/data/products";
 
 const FALLBACK_JERSEY = PRODUCTS[0];
@@ -66,7 +66,7 @@ export default function StoreClient({ products }: { products: Product[] }) {
             <div className="relative">
               <div className="relative aspect-square max-w-[460px] mx-auto">
                 <div className="absolute inset-6 rounded-full bg-[radial-gradient(circle,rgba(242,154,46,0.22),transparent_65%)]" aria-hidden="true" />
-                <JerseyArt key={`${variant}-${side}`} name={cleanName} number={number} variant={variant} side={side} className="relative w-full h-auto animate-fade-in" />
+                <ProductViewer name={cleanName} number={number} variant={variant} side={side} onSideChange={setSide} />
               </div>
               <div className="mt-2 flex justify-center gap-2">
                 <button type="button" onClick={() => setSide((s) => (s === "back" ? "front" : "back"))} className="h-10 px-4 inline-flex items-center gap-2 rounded-full border border-white/20 hover:border-white text-sm font-semibold">
