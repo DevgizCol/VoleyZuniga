@@ -34,15 +34,15 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: false, error: "Solicitud inválida" }, { status: 400 });
   }
 
-  const token = createSessionToken();
-  if (!token) {
+  if (!process.env.SESSION_SECRET || process.env.SESSION_SECRET.length < 32 || !process.env.ADMIN_PASSWORD) {
     return NextResponse.json(
       { ok: false, error: "El servidor no está configurado (SESSION_SECRET / ADMIN_PASSWORD)." },
       { status: 503 }
     );
   }
 
-  if (!checkAdminPassword(password)) {
+  const user = checkAdminPassword(password);
+  if (!user) {
     const current = entry && entry.resetAt > now ? entry : { count: 0, resetAt: now + WINDOW_MS };
     current.count += 1;
     attempts.set(key, current);
@@ -50,7 +50,9 @@ export async function POST(request: Request) {
   }
 
   attempts.delete(key);
-  const res = NextResponse.json({ ok: true });
+  const token = createSessionToken(user);
+  if (!token) return NextResponse.json({ ok: false, error: "No se pudo crear la sesión." }, { status: 500 });
+  const res = NextResponse.json({ ok: true, name: user.name });
   res.cookies.set(ADMIN_COOKIE, token, sessionCookieOptions);
   return res;
 }

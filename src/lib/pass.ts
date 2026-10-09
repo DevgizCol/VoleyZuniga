@@ -1,7 +1,8 @@
 "use client";
 
 import QRCode from "qrcode";
-import { SITE, whatsappUrl } from "@/config/site";
+import { SITE } from "@/config/site";
+import { waLink, type Contact } from "@/config/contact";
 
 // Pase de clase de prueba: código de inscripción, QR y la imagen descargable (formato historia 1080 x 1920).
 
@@ -13,6 +14,7 @@ export type PassData = {
   sede: string;
   horario: string;
   code: string;
+  contact: Contact;
 };
 
 const ALPHABET = "23456789ABCDEFGHJKMNPQRSTUVWXYZ"; // sin 0/O ni 1/I para que se lea bien
@@ -27,7 +29,7 @@ export function makeCode(category: string) {
 
 // Lo que abre el QR: un chat de WhatsApp con el club que identifica al deportista.
 export function passQrText(d: PassData) {
-  return whatsappUrl(`Hola, soy ${d.name.trim()} (código ${d.code}). Vengo a mi clase de prueba de ${d.category}.`);
+  return waLink(d.contact, `Hola, soy ${d.name.trim()} (código ${d.code}). Vengo a mi clase de prueba de ${d.category}.`);
 }
 
 export function qrMatrix(text: string) {
@@ -359,7 +361,7 @@ export async function renderPass(d: PassData): Promise<HTMLCanvasElement> {
   ctx.textAlign = "center";
   ctx.fillStyle = "#C9D5E6";
   ctx.font = `600 32px ${body}`;
-  ctx.fillText(`Presenta este pase en tu primera clase · ${SITE.instagram.handle}`, W / 2, 1790);
+  ctx.fillText(`Presenta este pase en tu primera clase · ${d.contact.instagramHandle}`, W / 2, 1790);
   ctx.fillStyle = "#8FA3BF";
   ctx.font = `500 26px ${body}`;
   const today = new Intl.DateTimeFormat("es-CO", { timeZone: "America/Bogota", day: "numeric", month: "long", year: "numeric" }).format(new Date());

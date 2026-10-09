@@ -8,7 +8,8 @@ import { Menu, X, ShoppingCart, MessageCircle, Phone, Shield } from "lucide-reac
 import clsx from "clsx";
 import { useCart } from "@/context/CartContext";
 import CourtStatusBanner from "./CourtStatusBanner";
-import { NAV_LINKS, SITE, telUrl, whatsappUrl } from "@/config/site";
+import { NAV_LINKS, SITE } from "@/config/site";
+import { useContact } from "./ContactProvider";
 import type { CourtNotice } from "@/lib/court";
 
 export default function Header({ notices = [] }: { notices?: CourtNotice[] }) {
@@ -16,6 +17,7 @@ export default function Header({ notices = [] }: { notices?: CourtNotice[] }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const { itemCount, setIsCartOpen } = useCart();
   const pathname = usePathname();
+  const { wa, tel } = useContact();
 
   useEffect(() => {
     const onScroll = () => setIsScrolled(window.scrollY > 12);
@@ -169,14 +171,14 @@ export default function Header({ notices = [] }: { notices?: CourtNotice[] }) {
           </Link>
           <div className="grid grid-cols-2 gap-3">
             <a
-              href={whatsappUrl()}
+              href={wa()}
               target="_blank"
               rel="noopener noreferrer"
               className="h-12 flex items-center justify-center gap-2 border border-[#25D366]/50 text-[#25D366] font-semibold rounded-md"
             >
               <MessageCircle size={18} /> WhatsApp
             </a>
-            <a href={telUrl} className="h-12 flex items-center justify-center gap-2 border border-white/20 text-white font-semibold rounded-md">
+            <a href={tel} className="h-12 flex items-center justify-center gap-2 border border-white/20 text-white font-semibold rounded-md">
               <Phone size={18} className="text-[#F29A2E]" /> Llamar
             </a>
           </div>

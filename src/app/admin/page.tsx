@@ -1,203 +1,187 @@
 import Link from "next/link";
-import { MessageCircle, ExternalLink, CloudRain, CheckCircle2, Inbox, Users, Mail, CalendarDays, AlertTriangle } from "lucide-react";
-import { isAdmin } from "@/lib/auth";
-import { readSheet, type Row } from "@/lib/sheets";
-import { getMatches, bogotaToday, dateParts, time12 } from "@/lib/matches";
-import { getCourtNotices } from "@/lib/court";
+import { Inbox, Users, Mail, CalendarDays, ArrowRight, MessageCircle, CheckCircle2, CloudRain } from "lucide-react";
+import { getAdmin } from "@/lib/auth";
+import { adminRead } from "@/lib/sheets";
 import { siteUrl } from "@/lib/site-url";
-import AdminLogin from "./AdminLogin";
-import { GroupMessage, LogoutButton } from "./AdminTools";
+import { GroupMessage } from "./AdminTools";
+import StatusSelect from "./_components/StatusSelect";
+import EditorButton from "./_components/EditorButton";
+import { Card, PageHeader, Badge, NotConnected, btn } from "./_components/ui";
+import { FIXTURE_FIELDS, NEWS_FIELDS } from "./_components/fields";
+import { bogotaToday, daysAgo, isoDate, shortDate, hhmm, waLink } from "./_components/format";
 
 export const dynamic = "force-dynamic";
 
-const daysAgo = (n: number) =>
-  new Intl.DateTimeFormat("en-CA", { timeZone: "America/Bogota" }).format(new Date(Date.now() - n * 86_400_000));
-
-function waLink(raw: string, text: string) {
-  const d = (raw || "").replace(/\D/g, "");
-  const num = d.length === 10 && d.startsWith("3") ? `57${d}` : d.length === 12 && d.startsWith("57") ? d : "";
-  return num ? `https://wa.me/${num}?text=${encodeURIComponent(text)}` : null;
-}
-
-const statusChip = (estado: string) => {
-  const e = (estado || "").toLowerCase();
-  if (e === "nuevo") return "bg-[#F29A2E] text-[#071426]";
-  if (e.startsWith("contact")) return "bg-[#3B82F6]/20 text-[#93C5FD]";
-  if (e.startsWith("matric")) return "bg-[#25D366]/20 text-[#6EE7A0]";
-  return "bg-white/10 text-[#C9D5E6]";
-};
-
-export default async function AdminPage() {
-  if (!(await isAdmin())) return <AdminLogin />;
-
-  const [regsRaw, msgsRaw, matches, notices] = await Promise.all([
-    readSheet("Inscripciones", 0),
-    readSheet("Contacto", 0),
-    getMatches(),
-    getCourtNotices(),
-  ]);
-  const privateOk = regsRaw !== null;
-  const regs: Row[] = (regsRaw ?? []).slice().reverse();
-  const msgs: Row[] = (msgsRaw ?? []).slice().reverse();
+export default async function AdminHome() {
+  const user = await getAdmin();
+  const [regs, msgs, fixture, court] = await Promise.all([adminRead("Inscripciones"), adminRead("Contacto"), adminRead("Fixture"), adminRead("Cancha")]);
+  const today = bogotaToday();
   const weekAgo = daysAgo(7);
-  const pending = regs.filter((r) => (r["Estado"] || "").toLowerCase() === "nuevo");
-  const regsWeek = regs.filter((r) => (r["Fecha"] || "").slice(0, 10) >= weekAgo);
-  const msgsWeek = msgs.filter((r) => (r["Fecha"] || "").slice(0, 10) >= weekAgo);
-  const nextMatch = (matches ?? []).find((m) => !m.finished && m.date >= bogotaToday());
-  const sheetUrl = process.env.SHEET_URL;
+
+  const registrations = (regs?.rows ?? []).slice().reverse();
+  const pending = registrations.filter((r) => (r.Estado || "Nuevo") === "Nuevo");
+  const regsWeek = registrations.filter((r) => isoDate(r.Fecha) >= weekAgo);
+  const messages = (msgs?.rows ?? []).slice().reverse();
+  const msgsNew = messages.filter((m) => (m.Estado || "Nuevo") === "Nuevo");
+  const upcoming = (fixture?.rows ?? [])
+    .filter((m) => isoDate(m.Fecha) >= today && !m.Resultado && (m.Activo || "").toUpperCase() !== "NO")
+    .sort((a, b) => (isoDate(a.Fecha) + hhmm(a.Hora)).localeCompare(isoDate(b.Fecha) + hhmm(b.Hora)));
+  const toScore = (fixture?.rows ?? []).filter((m) => isoDate(m.Fecha) < today && !m.Resultado && !/cancel|aplaz/i.test(m.Estado || ""));
+  const alerts = (court?.rows ?? []).filter((c) => c.Estado && c.Estado !== "Normal");
+  const hour = Number(new Intl.DateTimeFormat("en-US", { timeZone: "America/Bogota", hour: "numeric", hour12: false }).format(new Date()));
+  const greeting = hour < 12 ? "Buenos días" : hour < 19 ? "Buenas tardes" : "Buenas noches";
 
   return (
-    <div className="bg-[#071426] text-white min-h-screen pt-36 sm:pt-40 pb-24">
-      <div className="container mx-auto px-4 sm:px-6">
-        <div className="flex flex-wrap items-end justify-between gap-4 mb-8">
-          <div>
-            <p className="text-[#F29A2E] font-semibold">Panel del club</p>
-            <h1 className="font-heading font-black uppercase text-5xl sm:text-6xl leading-none mt-1">Hoy en el club</h1>
-          </div>
-          <div className="flex flex-wrap gap-3">
-            {sheetUrl ? (
-              <a href={sheetUrl} target="_blank" rel="noopener noreferrer" className="h-11 px-4 inline-flex items-center gap-2 rounded-md bg-[#F29A2E] hover:bg-[#FFB14A] text-[#071426] font-bold">
-                <ExternalLink size={18} /> Abrir la hoja
-              </a>
-            ) : null}
-            <LogoutButton />
-          </div>
+    <>
+      <PageHeader title={`${greeting}, ${user?.name.split(" ")[0] ?? ""}`} description="Lo importante de hoy en el club. Todo lo que cambies aquí se ve en la web al instante.">
+        <EditorButton sheet="Fixture" fields={FIXTURE_FIELDS} title="Nuevo partido" mode="create" label="Nuevo partido" defaults={{ Estado: "Programado", Local: "Club Voley Zúñiga" }} />
+        <EditorButton sheet="Noticias" fields={NEWS_FIELDS} title="Nueva noticia" mode="create" label="Nueva noticia" variant="secondary" defaults={{ Fecha: today }} preview="news" />
+      </PageHeader>
+
+      {!regs && !fixture ? <NotConnected /> : null}
+
+      <div className="grid grid-cols-2 xl:grid-cols-4 gap-3 mb-8">
+        <Stat href="/admin/inscripciones" icon={<Inbox size={18} />} label="Inscripciones sin atender" value={pending.length} accent={pending.length > 0} />
+        <Stat href="/admin/inscripciones" icon={<Users size={18} />} label="Inscripciones en 7 días" value={regsWeek.length} />
+        <Stat href="/admin/mensajes" icon={<Mail size={18} />} label="Mensajes nuevos" value={msgsNew.length} accent={msgsNew.length > 0} />
+        <Stat
+          href="/admin/partidos"
+          icon={<CalendarDays size={18} />}
+          label="Próximo partido"
+          value={upcoming[0] ? shortDate(upcoming[0].Fecha) : "—"}
+          detail={upcoming[0] ? `${upcoming[0].Categoría} · ${hhmm(upcoming[0].Hora) || "hora por confirmar"}` : "Sin partidos programados"}
+        />
+      </div>
+
+      {(toScore.length > 0 || alerts.length > 0) && (
+        <div className="grid md:grid-cols-2 gap-3 mb-8">
+          {toScore.length > 0 && (
+            <Link href="/admin/partidos?vista=resultados" className="rounded-2xl border border-[#F29A2E]/40 bg-[#F29A2E]/10 p-5 flex items-center gap-4 hover:bg-[#F29A2E]/15">
+              <CalendarDays className="text-[#F29A2E] shrink-0" />
+              <span className="flex-1">
+                <strong className="block">{toScore.length === 1 ? "Falta 1 resultado" : `Faltan ${toScore.length} resultados`} por cargar</strong>
+                <span className="text-sm text-[#C9D5E6]">Partidos ya jugados sin marcador.</span>
+              </span>
+              <ArrowRight size={18} />
+            </Link>
+          )}
+          {alerts.length > 0 && (
+            <Link href="/admin/canchas" className="rounded-2xl border border-[#F29A2E]/40 bg-[#F29A2E]/10 p-5 flex items-center gap-4 hover:bg-[#F29A2E]/15">
+              <CloudRain className="text-[#F29A2E] shrink-0" />
+              <span className="flex-1">
+                <strong className="block">Aviso activo en la web</strong>
+                <span className="text-sm text-[#C9D5E6]">{alerts.map((a) => `${a.Estado} · ${a.Sede}`).join(" / ")}</span>
+              </span>
+              <ArrowRight size={18} />
+            </Link>
+          )}
         </div>
+      )}
 
-        {!privateOk && (
-          <div className="mb-8 rounded-xl border border-[#F29A2E]/40 bg-[#F29A2E]/10 p-5 flex gap-3">
-            <AlertTriangle className="text-[#F29A2E] shrink-0" />
-            <p className="text-[#E6EDF7]">
-              Para ver aquí las inscripciones y los mensajes, publica la versión nueva del Apps Script
-              (Implementar → Administrar implementaciones → lápiz → Nueva versión).
-            </p>
+      <div className="grid xl:grid-cols-12 gap-6">
+        <section className="xl:col-span-7">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="font-heading font-black uppercase text-2xl">Por atender</h2>
+            <Link href="/admin/inscripciones" className={btn.ghost}>
+              Ver todas <ArrowRight size={14} />
+            </Link>
           </div>
-        )}
-
-        {/* Resumen */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-10">
-          <Stat icon={<Inbox size={20} />} label="Inscripciones sin atender" value={privateOk ? pending.length : "—"} accent={pending.length > 0} />
-          <Stat icon={<Users size={20} />} label="Inscripciones en 7 días" value={privateOk ? regsWeek.length : "—"} />
-          <Stat icon={<Mail size={20} />} label="Mensajes en 7 días" value={privateOk ? msgsWeek.length : "—"} />
-          <Stat
-            icon={<CalendarDays size={20} />}
-            label="Próximo partido"
-            value={nextMatch ? `${dateParts(nextMatch.date).day} ${dateParts(nextMatch.date).month}` : "—"}
-            detail={nextMatch ? `${nextMatch.category} · ${time12(nextMatch.time)}` : "Agrega partidos en Fixture"}
-          />
-        </div>
-
-        <div className="grid lg:grid-cols-12 gap-8">
-          <div className="lg:col-span-8 space-y-10">
-            <section>
-              <h2 className="font-heading font-black uppercase text-3xl mb-4">Inscripciones recientes</h2>
-              {regs.length === 0 ? (
-                <p className="rounded-xl border border-dashed border-white/15 p-6 text-[#B7C4D8]">{privateOk ? "Todavía no hay inscripciones." : "Disponible cuando actualices el Apps Script."}</p>
-              ) : (
-                <ul className="space-y-3">
-                  {regs.slice(0, 15).map((r, i) => {
-                    const wa = waLink(r["WhatsApp"], `Hola, te escribimos del Club Voley Zúñiga sobre la inscripción de ${r["Nombre"]}${r["Código"] ? ` (código ${r["Código"]})` : ""}. ¿Cuándo podemos agendar la clase de prueba?`);
-                    return (
-                      <li key={i} className="rounded-xl border border-white/10 bg-white/[0.03] p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-5">
-                        <div className="flex-1 min-w-0">
-                          <div className="flex flex-wrap items-center gap-2">
-                            <p className="font-heading font-extrabold text-2xl leading-tight">{r["Nombre"]}</p>
-                            <span className={`h-6 px-2.5 inline-flex items-center rounded-full text-xs font-bold ${statusChip(r["Estado"])}`}>{r["Estado"] || "Sin estado"}</span>
-                            {r["Código"] ? <span className="text-xs font-semibold text-[#8FA3BF] tracking-wide">{r["Código"]}</span> : null}
-                          </div>
-                          <p className="text-sm text-[#B7C4D8] mt-1">
-                            {r["Edad"]} años · {r["Categoría"]} · {r["Nivel"]}
-                          </p>
-                          <p className="text-xs text-[#8FA3BF] mt-0.5">{r["Fecha"]} · {r["Horario"]}</p>
-                        </div>
-                        {wa ? (
-                          <a href={wa} target="_blank" rel="noopener noreferrer" className="shrink-0 h-11 px-4 inline-flex items-center gap-2 rounded-md bg-[#25D366] text-[#071426] font-bold">
-                            <MessageCircle size={18} /> Escribir
-                          </a>
-                        ) : (
-                          <span className="text-sm text-[#8FA3BF]">{r["WhatsApp"]}</span>
-                        )}
-                      </li>
-                    );
-                  })}
-                </ul>
-              )}
-              <p className="mt-3 text-sm text-[#8FA3BF]">Cuando le escribas, cambia el Estado en la hoja a “Contactado” y luego a “Matriculado”.</p>
-            </section>
-
-            <section>
-              <h2 className="font-heading font-black uppercase text-3xl mb-4">Mensajes de contacto</h2>
-              {msgs.length === 0 ? (
-                <p className="rounded-xl border border-dashed border-white/15 p-6 text-[#B7C4D8]">{privateOk ? "No hay mensajes." : "Disponible cuando actualices el Apps Script."}</p>
-              ) : (
-                <ul className="space-y-3">
-                  {msgs.slice(0, 8).map((m, i) => (
-                    <li key={i} className="rounded-xl border border-white/10 bg-white/[0.03] p-5">
-                      <div className="flex flex-wrap items-center gap-2">
-                        <p className="font-semibold">{m["Nombre"]}</p>
-                        <span className="h-6 px-2.5 inline-flex items-center rounded-full bg-white/10 text-xs font-semibold">{m["Asunto"]}</span>
-                        <span className="text-xs text-[#8FA3BF]">{m["Fecha"]}</span>
+          {pending.length === 0 ? (
+            <Card className="p-6 flex items-center gap-3 text-[#7AF0A8]">
+              <CheckCircle2 /> Todas las inscripciones están atendidas.
+            </Card>
+          ) : (
+            <ul className="space-y-2.5">
+              {pending.slice(0, 6).map((r) => {
+                const wa = waLink(r.WhatsApp, `Hola, te escribimos del Club Voley Zúñiga sobre la inscripción de ${r.Nombre}${r["Código"] ? ` (código ${r["Código"]})` : ""}. ¿Cuándo podemos agendar la clase de prueba?`);
+                return (
+                  <li key={r._row}>
+                    <Card className="p-4 flex flex-wrap items-center gap-3">
+                      <div className="flex-1 min-w-[180px]">
+                        <p className="font-heading font-extrabold text-xl leading-tight">{r.Nombre}</p>
+                        <p className="text-sm text-[#B7C4D8]">
+                          {r.Edad} años · {r["Categoría"]} · {shortDate(r.Fecha)}
+                        </p>
                       </div>
-                      <p className="text-[#C9D5E6] mt-2 whitespace-pre-line line-clamp-4">{m["Mensaje"]}</p>
-                      <p className="text-sm text-[#8FA3BF] mt-2">{m["Contacto"]}</p>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </section>
-          </div>
+                      {wa ? (
+                        <a href={wa} target="_blank" rel="noopener noreferrer" className={btn.whatsapp}>
+                          <MessageCircle size={16} /> Escribir
+                        </a>
+                      ) : null}
+                      <StatusSelect sheet="Inscripciones" row={r} />
+                    </Card>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </section>
 
-          <aside className="lg:col-span-4 space-y-6">
-            <section className="rounded-2xl border border-white/10 bg-[#0B1E38] p-6">
-              <h2 className="font-heading font-black uppercase text-2xl">Estado de canchas</h2>
-              {notices.length === 0 ? (
-                <p className="mt-3 flex items-center gap-2 text-[#6EE7A0]"><CheckCircle2 size={18} /> Todo normal. No se muestra aviso.</p>
-              ) : (
-                <ul className="mt-3 space-y-2">
-                  {notices.map((n, i) => (
-                    <li key={i} className="flex gap-2 text-[#FFD9A8]"><CloudRain size={18} className="shrink-0 mt-0.5" /> <span><strong>{n.estado}</strong>{n.sede ? ` · ${n.sede}` : ""}: {n.mensaje}</span></li>
-                  ))}
-                </ul>
-              )}
-              <p className="mt-4 text-sm text-[#B7C4D8]">
-                Para cambiarlo, edita la pestaña <strong>Cancha</strong> de la hoja: Estado “Normal”, “Lluvia”, “Cancelado” o “Cambio de sede”, con un mensaje. La web se actualiza en unos 2 minutos.
-              </p>
-            </section>
-
-            <section className="rounded-2xl border border-white/10 bg-[#0B1E38] p-6">
-              <h2 className="font-heading font-black uppercase text-2xl mb-1">Mensaje al grupo</h2>
-              <p className="text-sm text-[#B7C4D8] mb-4">Escribe el aviso y elige el grupo de familias al abrir WhatsApp.</p>
-              <GroupMessage gamesUrl={`${siteUrl}/games`} />
-            </section>
-
-            <section className="rounded-2xl border border-white/10 bg-[#0B1E38] p-6">
-              <h2 className="font-heading font-black uppercase text-2xl mb-3">Ver la web</h2>
-              <ul className="grid grid-cols-2 gap-2 text-sm">
-                {[
-                  ["Partidos", "/games"],
-                  ["Posiciones", "/standings"],
-                  ["Noticias", "/news"],
-                  ["Inscripción", "/registrations"],
-                ].map(([label, href]) => (
-                  <li key={href}>
-                    <Link href={href} className="h-10 px-3 flex items-center rounded-md border border-white/10 hover:border-white/40">{label}</Link>
+        <section className="xl:col-span-5 space-y-6">
+          <Card className="p-5">
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="font-heading font-black uppercase text-2xl">Próximos partidos</h2>
+              <Link href="/admin/partidos" className={btn.ghost}>
+                Todos <ArrowRight size={14} />
+              </Link>
+            </div>
+            {upcoming.length === 0 ? (
+              <p className="text-[#B7C4D8]">No hay partidos programados.</p>
+            ) : (
+              <ul className="divide-y divide-white/10">
+                {upcoming.slice(0, 4).map((m) => (
+                  <li key={m._row} className="py-3 flex items-center gap-3">
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold truncate">
+                        {m.Local} vs {m.Visitante}
+                      </p>
+                      <p className="text-sm text-[#8FA3BF]">
+                        {shortDate(m.Fecha)} · {hhmm(m.Hora) || "por confirmar"} · {m["Categoría"]}
+                      </p>
+                    </div>
+                    <EditorButton sheet="Fixture" fields={FIXTURE_FIELDS} title="Editar partido" mode="edit" row={m} />
                   </li>
                 ))}
               </ul>
-            </section>
-          </aside>
-        </div>
+            )}
+          </Card>
+
+          <Card className="p-5">
+            <h2 className="font-heading font-black uppercase text-2xl mb-1">Mensaje al grupo</h2>
+            <p className="text-sm text-[#B7C4D8] mb-4">Escribe el aviso y elige el grupo de familias al abrir WhatsApp.</p>
+            <GroupMessage gamesUrl={`${siteUrl}/games`} />
+          </Card>
+
+          {messages.length > 0 && (
+            <Card className="p-5">
+              <div className="flex items-center justify-between mb-3">
+                <h2 className="font-heading font-black uppercase text-2xl">Último mensaje</h2>
+                <Badge tone={msgsNew.length ? "accent" : "muted"}>{msgsNew.length === 1 ? "1 nuevo" : `${msgsNew.length} nuevos`}</Badge>
+              </div>
+              <p className="font-semibold">
+                {messages[0].Nombre} · <span className="text-[#8FA3BF] font-normal">{messages[0].Asunto}</span>
+              </p>
+              <p className="text-[#C9D5E6] mt-1 line-clamp-3">{messages[0].Mensaje}</p>
+              <Link href="/admin/mensajes" className={`${btn.ghost} mt-3`}>
+                Ver mensajes <ArrowRight size={14} />
+              </Link>
+            </Card>
+          )}
+        </section>
       </div>
-    </div>
+    </>
   );
 }
 
-function Stat({ icon, label, value, detail, accent = false }: { icon: React.ReactNode; label: string; value: string | number; detail?: string; accent?: boolean }) {
+function Stat({ href, icon, label, value, detail, accent = false }: { href: string; icon: React.ReactNode; label: string; value: string | number; detail?: string; accent?: boolean }) {
   return (
-    <div className={`rounded-xl p-5 border ${accent ? "bg-[#F29A2E] border-[#F29A2E] text-[#071426]" : "bg-white/[0.04] border-white/10"}`}>
-      <div className={`flex items-center gap-2 text-sm ${accent ? "text-[#071426]/80" : "text-[#8FA3BF]"}`}>{icon}{label}</div>
-      <p className="font-heading font-black text-4xl sm:text-5xl leading-none mt-2 tabular-nums">{value}</p>
-      {detail ? <p className={`text-xs mt-1 ${accent ? "text-[#071426]/80" : "text-[#8FA3BF]"}`}>{detail}</p> : null}
-    </div>
+    <Link href={href} className={`rounded-2xl p-4 sm:p-5 border transition-colors ${accent ? "bg-[#F29A2E] border-[#F29A2E] text-[#071426] hover:bg-[#FFB14A]" : "bg-[#0B1E38] border-white/10 hover:border-white/25"}`}>
+      <span className={`flex items-center gap-2 text-sm ${accent ? "text-[#071426]/80" : "text-[#8FA3BF]"}`}>
+        {icon}
+        {label}
+      </span>
+      <span className="block font-heading font-black text-4xl sm:text-5xl leading-none mt-2 tabular-nums">{value}</span>
+      {detail ? <span className={`block text-xs mt-1.5 ${accent ? "text-[#071426]/80" : "text-[#8FA3BF]"}`}>{detail}</span> : null}
+    </Link>
   );
 }
