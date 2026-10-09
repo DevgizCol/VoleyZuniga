@@ -1,11 +1,14 @@
+/* eslint-disable @next/next/no-img-element -- las fotos de los entrenadores vienen de la hoja */
 import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight } from "lucide-react";
 import PageHero from "@/components/PageHero";
+import { getCoaches } from "@/lib/club";
 
 export const metadata: Metadata = {
   title: "El club",
+  alternates: { canonical: "/el-club" },
   description: "Quiénes somos, qué nos mueve y el camino que recorre cada deportista del Club Voley Zúñiga.",
 };
 
@@ -23,7 +26,10 @@ const VALUES = [
   { title: "Respeto", text: "Por compañeros, rivales, árbitros y familias. Sin excepciones." },
 ];
 
-export default function HistoryPage() {
+export const revalidate = 300;
+
+export default async function HistoryPage() {
+  const coaches = await getCoaches();
   return (
     <>
       <PageHero kicker="Quiénes somos" title="El club" intro="Nacimos con una convicción: el voleibol es una de las mejores herramientas para formar jóvenes disciplinados, competitivos y con valores." />
@@ -47,6 +53,36 @@ export default function HistoryPage() {
           </div>
         </div>
       </section>
+
+      {coaches.length > 0 && (
+        <section className="bg-[#0B1E38] text-white py-20 sm:py-28">
+          <div className="container mx-auto px-4 sm:px-6">
+            <h2 className="font-heading font-black uppercase text-5xl sm:text-6xl leading-none mb-4">Cuerpo técnico</h2>
+            <p className="text-[#B7C4D8] text-lg max-w-2xl mb-12">Las personas que acompañan a cada deportista en la cancha.</p>
+            <ul className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {coaches.map((c) => (
+                <li key={c.name} className="rounded-xl border border-white/10 bg-[#071426] overflow-hidden flex flex-col">
+                  <div className="relative aspect-[4/3] bg-gradient-to-br from-[#0F2347] to-[#071426]">
+                    {c.photo ? (
+                      <img src={c.photo} alt={`Foto de ${c.name}`} loading="lazy" className="absolute inset-0 w-full h-full object-cover" />
+                    ) : (
+                      <span className="absolute inset-0 flex items-center justify-center font-heading font-black text-7xl text-[#F29A2E]/40" aria-hidden="true">
+                        {c.name.split(/\s+/).slice(0, 2).map((w) => w[0]).join("")}
+                      </span>
+                    )}
+                  </div>
+                  <div className="p-6">
+                    <h3 className="font-heading font-black uppercase text-3xl leading-none">{c.name}</h3>
+                    {c.role ? <p className="mt-2 font-semibold text-[#F29A2E]">{c.role}</p> : null}
+                    {c.categories ? <p className="text-sm text-[#8FA3BF]">{c.categories}</p> : null}
+                    {c.bio ? <p className="mt-3 text-[#C9D5E6] leading-relaxed">{c.bio}</p> : null}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      )}
 
       <section className="bg-[#EEF2F7] text-[#0F2347] py-20 sm:py-28">
         <div className="container mx-auto px-4 sm:px-6">
@@ -78,8 +114,8 @@ export default function HistoryPage() {
             ))}
           </div>
           <div className="mt-12 flex flex-wrap gap-3">
-            <Link href="/club/methodology" className="h-12 px-6 inline-flex items-center gap-2 rounded-md border border-white/25 hover:border-white font-semibold">Cómo entrenamos <ArrowRight size={18} /></Link>
-            <Link href="/registrations" className="h-12 px-6 inline-flex items-center gap-2 rounded-md bg-[#F29A2E] hover:bg-[#FFB14A] text-[#071426] font-bold">Inscribirme <ArrowRight size={18} /></Link>
+            <Link href="/metodologia" className="h-12 px-6 inline-flex items-center gap-2 rounded-md border border-white/25 hover:border-white font-semibold">Cómo entrenamos <ArrowRight size={18} /></Link>
+            <Link href="/inscripciones" className="h-12 px-6 inline-flex items-center gap-2 rounded-md bg-[#F29A2E] hover:bg-[#FFB14A] text-[#071426] font-bold">Inscribirme <ArrowRight size={18} /></Link>
           </div>
         </div>
       </section>

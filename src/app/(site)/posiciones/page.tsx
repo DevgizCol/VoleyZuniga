@@ -10,6 +10,7 @@ import { getStandings, type StandingRow } from "@/lib/matches";
 
 export const metadata: Metadata = {
   title: "Posiciones",
+  alternates: { canonical: "/posiciones" },
   description: "Tabla de posiciones de los equipos del Club Voley Zúñiga por categoría.",
 };
 
@@ -41,7 +42,7 @@ export default async function StandingsPage({ searchParams }: { searchParams: Pr
         intro="Cómo van nuestros equipos en cada categoría. La tabla se actualiza después de cada fecha."
       >
         <Link
-          href="/games"
+          href="/partidos"
           className="h-12 px-6 inline-flex items-center gap-2 border border-white/25 hover:border-white hover:bg-white/5 font-semibold rounded-md transition-colors"
         >
           Ver partidos <ArrowRight size={18} />
@@ -70,7 +71,7 @@ export default async function StandingsPage({ searchParams }: { searchParams: Pr
           ) : (
             <>
               <div className="py-6">
-                <CategoryFilter basePath="/standings" categories={withData} active={active} showAll={false} />
+                <CategoryFilter basePath="/posiciones" categories={withData} active={active} showAll={false} />
               </div>
 
               {club && clubPos && (

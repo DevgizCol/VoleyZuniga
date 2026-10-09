@@ -1,6 +1,7 @@
 import "server-only";
 import { readSheet } from "./sheets";
 import { SITE } from "@/config/site";
+import { normDate, normTime } from "./sheet-values";
 
 // Partidos y tabla de posiciones leídos de la hoja (pestañas "Fixture" y "Tabla").
 
@@ -33,19 +34,6 @@ export type StandingRow = {
 const CLUB_RE = /z[uú][ñn]iga/i;
 
 export const bogotaToday = () => new Intl.DateTimeFormat("en-CA", { timeZone: "America/Bogota" }).format(new Date());
-
-// Acepta AAAA-MM-DD o DD/MM/AAAA (como lo muestra Google Sheets en español).
-function normDate(raw: string): string {
-  const s = (raw || "").trim();
-  if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
-  const m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
-  return m ? `${m[3]}-${m[2].padStart(2, "0")}-${m[1].padStart(2, "0")}` : "";
-}
-
-function normTime(raw: string): string {
-  const m = (raw || "").trim().match(/^(\d{1,2}):(\d{2})/);
-  return m ? `${m[1].padStart(2, "0")}:${m[2]}` : "";
-}
 
 function parseResult(result: string): [number, number] | null {
   const m = result.match(/(\d+)\s*[-–:]\s*(\d+)/);

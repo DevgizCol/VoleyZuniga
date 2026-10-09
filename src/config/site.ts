@@ -17,11 +17,11 @@ export const whatsappUrl = (message: string = SITE.whatsappMessage) =>
 export const telUrl = `tel:+${SITE.phoneDigits}`;
 
 export const NAV_LINKS = [
-  { name: "El club", href: "/club/history" },
-  { name: "Equipos", href: "/team" },
-  { name: "Partidos", href: "/games" },
-  { name: "Posiciones", href: "/standings" },
-  { name: "Noticias", href: "/news" },
-  { name: "Tienda", href: "/store" },
-  { name: "Contacto", href: "/club/contact" },
+  { name: "El club", href: "/el-club" },
+  { name: "Equipos", href: "/equipos" },
+  { name: "Partidos", href: "/partidos" },
+  { name: "Posiciones", href: "/posiciones" },
+  { name: "Noticias", href: "/noticias" },
+  { name: "Tienda", href: "/tienda" },
+  { name: "Contacto", href: "/contacto" },
 ] as const;

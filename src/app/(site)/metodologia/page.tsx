@@ -5,6 +5,7 @@ import PageHero from "@/components/PageHero";
 
 export const metadata: Metadata = {
   title: "Metodología",
+  alternates: { canonical: "/metodologia" },
   description: "Los cuatro pilares de entrenamiento del Club Voley Zúñiga.",
 };
 
@@ -62,7 +63,7 @@ export default function MethodologyPage() {
           ))}
         </div>
         <div className="container mx-auto px-4 sm:px-6 mt-12">
-          <Link href="/registrations" className="h-14 px-7 inline-flex items-center gap-2 rounded-md bg-[#F29A2E] hover:bg-[#FFB14A] text-[#071426] font-bold text-lg">
+          <Link href="/inscripciones" className="h-14 px-7 inline-flex items-center gap-2 rounded-md bg-[#F29A2E] hover:bg-[#FFB14A] text-[#071426] font-bold text-lg">
             Reservar clase de prueba <ArrowRight size={20} />
           </Link>
         </div>

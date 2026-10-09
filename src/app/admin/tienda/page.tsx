@@ -18,7 +18,7 @@ export default async function StoreAdmin() {
   return (
     <>
       <PageHeader title="Tienda" description="Productos, precios y fotos de la tienda del club. Los pedidos llegan por WhatsApp.">
-        <a href="/store" target="_blank" className={btn.secondary}>
+        <a href="/tienda" target="_blank" className={btn.secondary}>
           <ExternalLink size={16} /> Ver tienda
         </a>
         <EditorButton sheet="Productos" fields={PRODUCT_FIELDS} title="Nuevo producto" mode="create" label="Nuevo producto" defaults={{ Categoría: "Indumentaria", Personalizable: "" }} />

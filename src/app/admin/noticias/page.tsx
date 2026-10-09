@@ -55,7 +55,7 @@ export default async function NewsAdmin() {
                     <div className="mt-4 flex flex-wrap gap-1">
                       <EditorButton sheet="Noticias" fields={NEWS_FIELDS} title="Editar noticia" mode="edit" row={r} preview="news" />
                       {!draft ? (
-                        <a href={`/news/${slug}`} target="_blank" className={btn.ghost}>
+                        <a href={`/noticias/${slug}`} target="_blank" className={btn.ghost}>
                           <ExternalLink size={14} /> Ver
                         </a>
                       ) : null}

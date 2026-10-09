@@ -28,12 +28,12 @@ const errorText = (code: string) => ERRORS[code] ?? `No se pudo guardar (${code}
 
 // Páginas públicas que dependen de cada pestaña.
 const AFFECTED: Record<string, { path: string; type?: "layout" | "page" }[]> = {
-  Fixture: [{ path: "/games" }, { path: "/calendario.ics" }, { path: "/admin", type: "layout" }],
-  Tabla: [{ path: "/standings" }],
-  Noticias: [{ path: "/news", type: "layout" }, { path: "/sitemap.xml" }],
+  Fixture: [{ path: "/partidos" }, { path: "/calendario.ics" }, { path: "/admin", type: "layout" }],
+  Tabla: [{ path: "/posiciones" }],
+  Noticias: [{ path: "/noticias", type: "layout" }, { path: "/sitemap.xml" }],
   Cancha: [{ path: "/", type: "layout" }],
-  Horarios: [{ path: "/" }, { path: "/club/contact" }, { path: "/registrations" }, { path: "/team" }],
-  Productos: [{ path: "/store" }],
+  Horarios: [{ path: "/" }, { path: "/contacto" }, { path: "/inscripciones" }, { path: "/equipos" }],
+  Productos: [{ path: "/tienda" }],
   Ajustes: [{ path: "/", type: "layout" }],
   Inscripciones: [{ path: "/admin", type: "layout" }],
   Contacto: [{ path: "/admin", type: "layout" }],

@@ -71,8 +71,8 @@ export async function GET() {
     lines.push(
       `SUMMARY:${esc(title)}`,
       ...(m.venue ? [`LOCATION:${esc(m.venue + ", Medellín")}`] : []),
-      `DESCRIPTION:${esc(`Partido del Club Voley Zúñiga.${m.time ? "" : " Hora por confirmar."}\nMás información: ${siteUrl}/games`)}`,
-      `URL:${siteUrl}/games`,
+      `DESCRIPTION:${esc(`Partido del Club Voley Zúñiga.${m.time ? "" : " Hora por confirmar."}\nMás información: ${siteUrl}/partidos`)}`,
+      `URL:${siteUrl}/partidos`,
       "END:VEVENT"
     );
   }

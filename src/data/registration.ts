@@ -1,5 +1,5 @@
 // Fuente única para categorías, sedes, horarios y niveles de inscripción.
-// Los horarios coinciden con la programación de /club/contact.
+// Los horarios coinciden con la programación de /contacto.
 
 export const SEDES = [
   { value: "Polideportivo 3 Canchas", label: "Polideportivo 3 Canchas (Buenos Aires)" },

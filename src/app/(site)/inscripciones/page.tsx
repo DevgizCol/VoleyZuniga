@@ -8,6 +8,7 @@ import { waLink } from "@/config/contact";
 
 export const metadata: Metadata = {
   title: "Inscripción",
+  alternates: { canonical: "/inscripciones" },
   description: "Inscríbete al Club Voley Zúñiga y agenda una clase de prueba sin costo.",
 };
 
@@ -38,7 +39,7 @@ export default async function RegistrationsPage() {
                 <a href={waLink(settings.contact, "Hola, quiero que me avisen cuando abran cupos en el Club Voley Zúñiga")} target="_blank" rel="noopener noreferrer" className="h-12 px-5 inline-flex items-center gap-2 rounded-md bg-[#25D366] text-[#071426] font-bold">
                   <MessageCircle size={18} /> Avísenme por WhatsApp
                 </a>
-                <Link href="/club/contact" className="h-12 px-5 inline-flex items-center rounded-md border border-white/25 hover:border-white font-semibold">
+                <Link href="/contacto" className="h-12 px-5 inline-flex items-center rounded-md border border-white/25 hover:border-white font-semibold">
                   Ver horarios y sedes
                 </Link>
               </div>

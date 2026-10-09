@@ -8,7 +8,9 @@ import "server-only";
 //   SHEETS_SECRET      mismo valor que SHARED_SECRET en las propiedades del script
 
 export type WritableSheet = "Inscripciones" | "Contacto";
-export type ReadableSheet = "Fixture" | "Tabla" | "Noticias" | "Cancha" | "Horarios" | "Productos" | "Ajustes";
+export type ReadableSheet =
+  | "Fixture" | "Tabla" | "Noticias" | "Cancha" | "Horarios" | "Productos" | "Ajustes"
+  | "Galería" | "Entrenadores" | "Testimonios";
 // Solo para el panel de administración (contienen datos personales; nunca se cachean).
 export type PrivateSheet = "Inscripciones" | "Contacto";
 export type Row = Record<string, string>;
@@ -48,7 +50,7 @@ export async function appendToSheet(sheet: WritableSheet, data: Row): Promise<bo
 }
 
 /**
- * Lee las filas activas de Fixture, Tabla, Noticias o Cancha.
+ * Lee las filas activas de una pestaña pública (Fixture, Tabla, Noticias, Cancha, Galería…).
  * Se cachea en Next (revalidate) para que los visitantes no esperen a Google.
  * Devuelve null si no está configurado o falla, para que la página use un respaldo.
  */

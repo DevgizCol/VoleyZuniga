@@ -3,6 +3,7 @@ import Link from "next/link";
 import { CalendarPlus, CalendarCheck, Clock, MapPin, Navigation, ArrowRight, Camera } from "lucide-react";
 import { siteUrl } from "@/lib/site-url";
 import PageHero from "@/components/PageHero";
+import JsonLd from "@/components/JsonLd";
 import CategoryFilter from "@/components/CategoryFilter";
 import TeamBadge from "@/components/TeamBadge";
 import { getSettings } from "@/lib/content";
@@ -11,6 +12,7 @@ import { bogotaToday, calendarUrl, countdownLabel, dateParts, getMatches, time12
 
 export const metadata: Metadata = {
   title: "Partidos",
+  alternates: { canonical: "/partidos" },
   description: "Calendario de partidos y resultados del Club Voley Zúñiga.",
 };
 
@@ -48,13 +50,13 @@ export default async function GamesPage({ searchParams }: { searchParams: Promis
     homeTeam: { "@type": "SportsTeam", name: m.home },
     awayTeam: { "@type": "SportsTeam", name: m.away },
     organizer: { "@type": "SportsOrganization", name: "Club Voley Zúñiga", url: siteUrl },
-    url: `${siteUrl}/games`,
+    url: `${siteUrl}/partidos`,
   }));
 
   return (
     <>
       {jsonLd.length > 0 && (
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
+        <JsonLd data={jsonLd} />
       )}
       <PageHero
         kicker="Calendario y resultados"
@@ -63,7 +65,7 @@ export default async function GamesPage({ searchParams }: { searchParams: Promis
       >
         <div className="flex flex-wrap gap-3">
           <Link
-            href="/standings"
+            href="/posiciones"
             className="h-12 px-6 inline-flex items-center gap-2 border border-white/25 hover:border-white hover:bg-white/5 font-semibold rounded-md transition-colors"
           >
             Ver posiciones <ArrowRight size={18} />
@@ -83,7 +85,7 @@ export default async function GamesPage({ searchParams }: { searchParams: Promis
       <section className="bg-[#071426] text-white pb-24 sm:pb-32">
         <div className="container mx-auto px-4 sm:px-6">
           <div className="py-6">
-            <CategoryFilter basePath="/games" categories={categories} active={active} />
+            <CategoryFilter basePath="/partidos" categories={categories} active={active} />
           </div>
 
           {next ? <FeaturedMatch m={next} /> : <EmptyUpcoming filtered={Boolean(active)} instagram={contact} />}

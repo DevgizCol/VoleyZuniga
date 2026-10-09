@@ -14,7 +14,7 @@ export default function NotFound() {
           <Link href="/" className="h-14 px-7 inline-flex items-center justify-center gap-2 rounded-md bg-[#F29A2E] hover:bg-[#FFB14A] text-[#071426] font-bold text-lg">
             <ArrowLeft size={20} /> Ir al inicio
           </Link>
-          <Link href="/games" className="h-14 px-7 inline-flex items-center justify-center rounded-md border border-white/25 hover:border-white font-semibold text-lg">
+          <Link href="/partidos" className="h-14 px-7 inline-flex items-center justify-center rounded-md border border-white/25 hover:border-white font-semibold text-lg">
             Ver partidos
           </Link>
         </div>

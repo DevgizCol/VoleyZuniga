@@ -8,6 +8,7 @@ import { getArticles, longDate } from "@/lib/news";
 
 export const metadata: Metadata = {
   title: "Noticias",
+  alternates: { canonical: "/noticias" },
   description: "Crónicas, convocatorias y novedades del Club Voley Zúñiga.",
 };
 
@@ -34,7 +35,7 @@ export default async function NewsPage() {
             </div>
           ) : (
             <>
-              <Link href={`/news/${featured.slug}`} className="group grid lg:grid-cols-2 rounded-2xl overflow-hidden border border-white/10 bg-[#0B1E38] hover:border-[#F29A2E]/50 transition-colors">
+              <Link href={`/noticias/${featured.slug}`} className="group grid lg:grid-cols-2 rounded-2xl overflow-hidden border border-white/10 bg-[#0B1E38] hover:border-[#F29A2E]/50 transition-colors">
                 <div className="relative aspect-[16/10] lg:aspect-auto lg:min-h-[380px]">
                   <ArticleCover image={featured.image} title={featured.title} category={featured.category} large id="featured" />
                 </div>
@@ -50,7 +51,7 @@ export default async function NewsPage() {
                 <ul className="mt-6 grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
                   {rest.map((a) => (
                     <li key={a.slug}>
-                      <Link href={`/news/${a.slug}`} className="group h-full flex flex-col rounded-2xl overflow-hidden border border-white/10 bg-[#0B1E38] hover:border-[#F29A2E]/50 transition-colors">
+                      <Link href={`/noticias/${a.slug}`} className="group h-full flex flex-col rounded-2xl overflow-hidden border border-white/10 bg-[#0B1E38] hover:border-[#F29A2E]/50 transition-colors">
                         <div className="relative aspect-[16/10]">
                           <ArticleCover image={a.image} title={a.title} category={a.category} id={a.slug} />
                         </div>

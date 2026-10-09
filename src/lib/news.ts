@@ -1,6 +1,6 @@
 import "server-only";
 import { readSheet } from "./sheets";
-import { imageUrl } from "./images";
+import { imageUrl, normDate, slugify } from "./sheet-values";
 
 // Noticias de la pestaña "Noticias": Fecha, Título, Categoría, Resumen, Cuerpo, Imagen (URL), Activo.
 
@@ -13,22 +13,6 @@ export type Article = {
   body: string;
   image: string;
 };
-
-const slugify = (s: string) =>
-  s
-    .normalize("NFD")
-    .replace(/[̀-ͯ]/g, "")
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "")
-    .slice(0, 70);
-
-function normDate(raw: string) {
-  const s = (raw || "").trim();
-  if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
-  const m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
-  return m ? `${m[3]}-${m[2].padStart(2, "0")}-${m[1].padStart(2, "0")}` : "";
-}
 
 export async function getArticles(): Promise<Article[]> {
   const rows = (await readSheet("Noticias")) ?? [];

@@ -7,6 +7,7 @@ export const revalidate = 300;
 
 export const metadata: Metadata = {
   title: "Tienda",
+  alternates: { canonical: "/tienda" },
   description: "Camisetas personalizadas, balones y accesorios del Club Voley Zúñiga.",
 };
 

@@ -25,6 +25,8 @@ jobs:
         run: npm run lint
       - name: Tipos
         run: npx tsc --noEmit
+      - name: Pruebas
+        run: npm test
       - name: Compilar
         run: npm run build
         env:

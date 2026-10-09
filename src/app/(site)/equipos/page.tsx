@@ -7,6 +7,7 @@ import { CATEGORIES } from "@/data/registration";
 
 export const metadata: Metadata = {
   title: "Equipos",
+  alternates: { canonical: "/equipos" },
   description: "Las cinco categorías del Club Voley Zúñiga: edades, horarios y enfoque de entrenamiento.",
 };
 
@@ -71,7 +72,7 @@ export default function TeamPage() {
                       <p className="flex gap-3"><Clock size={18} className="text-[#8FA3BF] shrink-0 mt-0.5" /><span>{c.horario}</span></p>
                       <p className="flex gap-3"><MapPin size={18} className="text-[#8FA3BF] shrink-0 mt-0.5" /><span>{c.sede}</span></p>
                     </div>
-                    <Link href="/registrations" className="mt-5 lg:mt-auto self-start h-12 px-5 inline-flex items-center gap-2 rounded-md bg-[#F29A2E] hover:bg-[#FFB14A] text-[#071426] font-bold">
+                    <Link href="/inscripciones" className="mt-5 lg:mt-auto self-start h-12 px-5 inline-flex items-center gap-2 rounded-md bg-[#F29A2E] hover:bg-[#FFB14A] text-[#071426] font-bold">
                       Inscribirme en {nameOf(c.value)} <ArrowRight size={18} />
                     </Link>
                   </div>
