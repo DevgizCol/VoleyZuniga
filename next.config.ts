@@ -5,10 +5,6 @@ const nextConfig: NextConfig = {
   experimental: {
     optimizePackageImports: [
       "lucide-react",
-      "framer-motion",
-      "three",
-      "@react-three/fiber",
-      "@react-three/drei",
     ],
   },
   images: {

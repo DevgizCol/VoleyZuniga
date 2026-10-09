@@ -30,9 +30,9 @@ export default function CourtStatusBanner() {
     }
   }, []);
 
-  if (!status.active || dismissed) return null;
-
   const isAlert = status.type === "rain" || status.type === "special";
+  // Solo se muestra cuando hay un aviso real (lluvia o novedad); en días normales no ocupa espacio.
+  if (!status.active || dismissed || !isAlert) return null;
 
   return (
     <aside

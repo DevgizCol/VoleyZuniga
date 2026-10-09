@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import PageHero from "@/components/PageHero";
 
 export const metadata: Metadata = {
   title: "Política de tratamiento de datos personales",
@@ -73,25 +74,27 @@ const sections: { title: string; body: React.ReactNode }[] = [
 
 export default function PrivacyPage() {
   return (
-    <div className="pt-28 pb-24 bg-[#071426] min-h-screen text-white">
-      <div className="container mx-auto px-6 max-w-3xl">
-        <span className="text-[#F29A2E] font-mono text-xs uppercase font-bold tracking-widest block mb-3">
-          Documento institucional
-        </span>
-        <h1 className="text-3xl md:text-5xl font-heading font-bold uppercase text-white mb-3">
-          Política de tratamiento de datos personales
-        </h1>
-        <p className="text-sm text-gray-400 font-sans mb-10">Última actualización: 8 de octubre de 2026.</p>
-
-        <div className="space-y-8 font-sans text-sm md:text-base text-gray-300 leading-relaxed">
-          {sections.map((s) => (
-            <section key={s.title}>
-              <h2 className="text-lg font-heading font-bold uppercase text-white mb-2">{s.title}</h2>
-              {s.body}
-            </section>
-          ))}
+    <>
+      <PageHero kicker="Ley 1581 de 2012" title="Tus datos" intro="Cómo recogemos, usamos y protegemos los datos de deportistas, padres y acudientes. Última actualización: 8 de octubre de 2026." />
+      <section className="bg-[#071426] text-white pb-24">
+        <div className="container mx-auto px-4 sm:px-6 grid lg:grid-cols-12 gap-10">
+          <nav aria-label="Secciones" className="hidden lg:block lg:col-span-3">
+            <ul className="sticky top-32 space-y-2 text-sm text-[#8FA3BF]">
+              {sections.map((s, i) => (
+                <li key={s.title}><a href={`#s${i}`} className="hover:text-white">{s.title}</a></li>
+              ))}
+            </ul>
+          </nav>
+          <div className="lg:col-span-8 space-y-10 text-lg text-[#C9D5E6] leading-relaxed max-w-3xl">
+            {sections.map((s, i) => (
+              <section key={s.title} id={`s${i}`} className="scroll-mt-32">
+                <h2 className="font-heading font-black uppercase text-3xl text-white mb-3">{s.title}</h2>
+                {s.body}
+              </section>
+            ))}
+          </div>
         </div>
-      </div>
-    </div>
+      </section>
+    </>
   );
 }

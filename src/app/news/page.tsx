@@ -1,345 +1,73 @@
-"use client";
-
-import React, { useState } from "react";
-import Image from "next/image";
+import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, Calendar, Share2, MessageCircle, Sparkles, Check, X, BookOpen } from "lucide-react";
+import { ArrowRight, Camera } from "lucide-react";
+import PageHero from "@/components/PageHero";
+import ArticleCover from "@/components/ArticleCover";
+import { SITE } from "@/config/site";
+import { getArticles, longDate } from "@/lib/news";
 
-interface Article {
-  id: number;
-  title: string;
-  category: "Crónicas de Partidos" | "Convocatorias Selección" | "Nutrición & Rendimiento" | "Vida en el Club";
-  date: string;
-  readTime: string;
-  image: string;
-  gallery?: string[];
-  excerpt: string;
-  fullBody: string;
-  author: string;
-}
+export const metadata: Metadata = {
+  title: "Noticias",
+  description: "Crónicas, convocatorias y novedades del Club Voley Zúñiga.",
+};
 
-export default function NewsPage() {
-  const [copiedId, setCopiedId] = useState<number | null>(null);
-  const [selectedCategory, setSelectedCategory] = useState<string>("Todas");
-  const [readingArticle, setReadingArticle] = useState<Article | null>(null);
+export const revalidate = 300;
 
-  const allArticles: Article[] = [
-    {
-      id: 1,
-      title: "Club Voley Zúñiga se Corona Campeón Departamental Sub-18 en el Yesid Santos",
-      category: "Crónicas de Partidos",
-      date: "02 Septiembre 2026",
-      readTime: "4 min de lectura",
-      image: "https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?q=80&w=1200&auto=format&fit=crop",
-      gallery: [
-        "https://images.unsplash.com/photo-1581655353564-df123a1eb820?q=80&w=600&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1612872087720-bb876e2e67d1?q=80&w=600&auto=format&fit=crop"
-      ],
-      excerpt: "En un emocionante desempate a 5 sets frente a Envigado VC, nuestras atletas demostraron temple y disciplina táctica para levantar el trofeo más codiciado del voleibol juvenil antioqueño.",
-      fullBody: "Con gradas repletas de familiares y aficionados, el Coliseo Yesid Santos fue testigo de una de las finales más disputadas de la Liga Departamental. Tras perder el primer set 22-25, el equipo dirigido por el DT Alberto Zúñiga ajustó el bloqueo central con Manuela Restrepo y explotó la paralela con Valentina Morales. En el tie-break decisivo (15-11), tres saques flotantes consecutivos sellaron la victoria dorada para nuestro club.",
-      author: "Comité de Prensa Zúñiga"
-    },
-    {
-      id: 2,
-      title: "Tres Atletas de Zúñiga Convocadas a la Preselección Antioquia 2026",
-      category: "Convocatorias Selección",
-      date: "28 Agosto 2026",
-      readTime: "2 min de lectura",
-      image: "https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?q=80&w=800&auto=format&fit=crop",
-      excerpt: "Mariana Restrepo, Valeria Gómez y Sofía Arango iniciarán concentración oficial en el Coliseo Mayor con miras al Campeonato Nacional Interligas.",
-      fullBody: "La Liga Antioqueña de Voleibol oficializó la lista de 18 preseleccionadas departamentales rumbo al Nacional Interligas en Cali. Nos enorgullece anunciar que tres de nuestras formadas en el semillero vestirán los colores del departamento: Mariana Restrepo (Opuesta), Valeria Gómez (Líbero) y Sofía Arango (Armadora).",
-      author: "Coordinación Deportiva"
-    },
-    {
-      id: 3,
-      title: "Apertura de Nuevos Horarios en el Polideportivo 3 Canchas",
-      category: "Vida en el Club",
-      date: "15 Agosto 2026",
-      readTime: "2 min de lectura",
-      image: "https://images.unsplash.com/photo-1612872087720-bb876e2e67d1?q=80&w=800&auto=format&fit=crop",
-      excerpt: "Para responder a la alta demanda de matrículas, habilitamos grupos vespertinos de iniciación para niñas y niños de 8 a 13 años con entrenadores avalados.",
-      fullBody: "El Club Voley Zúñiga continúa expandiendo su impacto en la comuna 9 y Belén. A partir de septiembre, abrimos 40 nuevos cupos formativos en horarios de 4:00 PM a 6:00 PM los martes y jueves, dotados de material Mikasa oficial y entrenadores con licencia FIVB Nivel 1.",
-      author: "Administración Sede"
-    },
-    {
-      id: 4,
-      title: "Claves de la Pliometría en el Voleibol Moderno: Cómo Aumentar tu Salto",
-      category: "Nutrición & Rendimiento",
-      date: "05 Agosto 2026",
-      readTime: "4 min de lectura",
-      image: "https://images.unsplash.com/photo-1581655353564-df123a1eb820?q=80&w=800&auto=format&fit=crop",
-      excerpt: "El preparador físico del club explica los ejercicios biomecánicos que permitieron a nuestro equipo promediar un incremento de 12 cm de suspensión esta temporada.",
-      fullBody: "El salto vertical en voleibol no depende únicamente de la fuerza bruta de las piernas, sino de la velocidad del ciclo de estiramiento-acortamiento (CEA). En este artículo, el PF Felipe Durango desglosa cómo los saltos de caja (Depth Jumps) combinados con una ingesta balanceada de creatina y descanso activo optimizan la reactividad en la red.",
-      author: "Felipe Durango (Preparador Físico)"
-    }
-  ];
-
-  const categories = ["Todas", "Crónicas de Partidos", "Convocatorias Selección", "Nutrición & Rendimiento", "Vida en el Club"];
-
-  const filteredArticles = selectedCategory === "Todas"
-    ? allArticles
-    : allArticles.filter(a => a.category === selectedCategory);
-
-  const featuredArticle = allArticles[0];
-
-  const handleShareWhatsApp = (title: string) => {
-    const url = typeof window !== "undefined" ? window.location.href : "";
-    const text = `📰 *${title}*\n\nLee la crónica completa en el portal oficial de Voley Zúñiga:\n${url}`;
-    window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank");
-  };
-
-  const handleCopyLink = (id: number) => {
-    if (typeof window !== "undefined") {
-      navigator.clipboard.writeText(window.location.href);
-      setCopiedId(id);
-      setTimeout(() => setCopiedId(null), 2000);
-    }
-  };
+export default async function NewsPage() {
+  const articles = await getArticles();
+  const [featured, ...rest] = articles;
 
   return (
-    <div className="pt-28 pb-24 bg-[#071426] min-h-screen text-white">
-      <div className="container mx-auto px-6">
-        
-        {/* Header */}
-        <div className="max-w-3xl mb-12">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#F29A2E]/10 border border-[#F29A2E]/20 text-[#F29A2E] text-xs uppercase tracking-widest font-bold mb-6">
-            <Sparkles size={14} />
-            <span>Prensa & Cobertura Deportiva</span>
-          </div>
-          <h1 className="text-4xl md:text-6xl font-heading font-bold uppercase tracking-tight text-white mb-6">
-            Noticias y <span className="text-[#F29A2E]">Actualidad</span>
-          </h1>
-          <p className="text-gray-300 text-lg md:text-xl font-sans leading-relaxed">
-            Crónicas de partidos, convocatorias departamentales y eventos de la comunidad Voley Zúñiga.
-          </p>
-        </div>
-
-        {/* 1. Filtros por Temas */}
-        <div className="flex flex-wrap gap-2 mb-12">
-          {categories.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setSelectedCategory(cat)}
-              className={`py-2 px-4 rounded-xl font-bold text-xs uppercase tracking-wider transition-all cursor-pointer ${
-                selectedCategory === cat
-                  ? "bg-[#F29A2E] text-[#071426] shadow-md"
-                  : "bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white"
-              }`}
-            >
-              {cat}
-            </button>
-          ))}
-        </div>
-
-        {/* 2. Featured Article (Revista Editorial) */}
-        {selectedCategory === "Todas" && (
-          <div className="mb-20 rounded-3xl overflow-hidden bg-gradient-to-t from-[#040C18] via-[#0B1E38] to-[#071426] border border-white/10 shadow-2xl relative group">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-              
-              {/* Foto Editorial (Col 7) */}
-              <div className="lg:col-span-7 relative h-80 lg:h-[480px] w-full overflow-hidden">
-                <Image
-                  src={featuredArticle.image}
-                  alt={featuredArticle.title}
-                  fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-700"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#040C18] via-[#040C18]/40 to-transparent lg:hidden" />
-                <div className="absolute top-6 left-6 px-3.5 py-1.5 rounded-full bg-[#F29A2E] text-[#071426] font-mono text-xs font-bold uppercase tracking-wider shadow-lg">
-                  {featuredArticle.category}
-                </div>
+    <>
+      <PageHero kicker="Novedades del club" title="Noticias" intro="Crónicas de partidos, convocatorias y lo que pasa en el club." />
+      <section className="bg-[#071426] text-white pb-24 sm:pb-32">
+        <div className="container mx-auto px-4 sm:px-6">
+          {!featured ? (
+            <div className="rounded-2xl border border-white/10 bg-gradient-to-br from-[#0F2347] to-[#071426] p-8 sm:p-12 grid md:grid-cols-[1fr_auto] gap-8 items-center">
+              <div>
+                <h2 className="font-heading font-black uppercase text-4xl sm:text-5xl leading-none">Pronto, las primeras noticias</h2>
+                <p className="mt-4 text-[#C9D5E6] text-lg max-w-xl">Mientras preparamos las crónicas, el día a día del club se publica en Instagram.</p>
               </div>
-
-              {/* Texto y Contenido (Col 5) */}
-              <div className="lg:col-span-5 p-8 lg:pr-12 flex flex-col justify-between">
-                <div>
-                  <div className="flex items-center gap-4 text-xs font-mono text-gray-400 mb-4">
-                    <span className="flex items-center gap-1.5">
-                      <Calendar size={14} className="text-[#F29A2E]" />
-                      {featuredArticle.date}
-                    </span>
-                    <span>•</span>
-                    <span>{featuredArticle.readTime}</span>
-                  </div>
-
-                  <h2 className="text-2xl md:text-3xl lg:text-4xl font-heading font-bold uppercase text-white mb-4 leading-tight group-hover:text-[#F29A2E] transition-colors">
-                    {featuredArticle.title}
-                  </h2>
-
-                  <p className="text-gray-300 font-sans text-sm md:text-base leading-relaxed mb-6">
-                    {featuredArticle.excerpt}
-                  </p>
-
-                  <button
-                    onClick={() => setReadingArticle(featuredArticle)}
-                    className="inline-flex items-center gap-2 text-xs font-mono font-bold uppercase tracking-wider text-[#F29A2E] hover:underline mb-6 cursor-pointer"
-                  >
-                    <BookOpen size={15} />
-                    <span>Leer Crónica Completa & Galería</span>
-                    <ArrowRight size={14} />
-                  </button>
-                </div>
-
-                {/* Botones de Compartir */}
-                <div className="flex items-center gap-3 pt-6 border-t border-white/10">
-                  <button
-                    onClick={() => handleShareWhatsApp(featuredArticle.title)}
-                    className="flex items-center gap-2 px-5 py-3 rounded-xl bg-[#25D366] hover:bg-[#20ba59] text-[#071426] font-bold text-xs uppercase tracking-wider transition-all shadow-md active:scale-95 cursor-pointer"
-                  >
-                    <MessageCircle size={16} />
-                    <span>Compartir en WhatsApp</span>
-                  </button>
-                  <button
-                    onClick={() => handleCopyLink(featuredArticle.id)}
-                    className="flex items-center gap-2 px-4 py-3 rounded-xl bg-white/5 hover:bg-white/10 text-white font-bold text-xs uppercase tracking-wider border border-white/10 transition-colors cursor-pointer"
-                  >
-                    {copiedId === featuredArticle.id ? <Check size={16} className="text-green-400" /> : <Share2 size={16} />}
-                    <span>{copiedId === featuredArticle.id ? "¡Copiado!" : "Copiar Enlace"}</span>
-                  </button>
-                </div>
-              </div>
-
+              <a href={SITE.instagram.url} target="_blank" rel="noopener noreferrer" className="h-12 px-6 inline-flex items-center gap-2 bg-[#F29A2E] hover:bg-[#FFB14A] text-[#071426] font-bold rounded-md">
+                <Camera size={18} /> Seguir {SITE.instagram.handle}
+              </a>
             </div>
-          </div>
-        )}
-
-        {/* 3. Grid de Artículos */}
-        <div className="mb-20">
-          <h3 className="text-2xl md:text-3xl font-heading font-bold uppercase text-white mb-8">
-            {selectedCategory === "Todas" ? "Más Novedades del Club" : `Noticias de: ${selectedCategory}`}
-          </h3>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {filteredArticles.map((item) => (
-              <article 
-                key={item.id} 
-                className="rounded-3xl bg-[#0B1E38] border border-white/10 overflow-hidden shadow-xl hover:border-[#F29A2E]/40 transition-all duration-300 flex flex-col justify-between group"
-              >
-                <div>
-                  <div className="relative h-56 w-full overflow-hidden">
-                    <Image 
-                      src={item.image} 
-                      alt={item.title}
-                      fill
-                      className="object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                    <div className="absolute top-4 left-4 px-3 py-1 rounded-full bg-[#071426]/80 backdrop-blur-md border border-white/10 text-[#F29A2E] font-mono text-[10px] font-bold uppercase">
-                      {item.category}
-                    </div>
-                  </div>
-
-                  <div className="p-6">
-                    <div className="flex items-center gap-2 text-[11px] font-mono text-gray-400 mb-3">
-                      <Calendar size={13} className="text-[#F29A2E]" />
-                      <span>{item.date}</span>
-                      <span>•</span>
-                      <span>{item.readTime}</span>
-                    </div>
-
-                    <h4 
-                      onClick={() => setReadingArticle(item)}
-                      className="font-heading font-bold text-xl uppercase text-white mb-3 group-hover:text-[#F29A2E] transition-colors line-clamp-2 cursor-pointer"
-                    >
-                      {item.title}
-                    </h4>
-
-                    <p className="text-xs text-gray-300 font-sans leading-relaxed line-clamp-3 mb-4">
-                      {item.excerpt}
-                    </p>
-
-                    <button
-                      onClick={() => setReadingArticle(item)}
-                      className="inline-flex items-center gap-1.5 text-xs text-[#F29A2E] hover:underline font-bold uppercase tracking-wider cursor-pointer"
-                    >
-                      <span>Leer artículo</span>
-                      <ArrowRight size={13} />
-                    </button>
-                  </div>
+          ) : (
+            <>
+              <Link href={`/news/${featured.slug}`} className="group grid lg:grid-cols-2 rounded-2xl overflow-hidden border border-white/10 bg-[#0B1E38] hover:border-[#F29A2E]/50 transition-colors">
+                <div className="relative aspect-[16/10] lg:aspect-auto lg:min-h-[380px]">
+                  <ArticleCover image={featured.image} title={featured.title} category={featured.category} large id="featured" />
                 </div>
-
-                <div className="p-6 pt-0 flex items-center justify-between border-t border-white/5 mt-4">
-                  <button
-                    onClick={() => handleShareWhatsApp(item.title)}
-                    className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#25D366] hover:underline cursor-pointer"
-                  >
-                    <MessageCircle size={14} />
-                    <span>Compartir</span>
-                  </button>
-                  <button
-                    onClick={() => handleCopyLink(item.id)}
-                    className="text-gray-400 hover:text-white transition-colors cursor-pointer"
-                    title="Copiar enlace"
-                  >
-                    {copiedId === item.id ? <Check size={16} className="text-green-400" /> : <Share2 size={16} />}
-                  </button>
+                <div className="p-7 sm:p-10 flex flex-col">
+                  <p className="text-sm font-semibold text-[#F29A2E]">{featured.category} · {longDate(featured.date)}</p>
+                  <h2 className="font-heading font-black uppercase text-4xl sm:text-5xl leading-[0.95] mt-3 group-hover:text-[#FFB14A] transition-colors">{featured.title}</h2>
+                  <p className="mt-4 text-[#C9D5E6] text-lg leading-relaxed">{featured.summary}</p>
+                  <span className="mt-auto pt-8 inline-flex items-center gap-2 font-semibold text-[#F29A2E]">Leer noticia <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" /></span>
                 </div>
-              </article>
-            ))}
-          </div>
-        </div>
+              </Link>
 
-        {/* MODAL DE LECTURA COMPLETA DE ARTÍCULO */}
-        {readingArticle && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-fade-in">
-            <div className="relative w-full max-w-3xl max-h-[90vh] rounded-3xl bg-[#0B1E38] border-2 border-[#F29A2E]/50 p-6 md:p-10 shadow-2xl overflow-y-auto">
-              
-              <button
-                onClick={() => setReadingArticle(null)}
-                className="absolute top-6 right-6 p-2 rounded-full bg-white/10 hover:bg-white text-white hover:text-[#071426] transition-colors cursor-pointer"
-              >
-                <X size={20} />
-              </button>
-
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#F29A2E]/20 text-[#F29A2E] text-[10px] font-mono uppercase font-bold mb-3">
-                {readingArticle.category}
-              </div>
-
-              <h2 className="text-2xl md:text-4xl font-heading font-bold uppercase text-white mb-4 leading-tight">
-                {readingArticle.title}
-              </h2>
-
-              <div className="flex items-center gap-4 text-xs font-mono text-gray-400 mb-6 border-b border-white/10 pb-4">
-                <span>Por: <strong className="text-white">{readingArticle.author}</strong></span>
-                <span>•</span>
-                <span>{readingArticle.date}</span>
-                <span>•</span>
-                <span>{readingArticle.readTime}</span>
-              </div>
-
-              {/* Imagen Principal */}
-              <div className="relative h-64 md:h-80 w-full rounded-2xl overflow-hidden mb-6">
-                <Image src={readingArticle.image} alt={readingArticle.title} fill className="object-cover" />
-              </div>
-
-              {/* Cuerpo del Artículo */}
-              <div className="space-y-4 text-gray-200 font-sans text-sm md:text-base leading-relaxed mb-8">
-                <p className="font-bold text-white text-base md:text-lg">
-                  {readingArticle.excerpt}
-                </p>
-                <p>
-                  {readingArticle.fullBody}
-                </p>
-              </div>
-
-              {/* Galería Adicional */}
-              {readingArticle.gallery && readingArticle.gallery.length > 0 && (
-                <div className="mb-8">
-                  <h4 className="text-sm font-mono uppercase text-[#F29A2E] font-bold mb-3">Fotografías del Encuentro</h4>
-                  <div className="grid grid-cols-2 gap-4">
-                    {readingArticle.gallery.map((img, idx) => (
-                      <div key={idx} className="relative h-40 rounded-xl overflow-hidden">
-                        <Image src={img} alt={`Foto ${idx + 1}`} fill className="object-cover" />
-                      </div>
-                    ))}
-                  </div>
-                </div>
+              {rest.length > 0 && (
+                <ul className="mt-6 grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                  {rest.map((a) => (
+                    <li key={a.slug}>
+                      <Link href={`/news/${a.slug}`} className="group h-full flex flex-col rounded-2xl overflow-hidden border border-white/10 bg-[#0B1E38] hover:border-[#F29A2E]/50 transition-colors">
+                        <div className="relative aspect-[16/10]">
+                          <ArticleCover image={a.image} title={a.title} category={a.category} id={a.slug} />
+                        </div>
+                        <div className="p-6 flex flex-col flex-1">
+                          <p className="text-sm font-semibold text-[#F29A2E]">{a.category} · {longDate(a.date)}</p>
+                          <h3 className="font-heading font-extrabold text-2xl leading-tight mt-2 group-hover:text-[#FFB14A] transition-colors">{a.title}</h3>
+                          <p className="mt-2 text-[#B7C4D8] line-clamp-3">{a.summary}</p>
+                        </div>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
               )}
-
-            </div>
-          </div>
-        )}
-
-      </div>
-    </div>
+            </>
+          )}
+        </div>
+      </section>
+    </>
   );
 }

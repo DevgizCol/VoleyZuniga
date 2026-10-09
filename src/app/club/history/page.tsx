@@ -1,234 +1,88 @@
-import React from "react";
-import Image from "next/image";
+import type { Metadata } from "next";
 import Link from "next/link";
-import { Trophy, Award, Target, Flame, ChevronRight, Sparkles, Compass } from "lucide-react";
+import Image from "next/image";
+import { ArrowRight } from "lucide-react";
+import PageHero from "@/components/PageHero";
+
+export const metadata: Metadata = {
+  title: "El club",
+  description: "Quiénes somos, qué nos mueve y el camino que recorre cada deportista del Club Voley Zúñiga.",
+};
+
+const PATH = [
+  { title: "Semillero", age: "7 a 11 años", text: "Psicomotricidad, control del balón y disciplina básica, aprendidos jugando." },
+  { title: "Desarrollo", age: "12 a 14 años", text: "Fundamentos completos, primeros sistemas de juego y salto con técnica segura." },
+  { title: "Competencia", age: "15 a 18 años", text: "Liga de Antioquia y festivales: resiliencia, decisiones bajo presión y liderazgo." },
+  { title: "Proyección", age: "Mayores y egresados", text: "Acompañamos a quienes buscan becas deportivas y mantenemos viva la red de egresados." },
+];
+
+const VALUES = [
+  { title: "Puntualidad", text: "Llegar a tiempo es la primera forma de respeto por el equipo." },
+  { title: "Resiliencia", text: "Un error se olvida en el siguiente punto. Una derrota se estudia y se supera." },
+  { title: "Humildad", text: "Se gana con la cabeza en alto y los pies en la tierra." },
+  { title: "Respeto", text: "Por compañeros, rivales, árbitros y familias. Sin excepciones." },
+];
 
 export default function HistoryPage() {
-  const stages = [
-    {
-      step: "01",
-      title: "Semillero de Iniciación",
-      age: "8 a 11 Años",
-      focus: "Psicomotricidad, Control Óculo-Manual & Disciplina Básica",
-      desc: "El primer contacto con el balón. Priorizamos la diversión técnica, la postura corporal, el compañerismo y el amor incondicional por la disciplina deportiva.",
-      badge: "Formación Temprana"
-    },
-    {
-      step: "02",
-      title: "Desarrollo Táctico & Fuerza",
-      age: "12 a 14 Años",
-      focus: "Biomecánica de Salto, Batida de Remate & Lectura de Bloqueo",
-      desc: "Introducción a los sistemas de juego 5-1 y 4-2. Entrenamiento pliométrico seguro para aumentar la suspensión vertical y perfeccionar la precisión en el saque.",
-      badge: "Especialización"
-    },
-    {
-      step: "03",
-      title: "Alta Competencia Departamental",
-      age: "15 a 18 Años",
-      focus: "Liga Antioqueña de Voleibol & Festivales Nacionales",
-      desc: "Nuestros equipos compiten al más alto nivel competitivo en los coliseos de Medellín y el país. Enfoque en resiliencia mental, toma de decisiones bajo presión y liderazgo en cancha.",
-      badge: "Competencia Élite"
-    },
-    {
-      step: "04",
-      title: "Proyección & Becas Deportivas",
-      age: "Mayores / Egresados",
-      focus: "Becas Universitarias & Selección Departamental",
-      desc: "Acompañamos a nuestros atletas destacados para postularse a becas deportivas universitarias en Colombia y el exterior, manteniendo viva la red de egresados de la familia Zúñiga.",
-      badge: "Futuro & Éxito"
-    }
-  ];
-
   return (
-    <div className="pt-28 pb-20 bg-[#071426] min-h-screen text-white">
-      {/* 1. Header Hero */}
-      <div className="container mx-auto px-6 mb-20">
-        <div className="max-w-3xl">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#F29A2E]/10 border border-[#F29A2E]/20 text-[#F29A2E] text-xs uppercase tracking-widest font-bold mb-6">
-            <Compass size={14} />
-            <span>Nuestra Trayectoria & Filosofía</span>
-          </div>
-          <h1 className="text-4xl md:text-6xl font-heading font-bold uppercase tracking-tight text-white mb-6">
-            Una Década Forjando <span className="text-[#F29A2E]">Campeones</span> en Medellín
-          </h1>
-          <p className="text-gray-300 text-lg md:text-xl font-sans leading-relaxed">
-            El Club Deportivo Voley Zúñiga nació con una convicción inquebrantable: el voleibol es la herramienta más poderosa para forjar jóvenes disciplinados, competitivos y con valores a prueba de fuego.
-          </p>
-        </div>
-      </div>
+    <>
+      <PageHero kicker="Quiénes somos" title="El club" intro="Nacimos con una convicción: el voleibol es una de las mejores herramientas para formar jóvenes disciplinados, competitivos y con valores." />
 
-      {/* 2. Path to Glory (Timeline Inmersivo) */}
-      <section className="py-16 bg-[#0B1E38]/50 border-y border-white/5 relative">
-        <div className="container mx-auto px-6">
-          <div className="text-center max-w-2xl mx-auto mb-20">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 text-[#F29A2E] text-xs font-mono uppercase tracking-widest mb-3">
-              <Sparkles size={14} />
-              <span>Metodología Progresiva</span>
-            </div>
-            <h2 className="text-3xl md:text-5xl font-heading font-bold uppercase text-white mb-4">
-              Path to Glory: El Camino del Atleta
-            </h2>
-            <p className="text-gray-400 font-sans text-base">
-              Así es como acompañamos el crecimiento atlético y humano de cada deportista desde que pisa la cancha por primera vez.
+      <section className="bg-[#071426] text-white pb-20 sm:pb-28">
+        <div className="container mx-auto px-4 sm:px-6 grid lg:grid-cols-12 gap-10 items-center">
+          <div className="lg:col-span-7">
+            <p className="font-heading font-black uppercase text-5xl sm:text-7xl leading-[0.9]">
+              No formamos jugadores, <span className="text-[#F29A2E]">formamos campeones.</span>
+            </p>
+            <p className="mt-6 text-lg text-[#C9D5E6] max-w-2xl leading-relaxed">
+              Para nosotros un campeón no es solo quien levanta un trofeo. Es quien llega puntual, se levanta después de un mal set, apoya al compañero
+              y saca adelante el colegio. Eso es lo que entrenamos, dentro y fuera de la cancha.
             </p>
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 relative">
-            {stages.map((stage, idx) => (
-              <div 
-                key={idx}
-                className="relative p-8 rounded-3xl bg-[#071426] border border-white/10 hover:border-[#F29A2E]/50 transition-all duration-300 group flex flex-col justify-between shadow-xl"
-              >
-                <div>
-                  <div className="flex items-center justify-between mb-6">
-                    <span className="text-4xl font-heading font-bold text-white/20 group-hover:text-[#F29A2E] transition-colors">
-                      {stage.step}
-                    </span>
-                    <span className="px-3 py-1 rounded-full bg-white/5 text-[11px] font-bold tracking-wider uppercase text-gray-300">
-                      {stage.age}
-                    </span>
-                  </div>
-                  <div className="inline-block px-2.5 py-1 rounded-md bg-[#F29A2E]/10 text-[#F29A2E] text-[10px] font-bold uppercase tracking-wider mb-3">
-                    {stage.badge}
-                  </div>
-                  <h3 className="text-2xl font-heading font-bold uppercase text-white mb-3 group-hover:text-[#F29A2E] transition-colors">
-                    {stage.title}
-                  </h3>
-                  <p className="text-xs font-bold uppercase tracking-wider text-gray-300 mb-4">
-                    {stage.focus}
-                  </p>
-                  <p className="text-gray-400 font-sans text-sm leading-relaxed">
-                    {stage.desc}
-                  </p>
-                </div>
-              </div>
-            ))}
+          <div className="lg:col-span-5 flex justify-center">
+            <div className="relative w-full max-w-sm aspect-square rounded-full border border-[#F29A2E]/30 flex items-center justify-center bg-[radial-gradient(circle,rgba(242,154,46,0.15),transparent_65%)]">
+              <div className="absolute inset-6 rounded-full border border-white/10" />
+              <Image src="/logo-trim.png" alt="Escudo del Club Voley Zúñiga" width={800} height={473} className="w-3/4 h-auto" />
+            </div>
           </div>
         </div>
       </section>
 
-      {/* 3. Valores Inquebrantables */}
-      <section className="py-24 container mx-auto px-6">
-        <div className="text-center max-w-xl mx-auto mb-16">
-          <h2 className="text-3xl md:text-4xl font-heading font-bold uppercase text-white mb-4">
-            Nuestros Cuatro Pilares Éticos
-          </h2>
-          <p className="text-gray-400 text-sm md:text-base font-sans">
-            La técnica se entrena con repetición; el carácter se forja con valores.
-          </p>
+      <section className="bg-[#EEF2F7] text-[#0F2347] py-20 sm:py-28">
+        <div className="container mx-auto px-4 sm:px-6">
+          <h2 className="font-heading font-black uppercase text-5xl sm:text-6xl leading-none mb-12">El camino del deportista</h2>
+          <ol className="relative grid md:grid-cols-4 gap-8">
+            <div className="hidden md:block absolute top-6 left-0 right-0 h-0.5 bg-[#0F2347]/15" aria-hidden="true" />
+            {PATH.map((s, i) => (
+              <li key={s.title} className="relative">
+                <span className="relative z-10 w-12 h-12 rounded-full bg-[#0F2347] text-[#F29A2E] font-heading font-black text-xl flex items-center justify-center">{i + 1}</span>
+                <h3 className="font-heading font-black uppercase text-3xl mt-5">{s.title}</h3>
+                <p className="font-semibold text-[#C46F0A]">{s.age}</p>
+                <p className="mt-2 text-[#44546F] leading-relaxed">{s.text}</p>
+              </li>
+            ))}
+          </ol>
         </div>
+      </section>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <PillarCard 
-            icon={<Trophy size={32} className="text-[#F29A2E]" />}
-            title="Excelencia"
-            desc="Exigimos el 100% de compromiso tanto en una práctica de lunes como en la final de un campeonato."
-          />
-          <PillarCard 
-            icon={<Target size={32} className="text-[#F29A2E]" />}
-            title="Disciplina"
-            desc="Puntualidad rigurosa, respeto al uniforme y constancia. El talento sin disciplina no llega a la meta."
-          />
-          <PillarCard 
-            icon={<Award size={32} className="text-[#F29A2E]" />}
-            title="Humildad"
-            desc="Celebramos la victoria con respeto hacia el rival y asumimos la derrota como el maestro más valioso."
-          />
-          <PillarCard 
-            icon={<Flame size={32} className="text-[#F29A2E]" />}
-            title="Identidad Zúñiga"
-            desc="Pasión innegociable por la camiseta. En cada bloqueo y cada remate se deja el corazón en la cancha."
-          />
-        </div>
-
-        {/* 4. Vitrina Virtual de Trofeos (2021 a 2026) */}
-        <div className="mt-28">
-          <div className="text-center max-w-2xl mx-auto mb-16">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#F29A2E]/10 text-[#F29A2E] text-xs font-mono uppercase tracking-widest mb-3">
-              <Trophy size={14} />
-              <span>Palmarés Institucional</span>
-            </div>
-            <h2 className="text-3xl md:text-5xl font-heading font-bold uppercase text-white mb-4">
-              Vitrina Virtual de <span className="text-[#F29A2E]">Trofeos</span>
-            </h2>
-            <p className="text-gray-400 font-sans text-base">
-              Nuestros podios y consagraciones oficiales en los coliseos de Antioquia y Colombia.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[
-              { year: "2026", title: "Campeonas Liga Departamental", cat: "Sub-18 Femenina", venue: "Coliseo Yesid Santos", medal: "Oro" },
-              { year: "2025", title: "Oro Torneo Nacional Interclubes", cat: "Sub-16 Femenina", venue: "Cali / Medellín", medal: "Oro" },
-              { year: "2024", title: "Copa Medellín Metropolitana", cat: "Sub-14 Infantil", venue: "Polideportivo 3 Canchas", medal: "Oro" },
-              { year: "2023", title: "Subcampeón Departamental", cat: "Sub-18 Juvenil", venue: "Coliseo Yesid Santos", medal: "Plata" },
-              { year: "2022", title: "Festival Valle de Aburrá", cat: "Sub-12 Semillero", venue: "Envigado VC", medal: "Oro" },
-              { year: "2021", title: "Primer Título Municipal Interbarrial", cat: "Menores Libre", venue: "Buenos Aires", medal: "Oro" }
-            ].map((trophy, i) => (
-              <div 
-                key={i} 
-                className="p-8 rounded-3xl bg-gradient-to-br from-[#0B1E38] to-[#071426] border border-white/10 hover:border-[#F29A2E]/50 transition-all duration-300 shadow-xl group relative overflow-hidden"
-              >
-                <div className="absolute top-0 right-0 w-32 h-32 bg-[#F29A2E]/10 rounded-full blur-2xl pointer-events-none group-hover:scale-150 transition-transform duration-500" />
-                <div className="flex items-center justify-between mb-4">
-                  <span className="font-heading font-bold text-3xl text-[#F29A2E]">
-                    {trophy.year}
-                  </span>
-                  <span className="px-3 py-1 rounded-full bg-[#F29A2E]/20 text-[#F29A2E] text-xs font-mono font-bold uppercase tracking-wider">
-                    Medalla de {trophy.medal}
-                  </span>
-                </div>
-                <h4 className="font-heading font-bold text-xl uppercase text-white mb-2 group-hover:text-[#F29A2E] transition-colors">
-                  {trophy.title}
-                </h4>
-                <p className="text-xs font-mono uppercase tracking-wider text-gray-300 mb-1">
-                  Categoría: {trophy.cat}
-                </p>
-                <p className="text-xs text-gray-500 font-sans">
-                  Sede: {trophy.venue}
-                </p>
+      <section className="bg-[#071426] text-white py-20 sm:py-28">
+        <div className="container mx-auto px-4 sm:px-6">
+          <h2 className="font-heading font-black uppercase text-5xl sm:text-6xl leading-none mb-12">Lo que nos mueve</h2>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {VALUES.map((v) => (
+              <div key={v.title} className="rounded-xl border border-white/10 bg-white/[0.03] p-6">
+                <div className="court-rule mb-5" />
+                <h3 className="font-heading font-black uppercase text-3xl">{v.title}</h3>
+                <p className="mt-2 text-[#B7C4D8]">{v.text}</p>
               </div>
             ))}
           </div>
-        </div>
-
-        {/* CTA a Inscripciones */}
-        <div className="mt-20 p-10 md:p-12 rounded-3xl bg-gradient-to-r from-[#0B1E38] to-[#071426] border border-[#F29A2E]/30 flex flex-col md:flex-row items-center justify-between gap-8">
-          <div>
-            <h3 className="text-2xl md:text-3xl font-heading font-bold uppercase text-white mb-2">
-              ¿Quieres ser parte de esta historia?
-            </h3>
-            <p className="text-gray-300 font-sans text-sm md:text-base max-w-xl">
-              Abiertas inscripciones para niños, niñas y jóvenes desde los 8 años en nuestras sedes de Medellín.
-            </p>
+          <div className="mt-12 flex flex-wrap gap-3">
+            <Link href="/club/methodology" className="h-12 px-6 inline-flex items-center gap-2 rounded-md border border-white/25 hover:border-white font-semibold">Cómo entrenamos <ArrowRight size={18} /></Link>
+            <Link href="/registrations" className="h-12 px-6 inline-flex items-center gap-2 rounded-md bg-[#F29A2E] hover:bg-[#FFB14A] text-[#071426] font-bold">Inscribirme <ArrowRight size={18} /></Link>
           </div>
-          <Link
-            href="/registrations"
-            className="px-8 py-4 bg-[#F29A2E] text-[#071426] hover:bg-white font-bold text-sm uppercase tracking-wider rounded-xl transition-all shadow-lg shrink-0"
-          >
-            Inscribirse al Club
-          </Link>
         </div>
       </section>
-    </div>
+    </>
   );
 }
-
-function PillarCard({ icon, title, desc }: { icon: React.ReactNode, title: string, desc: string }) {
-  return (
-    <div className="p-8 rounded-3xl bg-white/[0.02] border border-white/10 hover:border-[#F29A2E]/40 transition-all duration-300 flex flex-col justify-between group">
-      <div className="w-14 h-14 rounded-2xl bg-white/5 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-        {icon}
-      </div>
-      <div>
-        <h3 className="text-2xl font-heading font-bold uppercase text-white mb-3">
-          {title}
-        </h3>
-        <p className="text-gray-400 font-sans text-sm leading-relaxed">
-          {desc}
-        </p>
-      </div>
-    </div>
-  );
-}
-
