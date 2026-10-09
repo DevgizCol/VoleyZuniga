@@ -74,11 +74,11 @@ export default function Home() {
       {/* ================= PORTADA ================= */}
       <section className="relative isolate overflow-hidden floodlights grain text-white min-h-[100svh] flex flex-col">
         <div className="container mx-auto px-4 sm:px-6 flex-1 grid lg:grid-cols-12 items-center gap-6 pt-40 sm:pt-44 lg:pt-32 pb-10">
-          <div className="lg:col-span-6 xl:col-span-5 relative z-10 hero-rise min-w-0">
+          <div className="lg:col-span-6 relative z-10 hero-rise min-w-0">
             <p className="inline-flex items-center gap-2 text-[#F29A2E] font-semibold">
               <span className="h-px w-8 bg-[#F29A2E]" /> Club de voleibol · {SITE.city}
             </p>
-            <h1 className="mt-5 font-heading font-black uppercase leading-[0.86] tracking-tight text-[clamp(3rem,14.5vw,5.5rem)] lg:text-[6.2rem] xl:text-[7rem]">
+            <h1 className="mt-5 font-heading font-black uppercase leading-[0.86] tracking-tight text-[clamp(3rem,14.5vw,5.5rem)] lg:text-[6rem] xl:text-[6.6rem]">
               No formamos jugadores,
               <span className="block text-[#F29A2E]">formamos campeones.</span>
             </h1>
@@ -105,7 +105,7 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="lg:col-span-6 xl:col-span-7 order-first lg:order-none -mx-10 sm:mx-0 -mb-6 lg:mb-0 absolute lg:relative inset-x-0 top-24 sm:top-20 lg:top-auto opacity-40 lg:opacity-100 -z-10 lg:z-0">
+          <div className="lg:col-span-6 order-first lg:order-none -mx-10 sm:mx-0 -mb-6 lg:mb-0 absolute lg:relative inset-x-0 top-24 sm:top-20 lg:top-auto opacity-40 lg:opacity-100 -z-10 lg:z-0">
             <HeroCourt className="w-full lg:scale-110 lg:translate-x-6" />
           </div>
         </div>

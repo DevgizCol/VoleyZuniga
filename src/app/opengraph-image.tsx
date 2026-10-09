@@ -1,121 +1,70 @@
 import { ImageResponse } from "next/og";
+import { readFile } from "node:fs/promises";
+import { join } from "node:path";
 
-export const alt = "Club Voley Zúñiga | Formamos Campeones";
-export const size = {
-  width: 1200,
-  height: 630,
-};
+// Imagen que aparece al compartir el enlace del sitio en WhatsApp, Facebook o X.
+export const alt = "Club Voley Zúñiga · No formamos jugadores, formamos campeones";
+export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-export default async function Image() {
+export default async function OpengraphImage() {
+  const [logo, display, body] = await Promise.all([
+    readFile(join(process.cwd(), "public/logo-trim.png")),
+    readFile(join(process.cwd(), "src/assets/fonts/big-shoulders-display-latin-900-normal.woff")),
+    readFile(join(process.cwd(), "src/assets/fonts/figtree-latin-600-normal.woff")),
+  ]);
+  const logoSrc = `data:image/png;base64,${logo.toString("base64")}`;
+
   return new ImageResponse(
     (
       <div
         style={{
-          height: "100%",
           width: "100%",
+          height: "100%",
           display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          backgroundColor: "#071426",
-          backgroundImage: "radial-gradient(circle at 25% 25%, #0E2952 0%, #071426 70%)",
-          border: "12px solid #F29A2E",
-          padding: "60px",
-          fontFamily: "sans-serif",
           position: "relative",
+          background: "linear-gradient(180deg, #071426 0%, #0F2347 100%)",
+          color: "white",
+          fontFamily: "Figtree",
         }}
       >
-        {/* Glow corner */}
-        <div
-          style={{
-            position: "absolute",
-            top: "-100px",
-            right: "-100px",
-            width: "350px",
-            height: "350px",
-            borderRadius: "50%",
-            backgroundColor: "rgba(242, 154, 46, 0.2)",
-            filter: "blur(60px)",
-          }}
-        />
-
-        {/* Badge VIP */}
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "10px",
-            padding: "8px 24px",
-            borderRadius: "9999px",
-            backgroundColor: "rgba(242, 154, 46, 0.15)",
-            border: "2px solid #F29A2E",
-            color: "#F29A2E",
-            fontSize: "20px",
-            fontWeight: "bold",
-            letterSpacing: "4px",
-            textTransform: "uppercase",
-            marginBottom: "30px",
-          }}
-        >
-          CLUB DEPORTIVO OFICIAL • MEDELLÍN
-        </div>
-
-        {/* Title */}
-        <div
-          style={{
-            display: "flex",
-            fontSize: "68px",
-            fontWeight: "900",
-            color: "#FFFFFF",
-            letterSpacing: "-1px",
-            textTransform: "uppercase",
-            textAlign: "center",
-            marginBottom: "16px",
-          }}
-        >
-          CLUB VOLEY ZÚÑIGA
-        </div>
-
-        {/* Subtitle */}
-        <div
-          style={{
-            display: "flex",
-            fontSize: "30px",
-            color: "#F29A2E",
-            fontWeight: "700",
-            letterSpacing: "2px",
-            textTransform: "uppercase",
-            marginBottom: "40px",
-          }}
-        >
-          Formamos Campeones con Valores y Excelencia
-        </div>
-
-        {/* Bottom Specs Bar */}
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "40px",
-            padding: "16px 40px",
-            borderRadius: "20px",
-            backgroundColor: "rgba(255, 255, 255, 0.05)",
-            border: "1px solid rgba(255, 255, 255, 0.15)",
-            color: "#CBD5E1",
-            fontSize: "18px",
-          }}
-        >
-          <span>🏆 Liga Departamental de Antioquia</span>
-          <span>•</span>
-          <span>📍 Polideportivo 3 Canchas & Yesid Santos</span>
-          <span>•</span>
-          <span>🏐 Sub-12 a Sub-18</span>
+        <svg width="1200" height="630" viewBox="0 0 1200 630" style={{ position: "absolute", top: 0, left: 0 }}>
+          <g transform="translate(560 120) scale(0.75)" fill="none" stroke="#F29A2E" strokeWidth="6" strokeLinecap="round">
+            <path d="M250 733L950 733 M483 344L717 344 M250 733L483 344 M950 733L717 344" />
+            <path d="M390 500L810 500 M450 400L750 400 M425 442L775 442" strokeWidth="4" />
+            <path d="M398 347L802 347 M398 442L398 347 M802 442L802 347" stroke="#C9D5E6" strokeWidth="5" />
+          </g>
+          <g fill="none" strokeLinecap="round" stroke="#F29A2E">
+            <path d="M700 140 C 860 90, 960 110, 1010 200" strokeWidth="22" opacity="0.9" />
+            <path d="M740 190 C 880 150, 960 170, 1000 240" strokeWidth="12" opacity="0.6" />
+          </g>
+          <defs>
+            <clipPath id="ball">
+              <circle cx="1040" cy="230" r="70" />
+            </clipPath>
+          </defs>
+          <circle cx="1040" cy="230" r="70" fill="#F3F6FB" />
+          <g clipPath="url(#ball)">
+            <path d="M965 215 C 1000 175, 1060 160, 1115 182" stroke="#213049" strokeWidth="26" fill="none" />
+            <path d="M965 275 C 1015 240, 1070 232, 1115 248" stroke="#213049" strokeWidth="18" fill="none" />
+          </g>
+        </svg>
+        <div style={{ display: "flex", flexDirection: "column", padding: "56px 80px", width: 760, position: "relative" }}>
+          <img src={logoSrc} width={180} height={106} alt="" style={{ objectFit: "contain" }} />
+          <div style={{ display: "flex", flexDirection: "column", marginTop: 26, fontFamily: "Big Shoulders", fontSize: 86, fontWeight: 900, lineHeight: 0.9 }}>
+            <span>NO FORMAMOS JUGADORES,</span>
+            <span style={{ color: "#F29A2E" }}>FORMAMOS CAMPEONES.</span>
+          </div>
+          <div style={{ display: "flex", marginTop: 24, fontSize: 28, color: "#C9D5E6" }}>Voleibol en Medellín desde los 7 años · Clase de prueba sin costo</div>
         </div>
       </div>
     ),
     {
       ...size,
+      fonts: [
+        { name: "Big Shoulders", data: display, weight: 900, style: "normal" },
+        { name: "Figtree", data: body, weight: 600, style: "normal" },
+      ],
     }
   );
 }

@@ -29,13 +29,21 @@ function normDate(raw: string) {
   return m ? `${m[3]}-${m[2].padStart(2, "0")}-${m[1].padStart(2, "0")}` : "";
 }
 
+// Convierte un enlace de Google Drive ("Cualquier persona con el enlace") en una imagen directa.
+function imageUrl(raw: string) {
+  const url = (raw || "").trim();
+  const drive = url.match(/drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?(?:export=\w+&)?id=)([\w-]{20,})/);
+  if (drive) return `https://lh3.googleusercontent.com/d/${drive[1]}=w1600`;
+  return /^https:\/\//.test(url) ? url : "";
+}
+
 export async function getArticles(): Promise<Article[]> {
   const rows = (await readSheet("Noticias")) ?? [];
   return rows
     .filter((r) => r["Título"] && normDate(r["Fecha"]))
     .map((r) => {
       const date = normDate(r["Fecha"]);
-      const image = (r["Imagen (URL)"] || "").trim();
+      const image = imageUrl(r["Imagen (URL)"]);
       return {
         slug: `${date}-${slugify(r["Título"])}`,
         date,
@@ -43,7 +51,7 @@ export async function getArticles(): Promise<Article[]> {
         category: (r["Categoría"] || "Club").trim(),
         summary: (r["Resumen"] || "").trim(),
         body: (r["Cuerpo"] || "").trim(),
-        image: /^https:\/\//.test(image) ? image : "",
+        image,
       };
     })
     .sort((a, b) => b.date.localeCompare(a.date));

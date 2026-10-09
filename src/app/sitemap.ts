@@ -1,81 +1,26 @@
 import type { MetadataRoute } from "next";
+import { siteUrl } from "@/lib/site-url";
+import { getArticles } from "@/lib/news";
 
-export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl =
-    process.env.NEXT_PUBLIC_SITE_URL ||
-    (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : null) ||
-    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null) ||
-    "https://voley-zuniga.vercel.app";
-  const currentDate = new Date().toISOString();
+export const revalidate = 3600;
 
-  const routes = [
-    {
-      url: `${baseUrl}`,
-      lastModified: currentDate,
-      changeFrequency: "daily" as const,
-      priority: 1.0,
-    },
-    {
-      url: `${baseUrl}/registrations`,
-      lastModified: currentDate,
-      changeFrequency: "daily" as const,
-      priority: 0.95,
-    },
-    {
-      url: `${baseUrl}/games`,
-      lastModified: currentDate,
-      changeFrequency: "daily" as const,
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/standings`,
-      lastModified: currentDate,
-      changeFrequency: "weekly" as const,
-      priority: 0.85,
-    },
-    {
-      url: `${baseUrl}/privacidad`,
-      lastModified: currentDate,
-      changeFrequency: "yearly" as const,
-      priority: 0.3,
-    },
-    {
-      url: `${baseUrl}/club/contact`,
-      lastModified: currentDate,
-      changeFrequency: "monthly" as const,
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/club/history`,
-      lastModified: currentDate,
-      changeFrequency: "monthly" as const,
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/club/methodology`,
-      lastModified: currentDate,
-      changeFrequency: "monthly" as const,
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/team`,
-      lastModified: currentDate,
-      changeFrequency: "weekly" as const,
-      priority: 0.85,
-    },
-    {
-      url: `${baseUrl}/store`,
-      lastModified: currentDate,
-      changeFrequency: "weekly" as const,
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/news`,
-      lastModified: currentDate,
-      changeFrequency: "daily" as const,
-      priority: 0.85,
-    },
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const pages: [string, number, MetadataRoute.Sitemap[number]["changeFrequency"]][] = [
+    ["", 1, "weekly"],
+    ["/registrations", 0.9, "monthly"],
+    ["/games", 0.8, "daily"],
+    ["/standings", 0.7, "weekly"],
+    ["/team", 0.7, "monthly"],
+    ["/club/contact", 0.7, "monthly"],
+    ["/news", 0.6, "weekly"],
+    ["/club/history", 0.5, "yearly"],
+    ["/club/methodology", 0.5, "yearly"],
+    ["/store", 0.5, "monthly"],
+    ["/privacidad", 0.2, "yearly"],
   ];
-
-  return routes;
+  const articles = await getArticles().catch(() => []);
+  return [
+    ...pages.map(([path, priority, changeFrequency]) => ({ url: `${siteUrl}${path}`, priority, changeFrequency, lastModified: new Date() })),
+    ...articles.map((a) => ({ url: `${siteUrl}/news/${a.slug}`, lastModified: new Date(`${a.date}T12:00:00-05:00`), priority: 0.5 })),
+  ];
 }

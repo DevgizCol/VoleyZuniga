@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { CalendarPlus, Clock, MapPin, Navigation, ArrowRight, Camera } from "lucide-react";
+import { CalendarPlus, CalendarCheck, Clock, MapPin, Navigation, ArrowRight, Camera } from "lucide-react";
+import { siteUrl } from "@/lib/site-url";
 import PageHero from "@/components/PageHero";
 import CategoryFilter from "@/components/CategoryFilter";
 import TeamBadge from "@/components/TeamBadge";
@@ -34,8 +35,26 @@ export default async function GamesPage({ searchParams }: { searchParams: Promis
     { w: 0, l: 0 }
   );
 
+  const jsonLd = upcoming.slice(0, 10).map((m) => ({
+    "@context": "https://schema.org",
+    "@type": "SportsEvent",
+    name: `${m.home} vs ${m.away} · ${m.category}`,
+    sport: "Volleyball",
+    startDate: m.time ? `${m.date}T${m.time}:00-05:00` : m.date,
+    eventStatus: "https://schema.org/EventScheduled",
+    eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+    location: { "@type": "Place", name: m.venue || "Por confirmar", address: { "@type": "PostalAddress", addressLocality: "Medellín", addressRegion: "Antioquia", addressCountry: "CO" } },
+    homeTeam: { "@type": "SportsTeam", name: m.home },
+    awayTeam: { "@type": "SportsTeam", name: m.away },
+    organizer: { "@type": "SportsOrganization", name: "Club Voley Zúñiga", url: siteUrl },
+    url: `${siteUrl}/games`,
+  }));
+
   return (
     <>
+      {jsonLd.length > 0 && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
+      )}
       <PageHero
         kicker="Calendario y resultados"
         title="Partidos"
@@ -78,6 +97,8 @@ export default async function GamesPage({ searchParams }: { searchParams: Promis
               </ul>
             </div>
           )}
+
+          <SubscribeBox />
 
           <div className="mt-20">
             <h2 className="font-heading font-black uppercase text-4xl sm:text-5xl mb-6">Resultados</h2>
@@ -270,6 +291,31 @@ function EmptyUpcoming({ filtered }: { filtered: boolean }) {
       >
         <Camera size={18} /> Seguir {SITE.instagram.handle}
       </a>
+    </div>
+  );
+}
+
+function SubscribeBox() {
+  const host = siteUrl.replace(/^https?:\/\//, "");
+  const webcal = `webcal://${host}/calendario.ics`;
+  const google = `https://calendar.google.com/calendar/render?cid=${encodeURIComponent(webcal)}`;
+  return (
+    <div className="mt-16 rounded-2xl border border-[#F29A2E]/30 bg-gradient-to-r from-[#F29A2E]/[0.12] to-transparent p-6 sm:p-8 grid md:grid-cols-[auto_1fr_auto] gap-5 items-center">
+      <span className="w-14 h-14 rounded-xl bg-[#F29A2E] text-[#071426] flex items-center justify-center">
+        <CalendarCheck size={28} />
+      </span>
+      <div>
+        <h2 className="font-heading font-black uppercase text-3xl leading-none">Todos los partidos en tu celular</h2>
+        <p className="mt-2 text-[#C9D5E6]">Suscríbete una vez y cada partido nuevo aparece solo en tu calendario, con hora y sede.</p>
+      </div>
+      <div className="flex flex-wrap gap-3">
+        <a href={google} target="_blank" rel="noopener noreferrer" className="h-12 px-5 inline-flex items-center gap-2 rounded-md bg-[#F29A2E] hover:bg-[#FFB14A] text-[#071426] font-bold">
+          Google Calendar
+        </a>
+        <a href={webcal} className="h-12 px-5 inline-flex items-center gap-2 rounded-md border border-white/25 hover:border-white font-semibold">
+          iPhone / Outlook
+        </a>
+      </div>
     </div>
   );
 }

@@ -5,6 +5,8 @@ import { CATEGORIES, HORARIOS, NIVELES, SEDES } from "@/data/registration";
 import { isOneOf } from "@/data/contact";
 
 const PHONE_RE = /^[+\d][\d\s().-]{6,19}$/;
+// Código del pase generado en el navegador, p. ej. VZ14-4FGR (sin 0, O, 1 ni I).
+const CODE_RE = /^VZ(?:\d{2}|MY)-[2-9A-HJ-KM-NP-Z]{4}$/;
 
 // Fecha de hoy en hora de Bogotá (AAAA-MM-DD), no en UTC, para que coincida con el día local.
 const bogotaDate = () => new Intl.DateTimeFormat("en-CA", { timeZone: "America/Bogota" }).format(new Date());
@@ -32,6 +34,7 @@ export async function POST(request: Request) {
   const name = text(body.name, 100);
   const phone = text(body.phone, 20);
   const age = Number(body.age);
+  const code = text(body.code, 12).toUpperCase();
 
   if (name.length < 2) return bad("Escribe el nombre del deportista.");
   if (!Number.isInteger(age) || age < 5 || age > 60) return bad("Revisa la edad del deportista.");
@@ -57,6 +60,7 @@ export async function POST(request: Request) {
     Horario: body.horario as string,
     WhatsApp: phone,
     Consentimiento: `Sí (${bogotaDate()})`,
+    Código: CODE_RE.test(code) ? code : "",
   });
 
   if (!saved) return NextResponse.json({ ok: false, error: "No se pudo guardar." }, { status: 502 });

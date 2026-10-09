@@ -9,6 +9,8 @@ import "server-only";
 
 export type WritableSheet = "Inscripciones" | "Contacto";
 export type ReadableSheet = "Fixture" | "Tabla" | "Noticias" | "Cancha";
+// Solo para el panel de administración (contienen datos personales; nunca se cachean).
+export type PrivateSheet = "Inscripciones" | "Contacto";
 export type Row = Record<string, string>;
 
 export function sheetsConfigured(): boolean {
@@ -47,7 +49,7 @@ export async function appendToSheet(sheet: WritableSheet, data: Row): Promise<bo
  * Se cachea en Next (revalidate) para que los visitantes no esperen a Google.
  * Devuelve null si no está configurado o falla, para que la página use un respaldo.
  */
-export async function readSheet(sheet: ReadableSheet, revalidateSeconds = 300): Promise<Row[] | null> {
+export async function readSheet(sheet: ReadableSheet | PrivateSheet, revalidateSeconds = 300): Promise<Row[] | null> {
   const url = process.env.SHEETS_WEBAPP_URL;
   const secret = process.env.SHEETS_SECRET;
   if (!url || !secret) return null;
@@ -58,7 +60,7 @@ export async function readSheet(sheet: ReadableSheet, revalidateSeconds = 300): 
     const target = `${url}?sheet=${encodeURIComponent(sheet)}&secret=${encodeURIComponent(secret)}`;
     const res = await fetch(target, {
       redirect: "follow",
-      next: { revalidate: revalidateSeconds },
+      ...(revalidateSeconds > 0 ? { next: { revalidate: revalidateSeconds } } : { cache: "no-store" as const }),
       signal: AbortSignal.timeout(TIMEOUT_MS),
     });
     if (!res.ok) return null;
