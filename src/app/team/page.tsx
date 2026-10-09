@@ -121,7 +121,7 @@ export default function TeamPage() {
       hand: "Diestra",
       tournaments: ["Festival Valle de Aburrá 2025"],
       quote: "Cada día entreno con la ilusión de llegar al equipo de Liga.",
-      image: "https://images.unsplash.com/photo-1517649763962-0c623266ddc0?q=80&w=800&auto=format&fit=crop"
+      image: "/placeholder-club.svg"
     }
   ];
 

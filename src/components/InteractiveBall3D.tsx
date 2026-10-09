@@ -1,56 +1,33 @@
 "use client";
 
-import React, { useRef } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
-import { OrbitControls, Environment, Float, Sphere, MeshDistortMaterial } from "@react-three/drei";
-import * as THREE from "three";
+import React, { useEffect, useRef, useState } from "react";
+import dynamic from "next/dynamic";
 
-function VolleyBall() {
-  const meshRef = useRef<THREE.Mesh>(null);
-
-  useFrame((state) => {
-    if (meshRef.current) {
-      meshRef.current.rotation.y = state.clock.elapsedTime * 0.5;
-      meshRef.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.2) * 0.2;
-    }
-  });
-
-  return (
-    <Float speed={2} rotationIntensity={0.5} floatIntensity={1}>
-      <Sphere ref={meshRef} args={[1.5, 64, 64]} castShadow receiveShadow>
-        <MeshDistortMaterial
-          color="#F29A2E"
-          roughness={0.2}
-          metalness={0.8}
-          distort={0.1}
-          speed={2}
-          envMapIntensity={2}
-        />
-      </Sphere>
-    </Float>
-  );
-}
+// Three.js solo se descarga cuando la sección está cerca de la pantalla, y la escena se
+// desmonta al salir. Así nunca hay dos contextos WebGL a la vez (el del logo del inicio y este),
+// que es lo que provocaba el aviso "Context Lost".
+const BallCanvas = dynamic(() => import("./BallCanvas"), { ssr: false });
 
 export default function InteractiveBall3D() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(([entry]) => setVisible(entry.isIntersecting), {
+      rootMargin: "200px 0px",
+    });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <section className="relative w-full h-[80vh] bg-[#F7F8FA] flex flex-col items-center justify-center overflow-hidden">
-      <div className="absolute inset-0 z-0">
-        <Canvas shadows camera={{ position: [0, 0, 5], fov: 45 }}>
-          <ambientLight intensity={0.5} />
-          <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={1} castShadow />
-          <pointLight position={[-10, -10, -10]} intensity={0.5} />
-          
-          <VolleyBall />
-          
-          <Environment preset="city" />
-          <OrbitControls 
-            enableZoom={false} 
-            enablePan={false}
-            minPolarAngle={Math.PI / 2.5}
-            maxPolarAngle={Math.PI / 1.5}
-          />
-        </Canvas>
-      </div>
+    <section
+      ref={sectionRef}
+      className="relative w-full h-[80vh] bg-[#F7F8FA] flex flex-col items-center justify-center overflow-hidden"
+    >
+      <div className="absolute inset-0 z-0">{visible && <BallCanvas />}</div>
 
       <div className="relative z-10 pointer-events-none text-center">
         <h3 className="text-4xl md:text-6xl font-heading font-bold text-[#0F2347] uppercase drop-shadow-md">

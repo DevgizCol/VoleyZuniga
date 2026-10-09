@@ -61,7 +61,7 @@ export default function StorePage() {
       name: "Sudadera de Viaje & Presentación",
       category: "Indumentaria",
       price: 165000,
-      image: "https://images.unsplash.com/photo-1517649763962-0c623266ddc0?q=80&w=800&auto=format&fit=crop",
+      image: "/placeholder-club.svg",
       badge: "Colección Viaje",
       desc: "Chaqueta rompevientos térmica con pantalón jogger y cremalleras impermeables."
     },

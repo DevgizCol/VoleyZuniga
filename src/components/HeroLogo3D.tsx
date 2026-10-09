@@ -88,6 +88,10 @@ export default function HeroLogo3D() {
         dpr={[1, 1.5]}
         gl={{ powerPreference: "high-performance", antialias: true, alpha: true, stencil: false }}
         style={{ touchAction: 'pan-y' }}
+        onCreated={({ gl }) => {
+          // Permite que el navegador restaure el contexto si lo pierde (memoria de GPU, cambio de pestaña).
+          gl.domElement.addEventListener("webglcontextlost", (e) => e.preventDefault());
+        }}
       >
         
         {/* Iluminación Dramática */}
