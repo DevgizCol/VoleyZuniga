@@ -1,96 +1,78 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Phone, Mail, MapPin } from "lucide-react";
+import { Phone, Mail, MapPin, Camera } from "lucide-react";
+import { NAV_LINKS, SITE, telUrl } from "@/config/site";
+import { SEDES } from "@/data/registration";
 
 export default function Footer() {
   return (
-    <footer className="w-full bg-[#071426] text-white pt-16 sm:pt-20 pb-[calc(7rem+env(safe-area-inset-bottom,0px))] md:pb-12 border-t border-white/5">
+    <footer className="w-full bg-[#050E1C] text-white pt-14 pb-[calc(6rem+env(safe-area-inset-bottom,0px))] md:pb-10">
+      <div className="court-rule mb-12" />
       <div className="container mx-auto px-4 sm:px-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 md:gap-12 mb-16">
-
-          {/* Brand Info */}
-          <div className="flex flex-col gap-6">
-            <Link href="/" className="flex items-center gap-3 group select-none">
-              <Image src="/logo.svg" alt="Logo" width={52} height={52} className="w-12 h-12 object-contain" />
-              <div className="flex flex-col">
-                <span className="font-heading font-bold text-2xl leading-none tracking-wide text-white">VOLEY ZÚÑIGA</span>
-                <span className="font-sans text-[10px] uppercase text-[#F29A2E] font-bold tracking-[0.2em] mt-0.5">Club Deportivo</span>
-              </div>
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-8 mb-14">
+          <div className="md:col-span-5 flex flex-col gap-5">
+            <Link href="/" className="flex items-center gap-3 w-fit" aria-label={`${SITE.name}, inicio`}>
+              <Image src="/logo-trim.png" alt="" width={800} height={473} className="h-14 w-auto" />
+              <span className="font-heading font-extrabold text-3xl leading-none">Voley Zúñiga</span>
             </Link>
-            <p className="text-gray-400 font-sans text-sm leading-relaxed max-w-sm">
-              Formación integral de deportistas, valores de convivencia y alta competencia.
-              No formamos jugadores, formamos campeones.
+            <p className="text-[#B7C4D8] text-sm leading-relaxed max-w-sm">
+              Escuela y club de voleibol en {SITE.city}. Formamos deportistas, y cuando se puede, campeones.
             </p>
-            <div className="flex gap-3">
-              <a 
-                href="https://www.instagram.com/voleyzuniga" 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                aria-label="Instagram"
-                className="w-11 h-11 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-[#F29A2E] hover:text-[#071426] active:scale-95 transition-all font-bold text-xs touch-manipulation"
-              >
-                IG
-              </a>
-              <a 
-                href="https://www.tiktok.com/@voleyzuniga" 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                aria-label="TikTok"
-                className="w-11 h-11 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-[#F29A2E] hover:text-[#071426] active:scale-95 transition-all font-bold text-xs touch-manipulation"
-              >
-                TT
-              </a>
-            </div>
+            <a
+              href={SITE.instagram.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 w-fit text-sm font-semibold text-white hover:text-[#F29A2E] transition-colors"
+            >
+              <Camera size={18} className="text-[#F29A2E]" /> Instagram {SITE.instagram.handle}
+            </a>
           </div>
 
-          {/* Navegación */}
-          <div>
-            <h4 className="font-heading font-bold text-xl uppercase tracking-wider mb-6 text-white/90">Navegación</h4>
-            <ul className="flex flex-col gap-3 font-sans text-sm text-gray-400">
-              <li><Link href="/" className="hover:text-[#F29A2E] transition-colors">Inicio</Link></li>
-              <li><Link href="/team" className="hover:text-[#F29A2E] transition-colors">Equipos y Atletas</Link></li>
-              <li><Link href="/games" className="hover:text-[#F29A2E] transition-colors">Partidos y Resultados</Link></li>
-              <li><Link href="/store" className="hover:text-[#F29A2E] transition-colors">Tienda Oficial</Link></li>
+          <nav aria-label="Pie de página" className="md:col-span-3">
+            <h2 className="font-heading font-bold text-xl mb-4 text-white">Navegar</h2>
+            <ul className="flex flex-col gap-2.5 text-sm text-[#B7C4D8]">
+              <li><Link href="/registrations" className="hover:text-[#F29A2E] transition-colors">Inscribirme</Link></li>
+              {NAV_LINKS.map((l) => (
+                <li key={l.href}><Link href={l.href} className="hover:text-[#F29A2E] transition-colors">{l.name}</Link></li>
+              ))}
             </ul>
-          </div>
+          </nav>
 
-          {/* El Club */}
-          <div>
-            <h4 className="font-heading font-bold text-xl uppercase tracking-wider mb-6 text-white/90">El Club</h4>
-            <ul className="flex flex-col gap-3 font-sans text-sm text-gray-400">
-              <li><Link href="/club/history" className="hover:text-[#F29A2E] transition-colors">Historia y Visión</Link></li>
-              <li><Link href="/club/methodology" className="hover:text-[#F29A2E] transition-colors">Metodología de Entrenamiento</Link></li>
-              <li><Link href="/registrations" className="hover:text-[#F29A2E] transition-colors">Inscripciones Abiertas</Link></li>
-              <li><Link href="/news" className="hover:text-[#F29A2E] transition-colors">Noticias y Actualidad</Link></li>
-            </ul>
-          </div>
-
-          {/* Sedes y Contacto */}
-          <div>
-            <h4 className="font-heading font-bold text-xl uppercase tracking-wider mb-6 text-white/90">Contacto</h4>
-            <ul className="flex flex-col gap-4 font-sans text-sm text-gray-400">
-              <li className="flex items-start gap-3">
-                <MapPin size={18} className="text-[#F29A2E] shrink-0 mt-0.5" />
-                <span>Coliseo Yesid Santos (Atanasio Girardot) <br />Canchas Buenos Aires</span>
-              </li>
+          <div className="md:col-span-4">
+            <h2 className="font-heading font-bold text-xl mb-4 text-white">Dónde entrenamos</h2>
+            <ul className="flex flex-col gap-3.5 text-sm text-[#B7C4D8]">
+              {SEDES.map((s) => (
+                <li key={s.value} className="flex items-start gap-3">
+                  <MapPin size={18} className="text-[#F29A2E] shrink-0 mt-0.5" />
+                  <span>{s.label}</span>
+                </li>
+              ))}
               <li className="flex items-center gap-3">
                 <Phone size={18} className="text-[#F29A2E] shrink-0" />
-                <span>+57 312 845 9210</span>
+                <a href={telUrl} className="hover:text-white">{SITE.phoneDisplay}</a>
               </li>
               <li className="flex items-center gap-3">
                 <Mail size={18} className="text-[#F29A2E] shrink-0" />
-                <span>clubvoleyzuniga@gmail.com</span>
+                <a href={`mailto:${SITE.email}`} className="hover:text-white break-all">{SITE.email}</a>
               </li>
             </ul>
           </div>
-
         </div>
 
-        {/* Bottom */}
-        <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-sans text-gray-500">
-          <p>Copyright © 2026 Club Voley Zúñiga. Todos los derechos reservados. <Link href="/privacidad" className="underline underline-offset-2 hover:text-[#F29A2E]">Política de datos</Link></p>
-          <p>Powered by <Link href="https://devgiz.vercel.app/" target="_blank" rel="noopener noreferrer"><span className="text-gray-300 font-bold">DevGiz</span></Link></p>
+        <div className="pt-6 border-t border-white/10 flex flex-col md:flex-row justify-between gap-3 text-xs text-[#8FA3BF]">
+          <p>
+            © 2026 {SITE.name}.{" "}
+            <Link href="/privacidad" className="underline underline-offset-2 hover:text-[#F29A2E]">
+              Política de datos
+            </Link>
+          </p>
+          <p>
+            Sitio web por{" "}
+            <a href="https://devgiz.vercel.app/" target="_blank" rel="noopener noreferrer" className="text-white font-semibold hover:text-[#F29A2E]">
+              DevGiz
+            </a>
+          </p>
         </div>
       </div>
     </footer>

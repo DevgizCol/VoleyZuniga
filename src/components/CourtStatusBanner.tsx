@@ -56,7 +56,7 @@ export default function CourtStatusBanner() {
           <strong>{isAlert ? "AVISO EN VIVO:" : "ESTADO DE CANCHAS:"}</strong> {status.message}
         </span>
 
-        <span className={`px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-mono uppercase tracking-wider shrink-0 ${
+        <span className={`hidden sm:inline px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-mono uppercase tracking-wider shrink-0 ${
           isAlert ? "bg-[#071426] text-[#F29A2E]" : "bg-white/10 text-[#F29A2E]"
         }`}>
           {status.venue}
