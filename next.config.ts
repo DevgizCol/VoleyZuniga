@@ -1,18 +1,21 @@
 import type { NextConfig } from "next";
 
 const isDev = process.env.NODE_ENV === "development";
+// En las vistas previas de Vercel se inyecta la barra de comentarios (vercel.live); en producción no.
+const isPreview = process.env.VERCEL_ENV === "preview";
+const live = isPreview ? " https://vercel.live" : "";
 
 // Política de contenido: solo recursos del propio sitio, más las imágenes de noticias (enlaces https)
 // y el mapa de Google embebido en /contacto. 'unsafe-inline' en scripts es necesario sin nonce
 // (que obligaría a renderizar todo en cada visita); en desarrollo React además necesita 'unsafe-eval'.
 const csp = [
   "default-src 'self'",
-  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`,
-  "style-src 'self' 'unsafe-inline'",
+  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}${live}`,
+  `style-src 'self' 'unsafe-inline'${live}`,
   "img-src 'self' data: blob: https:",
-  "font-src 'self'",
-  "connect-src 'self'",
-  "frame-src https://www.google.com",
+  `font-src 'self'${isPreview ? " https://vercel.live https://assets.vercel.com" : ""}`,
+  `connect-src 'self'${isPreview ? " https://vercel.live wss://ws-us3.pusher.com" : ""}`,
+  `frame-src https://www.google.com${live}`,
   "object-src 'none'",
   "base-uri 'self'",
   "form-action 'self'",

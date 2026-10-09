@@ -83,7 +83,7 @@ export function Honeypot({ value, onChange }: { value: string; onChange: (v: str
     <div aria-hidden="true" className="absolute -left-[9999px] w-px h-px overflow-hidden">
       <label>
         No llenes este campo
-        <input type="text" tabIndex={-1} autoComplete="off" value={value} onChange={(e) => onChange(e.target.value)} />
+        <input type="text" name="vz_hp" tabIndex={-1} autoComplete="off" value={value} onChange={(e) => onChange(e.target.value)} />
       </label>
     </div>
   );

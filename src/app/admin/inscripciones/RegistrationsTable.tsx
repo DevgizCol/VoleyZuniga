@@ -3,7 +3,7 @@
 import { useDeferredValue, useMemo, useState } from "react";
 import clsx from "clsx";
 import { MessageCircle, Search } from "lucide-react";
-import { REGISTRATION_STATES } from "@/lib/admin/schemas";
+import { REGISTRATION_STATES } from "@/lib/admin/options";
 import StatusSelect from "../_components/StatusSelect";
 import NoteButton from "../_components/NoteButton";
 import { Card, Empty, btn } from "../_components/ui";

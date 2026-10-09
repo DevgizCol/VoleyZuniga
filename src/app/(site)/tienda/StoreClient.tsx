@@ -102,11 +102,11 @@ export default function StoreClient({ products }: { products: Product[] }) {
                 <div className="grid grid-cols-[1fr_7rem] gap-3">
                   <label className="block">
                     <span className="block font-semibold mb-2">Nombre</span>
-                    <input value={name} onChange={(e) => setName(e.target.value.slice(0, 12))} placeholder="Opcional" maxLength={12} className="w-full h-12 rounded-lg bg-white/[0.05] border border-white/15 px-4 uppercase placeholder:normal-case placeholder:text-[#8FA3BF] focus:outline-none focus:border-[#F29A2E]" />
+                    <input name="jersey-name" autoComplete="off" value={name} onChange={(e) => setName(e.target.value.slice(0, 12))} placeholder="Opcional" maxLength={12} className="w-full h-12 rounded-lg bg-white/[0.05] border border-white/15 px-4 uppercase placeholder:normal-case placeholder:text-[#8FA3BF] focus:outline-none focus:border-[#F29A2E]" />
                   </label>
                   <label className="block">
                     <span className="block font-semibold mb-2">Número</span>
-                    <input value={number} onChange={(e) => setNumber(e.target.value.replace(/\D/g, "").slice(0, 2))} inputMode="numeric" className="w-full h-12 rounded-lg bg-white/[0.05] border border-white/15 px-4 text-center font-heading font-black text-2xl focus:outline-none focus:border-[#F29A2E]" />
+                    <input name="jersey-number" autoComplete="off" value={number} onChange={(e) => setNumber(e.target.value.replace(/\D/g, "").slice(0, 2))} inputMode="numeric" className="w-full h-12 rounded-lg bg-white/[0.05] border border-white/15 px-4 text-center font-heading font-black text-2xl focus:outline-none focus:border-[#F29A2E]" />
                   </label>
                 </div>
 

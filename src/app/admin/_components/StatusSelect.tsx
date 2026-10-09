@@ -4,7 +4,7 @@ import { useOptimistic, useTransition } from "react";
 import clsx from "clsx";
 import { toast } from "sonner";
 import { setStatus } from "../actions";
-import { STATUS_OPTIONS, type StatusSheet } from "@/lib/admin/schemas";
+import { STATUS_OPTIONS, type StatusSheet } from "@/lib/admin/options";
 import type { RowData } from "./types";
 
 const tone = (e: string) =>

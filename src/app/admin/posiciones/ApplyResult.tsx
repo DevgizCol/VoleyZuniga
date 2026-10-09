@@ -38,27 +38,27 @@ export default function ApplyResult({ categories, teams }: { categories: string[
           </div>
           <label className="block">
             <span className="block text-sm font-semibold mb-1.5">Categoría</span>
-            <input value={form.category} onChange={set("category")} list="ar-cats" className={input} required />
+            <input name="category" value={form.category} onChange={set("category")} list="ar-cats" className={input} required />
             <datalist id="ar-cats">{categories.map((c) => <option key={c} value={c} />)}</datalist>
           </label>
           <div className="grid grid-cols-[1fr_72px] gap-3 items-end">
             <label>
               <span className="block text-sm font-semibold mb-1.5">Equipo A</span>
-              <input value={form.a} onChange={set("a")} list="ar-teams" className={input} required />
+              <input name="team-a" value={form.a} onChange={set("a")} list="ar-teams" className={input} required />
             </label>
             <label>
               <span className="block text-sm font-semibold mb-1.5">Sets</span>
-              <select value={form.sa} onChange={set("sa")} className={`${input} bg-[#0F2347] text-center font-bold`}>
+              <select name="sets-a" value={form.sa} onChange={set("sa")} className={`${input} bg-[#0F2347] text-center font-bold`}>
                 {[0, 1, 2, 3].map((n) => <option key={n}>{n}</option>)}
               </select>
             </label>
             <label>
               <span className="block text-sm font-semibold mb-1.5">Equipo B</span>
-              <input value={form.b} onChange={set("b")} list="ar-teams" className={input} required />
+              <input name="team-b" value={form.b} onChange={set("b")} list="ar-teams" className={input} required />
             </label>
             <label>
               <span className="block text-sm font-semibold mb-1.5">Sets</span>
-              <select value={form.sb} onChange={set("sb")} className={`${input} bg-[#0F2347] text-center font-bold`}>
+              <select name="sets-b" value={form.sb} onChange={set("sb")} className={`${input} bg-[#0F2347] text-center font-bold`}>
                 {[0, 1, 2, 3].map((n) => <option key={n}>{n}</option>)}
               </select>
             </label>

@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import Link from "next/link";
 import Image from "next/image";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, Home } from "lucide-react";
 import { Toaster } from "sonner";
 import { getAdmin } from "@/lib/auth";
 import AdminLogin from "./AdminLogin";
@@ -54,7 +54,10 @@ export default async function AdminLayout({ children }: { children: React.ReactN
               <span className="font-heading font-black uppercase text-lg">Panel</span>
             </Link>
             <div className="flex items-center gap-2">
-              <span className="text-xs text-[#8FA3BF] max-w-[110px] truncate">{user.name}</span>
+              <span className="text-xs text-[#8FA3BF] max-w-[90px] truncate">{user.name}</span>
+              <Link href="/" aria-label="Ver la web" className="h-10 w-10 inline-flex items-center justify-center rounded-lg border border-white/15 hover:bg-white/5">
+                <Home size={16} />
+              </Link>
               <LogoutButton compact />
             </div>
           </div>

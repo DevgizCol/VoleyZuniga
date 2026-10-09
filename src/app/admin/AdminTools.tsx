@@ -11,6 +11,7 @@ export function LogoutButton({ compact = false }: { compact?: boolean }) {
       type="button"
       onClick={async () => {
         await fetch("/api/admin/logout", { method: "POST" }).catch(() => {});
+        router.replace("/");
         router.refresh();
       }}
       className={
@@ -49,6 +50,7 @@ export function GroupMessage({ gamesUrl }: { gamesUrl: string }) {
         ))}
       </div>
       <textarea
+        name="group-message"
         value={text}
         onChange={(e) => setText(e.target.value)}
         rows={4}
