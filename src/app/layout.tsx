@@ -1,24 +1,24 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Oswald } from "next/font/google";
+import { Figtree, Big_Shoulders } from "next/font/google";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import MobileBar from "@/components/MobileBar";
 import CartDrawer from "@/components/CartDrawer";
 import VercelAnalytics from "@/components/VercelAnalytics";
 import { CartProvider } from "@/context/CartContext";
 import "./globals.css";
 
-const inter = Inter({
-  variable: "--font-inter",
+const figtree = Figtree({
+  variable: "--font-figtree",
   subsets: ["latin"],
   display: "swap",
-  preload: true,
 });
 
-const oswald = Oswald({
-  variable: "--font-oswald",
+const display = Big_Shoulders({
+  variable: "--font-display",
   subsets: ["latin"],
+  weight: ["600", "700", "800", "900"],
   display: "swap",
-  preload: true,
 });
 
 const siteUrl =
@@ -109,7 +109,7 @@ export default function RootLayout({
   return (
     <html
       lang="es"
-      className={`${inter.variable} ${oswald.variable} scroll-smooth antialiased`}
+      className={`${figtree.variable} ${display.variable} scroll-smooth antialiased`}
     >
       <body className="min-h-screen flex flex-col font-sans text-white bg-[#071426] selection:bg-[#F29A2E] selection:text-white">
         <script
@@ -119,10 +119,11 @@ export default function RootLayout({
         <CartProvider>
           <Header />
           <CartDrawer />
-          <div className="flex-1">
+          <main id="contenido" className="flex-1">
             {children}
-          </div>
+          </main>
           <Footer />
+          <MobileBar />
         </CartProvider>
         <VercelAnalytics />
       </body>

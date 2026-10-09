@@ -1,17 +1,21 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-heading: var(--font-oswald), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-figtree), ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-display), ui-sans-serif, system-ui, sans-serif;
 
+  /* Paleta del logo: azul de noche y naranja balón. */
   --color-primary: #0F2347;
   --color-primary-dark: #071426;
+  --color-night: #0B1E38;
   --color-accent: #F29A2E;
   --color-accent-light: #FFB14A;
   --color-titanium: #F7F8FA;
+  --color-mist: #EEF2F7;
+  --color-steel: #8FA3BF;
 
   --animate-fade-in: fade-in 0.25s ease-out forwards;
-  --animate-fade-in-up: fade-in-up 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  --animate-fade-in-up: fade-in-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 
   @keyframes fade-in {
     from { opacity: 0; }
@@ -19,14 +23,8 @@
   }
 
   @keyframes fade-in-up {
-    from {
-      opacity: 0;
-      transform: translateY(40px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
   }
 }
 
@@ -58,7 +56,33 @@ body {
 
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-heading);
-  text-transform: uppercase;
+  letter-spacing: -0.01em;
+}
+
+/* Foco visible para quien navega con teclado */
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+}
+
+/* Líneas de cancha: se dibujan una sola vez al cargar el inicio */
+.court-draw {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: court-draw 1.6s cubic-bezier(0.65, 0, 0.35, 1) 0.15s forwards;
+}
+@keyframes court-draw {
+  to { stroke-dashoffset: 0; }
+}
+
+/* Divisor con marca de línea de ataque */
+.court-rule {
+  height: 1px;
+  background: linear-gradient(90deg, var(--color-accent) 0 56px, rgba(143, 163, 191, 0.28) 56px 100%);
+}
+.court-rule-light {
+  height: 1px;
+  background: linear-gradient(90deg, var(--color-accent) 0 56px, rgba(15, 35, 71, 0.16) 56px 100%);
 }
 
 /* Safe Area Inset Utility Classes */
@@ -91,4 +115,59 @@ h1, h2, h3, h4, h5, h6 {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+/* ---------- Portada: un solo momento de entrada ---------- */
+.net-rise { animation: net-rise 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.9s both; transform-origin: 50% 55%; transform-box: fill-box; }
+@keyframes net-rise { from { opacity: 0; transform: scaleY(0.2); } to { opacity: 1; transform: scaleY(1); } }
+
+.trail-in { animation: trail-in 0.9s ease-out 1.2s both; }
+@keyframes trail-in { from { opacity: 0; transform: translateX(-60px); } to { opacity: 1; transform: none; } }
+
+.ball-in { animation: ball-in 1.1s cubic-bezier(0.16, 1, 0.3, 1) 1.1s both; }
+@keyframes ball-in { from { opacity: 0; transform: translate(-40%, -30%) scale(0.6) rotate(-120deg); } to { opacity: 1; transform: none; } }
+
+.ball-float { animation: ball-float 5s ease-in-out 2.3s infinite; }
+@keyframes ball-float { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-14px) rotate(8deg); } }
+
+.shadow-pulse { animation: shadow-pulse 5s ease-in-out 2.3s infinite; transform-origin: center; transform-box: fill-box; }
+@keyframes shadow-pulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(0.85); opacity: 0.7; } }
+
+.hero-rise > * { animation: fade-in-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.hero-rise > *:nth-child(1) { animation-delay: 0.05s; }
+.hero-rise > *:nth-child(2) { animation-delay: 0.15s; }
+.hero-rise > *:nth-child(3) { animation-delay: 0.3s; }
+.hero-rise > *:nth-child(4) { animation-delay: 0.45s; }
+.hero-rise > *:nth-child(5) { animation-delay: 0.6s; }
+
+/* Banda de categorías en movimiento */
+.marquee { animation: marquee 38s linear infinite; }
+@keyframes marquee { to { transform: translateX(-50%); } }
+
+/* Texto con contorno */
+.text-outline { color: transparent; -webkit-text-stroke: 1.5px currentColor; }
+.text-outline-accent { color: transparent; -webkit-text-stroke: 1.5px #F29A2E; }
+
+/* Grano fino para dar textura a los fondos oscuros */
+.grain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.07;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Luces de coliseo */
+.floodlights {
+  background:
+    radial-gradient(60% 50% at 78% -5%, rgba(255, 214, 160, 0.20), transparent 70%),
+    radial-gradient(40% 40% at 20% -10%, rgba(143, 163, 191, 0.18), transparent 70%),
+    radial-gradient(50% 60% at 70% 75%, rgba(242, 154, 46, 0.10), transparent 70%),
+    linear-gradient(180deg, #071426 0%, #0A1B33 55%, #071426 100%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee, .ball-float, .shadow-pulse { animation: none !important; }
 }
