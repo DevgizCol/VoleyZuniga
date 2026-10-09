@@ -167,17 +167,17 @@ export default async function AdminPage() {
             <section className="rounded-2xl border border-white/10 bg-[#0B1E38] p-6">
               <h2 className="font-heading font-black uppercase text-2xl mb-1">Mensaje al grupo</h2>
               <p className="text-sm text-[#B7C4D8] mb-4">Escribe el aviso y elige el grupo de familias al abrir WhatsApp.</p>
-              <GroupMessage gamesUrl={`${siteUrl}/games`} />
+              <GroupMessage gamesUrl={`${siteUrl}/partidos`} />
             </section>
 
             <section className="rounded-2xl border border-white/10 bg-[#0B1E38] p-6">
               <h2 className="font-heading font-black uppercase text-2xl mb-3">Ver la web</h2>
               <ul className="grid grid-cols-2 gap-2 text-sm">
                 {[
-                  ["Partidos", "/games"],
-                  ["Posiciones", "/standings"],
-                  ["Noticias", "/news"],
-                  ["Inscripción", "/registrations"],
+                  ["Partidos", "/partidos"],
+                  ["Posiciones", "/posiciones"],
+                  ["Noticias", "/noticias"],
+                  ["Inscripción", "/inscripciones"],
                 ].map(([label, href]) => (
                   <li key={href}>
                     <Link href={href} className="h-10 px-3 flex items-center rounded-md border border-white/10 hover:border-white/40">{label}</Link>

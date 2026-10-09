@@ -8,6 +8,7 @@ import { DAY_NAMES, SESSIONS, TRAINING_DAYS, formatTime } from "@/data/schedule"
 
 export const metadata: Metadata = {
   title: "Sedes y contacto",
+  alternates: { canonical: "/contacto" },
   description: "Sedes, horarios y canales de contacto del Club Voley Zúñiga en Medellín.",
 };
 

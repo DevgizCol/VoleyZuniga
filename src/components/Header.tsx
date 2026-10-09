@@ -79,7 +79,7 @@ export default function Header({ notices = [] }: { notices?: CourtNotice[] }) {
 
           <div className="flex items-center gap-1">
             <Link
-              href="/registrations"
+              href="/inscripciones"
               className="hidden lg:inline-flex ml-2 px-5 h-10 items-center bg-[#F29A2E] hover:bg-[#FFB14A] text-[#071426] font-bold text-sm rounded-md transition-colors"
             >
               Inscribirme
@@ -161,7 +161,7 @@ export default function Header({ notices = [] }: { notices?: CourtNotice[] }) {
 
         <div className="px-4 pb-6 space-y-3">
           <Link
-            href="/registrations"
+            href="/inscripciones"
             onClick={() => setMenuOpen(false)}
             className="flex items-center justify-center h-14 bg-[#F29A2E] text-[#071426] font-bold text-lg rounded-md"
           >

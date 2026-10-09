@@ -1,13 +1,21 @@
+/* eslint-disable @next/next/no-img-element -- las fotos de la galería vienen de la hoja */
+import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, ChevronDown, Camera, MessageCircle, MapPin, Clock } from "lucide-react";
+import { ArrowRight, ChevronDown, Camera, MessageCircle, MapPin, Clock, Quote } from "lucide-react";
 import HeroCourt from "@/components/HeroCourt";
+import JsonLd from "@/components/JsonLd";
 import NextSession from "@/components/NextSession";
 import Volleyball from "@/components/Volleyball";
 import { PictoGrowth, PictoScore, PictoTechnique } from "@/components/Pictograms";
 import { SITE, whatsappUrl } from "@/config/site";
 import { CATEGORIES } from "@/data/registration";
 import { DAY_NAMES, SESSIONS, TRAINING_DAYS, formatTime } from "@/data/schedule";
+import { getGallery, getTestimonials } from "@/lib/club";
+
+export const metadata: Metadata = { alternates: { canonical: "/" } };
+
+export const revalidate = 300;
 
 const ageLabel = (min: number, max: number) => (max >= 100 ? "18 años o más" : min === 0 ? "7 a 11 años" : `${min} a ${max} años`);
 
@@ -22,7 +30,7 @@ const METHOD = [
     Picto: PictoTechnique,
     title: "Técnica que se corrige en video",
     text: "Batida, suspensión y golpeo revisados cuadro a cuadro, con acondicionamiento progresivo para cuidar rodillas y hombros.",
-    href: "/club/methodology",
+    href: "/metodologia",
     cta: "Ver metodología",
   },
   {
@@ -36,7 +44,7 @@ const METHOD = [
     Picto: PictoScore,
     title: "Competencia de verdad",
     text: "Liga de Antioquia, torneos municipales y festivales interclubes. Se aprende a ganar, y también a perder.",
-    href: "/games",
+    href: "/partidos",
     cta: "Ver partidos",
   },
 ];
@@ -57,6 +65,10 @@ const FAQS = [
     a: "En el Polideportivo 3 Canchas (Buenos Aires) y en el Coliseo Yesid Santos (Atanasio Girardot). El horario de cada categoría está en la semana de entrenamientos, más arriba.",
   },
   {
+    q: "¿Cuánto cuesta?",
+    a: "La clase de prueba no tiene costo. El valor de la mensualidad y las formas de pago te los enviamos por WhatsApp cuando confirmamos tu clase, para que decidas con toda la información.",
+  },
+  {
     q: "¿Qué debo llevar el primer día?",
     a: "Ropa deportiva cómoda, tenis con buen agarre para cancha y un termo con agua. La indumentaria oficial se entrega al formalizar la matrícula.",
   },
@@ -66,11 +78,19 @@ const FAQS = [
   },
 ];
 
-export default function Home() {
+const faqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: FAQS.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
+};
+
+export default async function Home() {
   const marqueeItems = CATEGORIES.map((c) => c.value);
+  const [photos, testimonials] = await Promise.all([getGallery(), getTestimonials()]);
 
   return (
     <>
+      <JsonLd data={faqJsonLd} />
       {/* ================= PORTADA ================= */}
       <section className="relative isolate overflow-hidden floodlights grain text-white min-h-[100svh] flex flex-col">
         <div className="container mx-auto px-4 sm:px-6 flex-1 grid lg:grid-cols-12 items-center gap-6 pt-40 sm:pt-44 lg:pt-32 pb-10">
@@ -87,7 +107,7 @@ export default function Home() {
             </p>
             <div className="mt-8 flex flex-col sm:flex-row gap-3">
               <Link
-                href="/registrations"
+                href="/inscripciones"
                 className="group h-14 px-7 inline-flex items-center justify-center gap-2 bg-[#F29A2E] hover:bg-[#FFB14A] text-[#071426] font-bold text-lg rounded-md shadow-[0_10px_30px_-8px_rgba(242,154,46,0.7)] transition-all"
               >
                 Reservar clase de prueba
@@ -204,7 +224,7 @@ export default function Home() {
 
           <div className="mt-10 flex flex-col sm:flex-row gap-3">
             <Link
-              href="/registrations"
+              href="/inscripciones"
               className="group h-14 px-7 inline-flex items-center justify-center gap-2 bg-[#0F2347] hover:bg-[#071426] text-white font-bold text-lg rounded-md transition-colors"
             >
               Inscribirme <ArrowRight size={20} className="transition-transform group-hover:translate-x-1" />
@@ -264,6 +284,50 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ================= FOTOS ================= */}
+      {photos.length > 0 && (
+        <section className="bg-[#071426] text-white py-24 sm:py-32">
+          <div className="container mx-auto px-4 sm:px-6">
+            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6 mb-12">
+              <h2 className="font-heading font-black uppercase leading-[0.9] text-5xl sm:text-7xl">En la cancha</h2>
+              <Link href="/galeria" className="inline-flex items-center gap-2 font-semibold text-[#F29A2E] hover:text-[#FFB14A]">
+                Ver la galería <ArrowRight size={16} />
+              </Link>
+            </div>
+            <ul className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+              {photos.slice(0, 6).map((p, i) => (
+                <li key={`${p.image}-${i}`} className="relative aspect-square rounded-xl overflow-hidden border border-white/10 bg-[#0B1E38]">
+                  <img src={p.image} alt={p.title || "Foto del Club Voley Zúñiga"} loading="lazy" className="absolute inset-0 w-full h-full object-cover" />
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      )}
+
+      {/* ================= TESTIMONIOS ================= */}
+      {testimonials.length > 0 && (
+        <section className="bg-[#EEF2F7] text-[#0F2347] py-24 sm:py-32">
+          <div className="container mx-auto px-4 sm:px-6">
+            <h2 className="font-heading font-black uppercase leading-[0.9] text-5xl sm:text-7xl mb-12">Lo que dicen las familias</h2>
+            <ul className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {testimonials.slice(0, 6).map((t) => (
+                <li key={t.name + t.text.slice(0, 20)}>
+                  <figure className="h-full rounded-xl bg-white p-7 shadow-[0_1px_0_rgba(15,35,71,0.06),0_20px_40px_-24px_rgba(15,35,71,0.35)] flex flex-col">
+                    <Quote size={28} className="text-[#F29A2E]" aria-hidden="true" />
+                    <blockquote className="mt-4 text-lg leading-relaxed flex-1">{t.text}</blockquote>
+                    <figcaption className="mt-6 pt-5 border-t border-[#0F2347]/10">
+                      <span className="font-heading font-extrabold text-2xl">{t.name}</span>
+                      {t.relation ? <span className="block text-sm text-[#44546F]">{t.relation}</span> : null}
+                    </figcaption>
+                  </figure>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      )}
+
       {/* ================= PREGUNTAS ================= */}
       <section className="bg-[#071426] text-white py-24 sm:py-32">
         <div className="container mx-auto px-4 sm:px-6 grid lg:grid-cols-12 gap-12">
@@ -316,7 +380,7 @@ export default function Home() {
             </h2>
             <div className="mt-8 flex flex-col sm:flex-row gap-3">
               <Link
-                href="/registrations"
+                href="/inscripciones"
                 className="group h-14 px-8 inline-flex items-center justify-center gap-2 bg-[#071426] hover:bg-[#0F2347] text-white font-bold text-lg rounded-md transition-colors"
               >
                 Reservar clase de prueba <ArrowRight size={20} className="transition-transform group-hover:translate-x-1" />

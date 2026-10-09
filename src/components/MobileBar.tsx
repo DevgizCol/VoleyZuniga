@@ -8,7 +8,7 @@ import { whatsappUrl } from "@/config/site";
 // Acciones principales siempre a mano en el celular.
 export default function MobileBar() {
   const pathname = usePathname();
-  if (pathname.startsWith("/admin") || pathname.startsWith("/registrations")) return null;
+  if (pathname.startsWith("/admin") || pathname.startsWith("/inscripciones")) return null;
 
   const base =
     "flex-1 min-h-[52px] flex flex-col items-center justify-center gap-0.5 text-[11px] font-semibold touch-manipulation active:opacity-80";
@@ -19,11 +19,11 @@ export default function MobileBar() {
       className="md:hidden fixed inset-x-0 bottom-0 z-40 bg-[#071426]/95 backdrop-blur border-t border-white/10 flex"
       style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}
     >
-      <Link href="/registrations" className={`${base} bg-[#F29A2E] text-[#071426]`}>
+      <Link href="/inscripciones" className={`${base} bg-[#F29A2E] text-[#071426]`}>
         <UserPlus size={18} />
         <span>Inscribirme</span>
       </Link>
-      <Link href="/club/contact" className={`${base} text-white`}>
+      <Link href="/contacto" className={`${base} text-white`}>
         <CalendarDays size={18} className="text-[#F29A2E]" />
         <span>Horarios</span>
       </Link>

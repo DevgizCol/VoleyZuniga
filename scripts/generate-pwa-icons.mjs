@@ -121,6 +121,6 @@ console.log("Rendering 180x180 Apple Touch Icon PNG...");
 execSync(`"${edgePath}" --headless --screenshot="${outApple}" --window-size=180,180 --default-background-color=00000000 "file://${tempHtmlPath}"`, { stdio: "inherit" });
 
 // Clean up temp HTML
-try { fs.unlinkSync(tempHtmlPath); } catch (e) {}
+try { fs.unlinkSync(tempHtmlPath); } catch { /* ya no existe */ }
 
 console.log("All luxury mobile PWA icons successfully created!");

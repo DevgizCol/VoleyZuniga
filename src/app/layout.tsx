@@ -7,6 +7,9 @@ import { getCourtNotices } from "@/lib/court";
 import { siteUrl } from "@/lib/site-url";
 import CartDrawer from "@/components/CartDrawer";
 import VercelAnalytics from "@/components/VercelAnalytics";
+import JsonLd from "@/components/JsonLd";
+import { SITE } from "@/config/site";
+import { VENUES, mapsLink } from "@/data/venues";
 import { CartProvider } from "@/context/CartContext";
 import "./globals.css";
 
@@ -81,7 +84,7 @@ const jsonLd = {
   "name": "Club Voley Zúñiga",
   "image": `${siteUrl}/logo-trim.png`,
   "logo": `${siteUrl}/logo-trim.png`,
-  "sameAs": ["https://www.instagram.com/voleyzuniga"],
+  "sameAs": [SITE.instagram.url],
   "description": "Club de voleibol en Medellín para niños, jóvenes y adultos.",
   "address": {
     "@type": "PostalAddress",
@@ -89,8 +92,17 @@ const jsonLd = {
     "addressRegion": "Antioquia",
     "addressCountry": "CO"
   },
-  "telephone": "+573128459210",
-  "url": siteUrl
+  "telephone": `+${SITE.phoneDigits}`,
+  "email": SITE.email,
+  "sport": "Volleyball",
+  "url": siteUrl,
+  "location": VENUES.map((v) => ({
+    "@type": "SportsActivityLocation",
+    "name": v.name,
+    "address": { "@type": "PostalAddress", "streetAddress": v.address, "addressLocality": "Medellín", "addressRegion": "Antioquia", "addressCountry": "CO" },
+    "geo": { "@type": "GeoCoordinates", "latitude": v.lat, "longitude": v.lng },
+    "hasMap": mapsLink(v),
+  })),
 };
 
 export const viewport: Viewport = {
@@ -116,10 +128,7 @@ export default async function RootLayout({
       className={`${figtree.variable} ${display.variable} scroll-smooth antialiased`}
     >
       <body className="min-h-screen flex flex-col font-sans text-white bg-[#071426] selection:bg-[#F29A2E] selection:text-white">
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-        />
+        <JsonLd data={jsonLd} />
         <CartProvider>
           <Header notices={notices} />
           <CartDrawer />
@@ -129,7 +138,8 @@ export default async function RootLayout({
           <Footer />
           <MobileBar />
         </CartProvider>
-        <VercelAnalytics />
+        {/* Los scripts de analítica solo existen en Vercel; en Docker u otro hosting darían 404. */}
+        {process.env.VERCEL ? <VercelAnalytics /> : null}
       </body>
     </html>
   );

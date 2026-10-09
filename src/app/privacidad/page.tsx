@@ -15,7 +15,7 @@ const sections: { title: string; body: React.ReactNode }[] = [
     body: (
       <p>
         Club Voley Zúñiga, Medellín (Antioquia, Colombia). Puedes contactarnos por WhatsApp al +57 312 845 9210, al correo clubvoleyzuniga@gmail.com o desde el{" "}
-        <Link href="/club/contact" className="text-[#F29A2E] underline underline-offset-2">
+        <Link href="/contacto" className="text-[#F29A2E] underline underline-offset-2">
           formulario de contacto
         </Link>
         .

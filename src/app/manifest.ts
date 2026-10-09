@@ -17,9 +17,9 @@ export default function manifest(): MetadataRoute.Manifest {
       { src: "/icon-maskable-512.png", sizes: "512x512", type: "image/png", purpose: "maskable" },
     ],
     shortcuts: [
-      { name: "Inscribirme", url: "/registrations" },
-      { name: "Partidos", url: "/games" },
-      { name: "Horarios y sedes", url: "/club/contact" },
+      { name: "Inscribirme", url: "/inscripciones" },
+      { name: "Partidos", url: "/partidos" },
+      { name: "Horarios y sedes", url: "/contacto" },
     ],
   };
 }

@@ -3,31 +3,50 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, MessageCircle } from "lucide-react";
 import ArticleCover from "@/components/ArticleCover";
+import JsonLd from "@/components/JsonLd";
 import { getArticle, longDate } from "@/lib/news";
+import { siteUrl } from "@/lib/site-url";
 
 export const revalidate = 300;
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const a = await getArticle((await params).slug);
   if (!a) return { title: "Noticia no encontrada" };
-  return { title: a.title, description: a.summary, openGraph: { title: a.title, description: a.summary, images: a.image ? [a.image] : undefined } };
+  return {
+    title: a.title,
+    description: a.summary,
+    alternates: { canonical: `/noticias/${a.slug}` },
+    openGraph: { type: "article", title: a.title, description: a.summary, publishedTime: a.date, images: a.image ? [a.image] : undefined },
+  };
 }
 
 export default async function ArticlePage({ params }: { params: Promise<{ slug: string }> }) {
   const a = await getArticle((await params).slug);
   if (!a) notFound();
-  const base = process.env.NEXT_PUBLIC_SITE_URL || "";
-  const share = `https://wa.me/?text=${encodeURIComponent(`${a.title}\n${base}/news/${a.slug}`)}`;
+  const url = `${siteUrl}/noticias/${a.slug}`;
+  const share = `https://wa.me/?text=${encodeURIComponent(`${a.title}\n${url}`)}`;
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "NewsArticle",
+    headline: a.title,
+    description: a.summary || undefined,
+    datePublished: `${a.date}T12:00:00-05:00`,
+    image: a.image ? [a.image] : [`${siteUrl}/opengraph-image`],
+    mainEntityOfPage: url,
+    author: { "@type": "SportsOrganization", name: "Club Voley Zúñiga", url: siteUrl },
+    publisher: { "@type": "SportsOrganization", name: "Club Voley Zúñiga", logo: { "@type": "ImageObject", url: `${siteUrl}/logo-trim.png` } },
+  };
 
   return (
     <article className="bg-[#071426] text-white">
+      <JsonLd data={jsonLd} />
       <header className="relative isolate overflow-hidden pt-40 sm:pt-44 pb-12">
         <div className="absolute inset-0 -z-10 opacity-40">
           <ArticleCover image={a.image} title={a.title} category={a.category} large id="article" />
         </div>
         <div className="absolute inset-0 -z-10 bg-gradient-to-t from-[#071426] via-[#071426]/80 to-[#071426]/40" />
         <div className="container mx-auto px-4 sm:px-6 max-w-3xl">
-          <Link href="/news" className="inline-flex items-center gap-2 text-sm text-[#C9D5E6] hover:text-white"><ArrowLeft size={16} /> Todas las noticias</Link>
+          <Link href="/noticias" className="inline-flex items-center gap-2 text-sm text-[#C9D5E6] hover:text-white"><ArrowLeft size={16} /> Todas las noticias</Link>
           <p className="mt-6 text-[#F29A2E] font-semibold">{a.category} · {longDate(a.date)}</p>
           <h1 className="mt-3 font-heading font-black uppercase leading-[0.92] text-[clamp(2.6rem,9vw,5rem)]">{a.title}</h1>
           {a.summary ? <p className="mt-5 text-xl text-[#C9D5E6] leading-relaxed">{a.summary}</p> : null}

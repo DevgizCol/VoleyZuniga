@@ -4,6 +4,7 @@ import RegistrationForm from "./RegistrationForm";
 
 export const metadata: Metadata = {
   title: "Inscripción",
+  alternates: { canonical: "/inscripciones" },
   description: "Inscríbete al Club Voley Zúñiga y agenda una clase de prueba sin costo.",
 };
 

@@ -4,6 +4,7 @@ import StoreClient from "./StoreClient";
 
 export const metadata: Metadata = {
   title: "Tienda",
+  alternates: { canonical: "/tienda" },
   description: "Camisetas personalizadas, balones y accesorios del Club Voley Zúñiga.",
 };
 

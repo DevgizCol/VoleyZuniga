@@ -32,10 +32,11 @@ export default function Footer() {
           <nav aria-label="Pie de página" className="md:col-span-3">
             <h2 className="font-heading font-bold text-xl mb-4 text-white">Navegar</h2>
             <ul className="flex flex-col gap-2.5 text-sm text-[#B7C4D8]">
-              <li><Link href="/registrations" className="hover:text-[#F29A2E] transition-colors">Inscribirme</Link></li>
+              <li><Link href="/inscripciones" className="hover:text-[#F29A2E] transition-colors">Inscribirme</Link></li>
               {NAV_LINKS.map((l) => (
                 <li key={l.href}><Link href={l.href} className="hover:text-[#F29A2E] transition-colors">{l.name}</Link></li>
               ))}
+              <li><Link href="/galeria" className="hover:text-[#F29A2E] transition-colors">Galería</Link></li>
             </ul>
           </nav>
 
