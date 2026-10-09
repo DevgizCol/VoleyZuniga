@@ -19,6 +19,10 @@ Todo se maneja desde la hoja de Google del club (pestaña **Leeme** con instrucc
 | Galería | El club | Fotos en `/galeria` y las 6 más recientes en el inicio. Columnas: Fecha, Título, Imagen (URL), Activo. |
 | Entrenadores | El club | Cuerpo técnico en `/el-club`. Columnas: Nombre, Cargo, Categorías, Foto (URL), Perfil, Activo. |
 | Testimonios | El club | "Lo que dicen las familias" en el inicio. Columnas: Nombre, Relación, Testimonio, Activo. |
+| Horarios | El club | Entrenamientos de la semana: portada, Contacto, formulario de inscripción. |
+| Productos | El club | Catálogo de la tienda. |
+| Ajustes | El club | Teléfono, correo, Instagram, mensaje de WhatsApp, aviso de portada, inscripciones abiertas. |
+| Historial | El panel | Registro de cada cambio hecho desde `/admin` y por quién. |
 
 Las filas con **Activo = NO** no se muestran. Los cambios se ven en la web en 2 a 5 minutos.
 Si una pestaña no existe o está vacía, su sección simplemente no aparece. Las imágenes pueden ser
@@ -27,13 +31,22 @@ enlaces de Google Drive compartidos como "Cualquier persona con el enlace".
 > Las pestañas Galería, Entrenadores y Testimonios son nuevas: después de pegar la versión actual de
 > `Code.gs`, publica una **Nueva versión** de la implementación (paso 4 abajo) para que la web pueda leerlas.
 
-El panel `/admin` muestra las inscripciones sin atender (con botón para escribir por WhatsApp),
-los mensajes, el próximo partido, el estado de las canchas y un generador de mensajes para el grupo.
+### Panel `/admin`
+
+Todo lo anterior se edita también desde el panel, sin abrir la hoja: partidos (con carga rápida de
+resultados y suma automática a la tabla), posiciones, noticias, estado de canchas, horarios, tienda,
+ajustes, inscripciones (estado y notas) y mensajes. Cada cambio se guarda en la hoja, se ve en la web
+al instante (caché por etiquetas con `updateTag`) y queda en el Historial con el nombre de quien lo hizo.
+
+Técnica: Server Actions de Next.js 16, validación con zod en el servidor, interfaz optimista
+(`useOptimistic`), control de conflictos (si la fila cambió en la hoja, no se sobrescribe) y lista blanca
+de pestañas y columnas en el Apps Script.
 
 ## Variables de entorno (Vercel → Settings → Environment Variables)
 
 Ver `.env.example`. Obligatorias: `ADMIN_PASSWORD`, `SESSION_SECRET`, `SHEETS_WEBAPP_URL`, `SHEETS_SECRET`.
-Opcionales: `SHEET_URL` (botón "Abrir la hoja" del panel) y `NEXT_PUBLIC_SITE_URL` (dominio propio).
+Opcionales: `ADMIN_USERS` (más usuarios, `Nombre:clave; Nombre2:clave2`), `SHEET_URL` (botón "Abrir la hoja"
+del panel) y `NEXT_PUBLIC_SITE_URL` (dominio propio).
 
 ## Apps Script (backend de la hoja)
 

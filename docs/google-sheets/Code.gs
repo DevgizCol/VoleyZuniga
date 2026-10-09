@@ -13,6 +13,9 @@
  *   SHARED_SECRET : cadena larga y aleatoria. La MISMA va en Vercel como SHEETS_SECRET.
  *   NOTIFY_EMAIL  : correo(s) que reciben el aviso de cada inscripción/mensaje (opcional).
  *
+ * Panel de administración (/admin): crea, edita y borra filas de Fixture, Tabla, Noticias, Cancha y Horarios,
+ * y cambia el Estado de Inscripciones y Contacto. Cada cambio queda en la pestaña "Historial".
+ *
  * Resumen semanal por correo (opcional): ejecuta una vez la función instalarResumenSemanal()
  * desde el editor (botón Ejecutar). Cada lunes a las 7 a. m. llegará un resumen a NOTIFY_EMAIL.
  *   SITE_URL      : dirección pública de la web, sin "/" final (p. ej. https://tudominio.com). Se usa para
@@ -28,11 +31,27 @@ var AFTER_STATE = {
   Inscripciones: ["Código"],
   Contacto: []
 };
-var READABLE = ["Fixture", "Tabla", "Noticias", "Cancha", "Galería", "Entrenadores", "Testimonios"];
+var READABLE = ["Fixture", "Tabla", "Noticias", "Cancha", "Horarios", "Productos", "Ajustes", "Galería", "Entrenadores", "Testimonios"];
 // Solo para el panel de administración (la web las pide desde el servidor con la clave secreta).
-var PRIVATE_READABLE = ["Inscripciones", "Contacto"];
-var PRIVATE_MAX_ROWS = 100;
+var PRIVATE_READABLE = ["Inscripciones", "Contacto", "Historial"];
+var PRIVATE_MAX_ROWS = 300;
+
+// Lo que el panel de administración puede cambiar. true = cualquier columna; lista = solo esas columnas.
+var ADMIN_EDITABLE = {
+  Fixture: { create: true, update: true, remove: true },
+  Tabla: { create: true, update: true, remove: true },
+  Noticias: { create: true, update: true, remove: true },
+  Cancha: { create: true, update: true, remove: true },
+  Horarios: { create: true, update: true, remove: true },
+  Productos: { create: true, update: true, remove: true },
+  Ajustes: { create: true, update: ["Valor"], remove: false },
+  Inscripciones: { create: false, update: ["Estado", "Notas"], remove: false },
+  Contacto: { create: false, update: ["Estado", "Notas"], remove: false }
+};
+var HISTORY_SHEET = "Historial";
+var HISTORY_HEADERS = ["Fecha", "Usuario", "Acción", "Pestaña", "Detalle"];
 var MAX_LEN = 2000;
+var ADMIN_MAX_LEN = 10000; // el cuerpo de una noticia puede ser largo
 var TZ = "America/Bogota";
 
 // Etiquetas que se muestran en el correo (la hoja conserva los nombres de columna).
@@ -51,8 +70,8 @@ function secretOk_(provided) {
 }
 
 // Evita inyección de fórmulas (=, +, -, @) al abrir la hoja.
-function clean_(value) {
-  var s = String(value == null ? "" : value).trim().slice(0, MAX_LEN);
+function clean_(value, max) {
+  var s = String(value == null ? "" : value).trim().slice(0, max || MAX_LEN);
   return /^[=+\-@]/.test(s) ? "'" + s : s;
 }
 
@@ -60,6 +79,7 @@ function doPost(e) {
   try {
     var body = JSON.parse(e.postData.contents);
     if (!secretOk_(body.secret)) return json_({ ok: false, error: "unauthorized" });
+    if (body.action && String(body.action).indexOf("admin.") === 0) return json_(adminAction_(body));
 
     var name = body.sheet;
     if (!WRITABLE.hasOwnProperty(name)) return json_({ ok: false, error: "sheet_not_allowed" });
@@ -218,6 +238,106 @@ function notify_(sheetName, fields, values, stamp, sheetUrl) {
   MailApp.sendEmail(to, subject.replace(/[\r\n]+/g, " "), plain, options);
 }
 
+// ---------- Panel de administración: crear, editar y borrar ----------
+
+// Escribe los valores como texto plano para que Sheets no convierta fechas, horas ni números.
+function writeRow_(sh, rowNum, headers, values) {
+  var range = sh.getRange(rowNum, 1, 1, headers.length);
+  range.setNumberFormat("@");
+  range.setValues([values]);
+}
+
+function historySheet_() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sh = ss.getSheetByName(HISTORY_SHEET);
+  if (!sh) {
+    sh = ss.insertSheet(HISTORY_SHEET);
+    sh.appendRow(HISTORY_HEADERS);
+    sh.setFrozenRows(1);
+  }
+  return sh;
+}
+
+function log_(actor, action, sheet, detail) {
+  try {
+    historySheet_().appendRow([Utilities.formatDate(new Date(), TZ, "yyyy-MM-dd HH:mm:ss"), clean_(actor), action, sheet, clean_(String(detail).slice(0, 500))]);
+  } catch (err) {
+    console.error("Historial: " + err);
+  }
+}
+
+function describe_(obj) {
+  return Object.keys(obj || {}).filter(function (k) { return k !== "_row" && obj[k] !== ""; }).slice(0, 6).map(function (k) { return k + ": " + obj[k]; }).join(" · ");
+}
+
+function adminAction_(body) {
+  var action = String(body.action).replace("admin.", "");
+  var name = body.sheet;
+  var perms = ADMIN_EDITABLE[name];
+  var actor = String(body.actor || "Panel").replace(/[\r\n]+/g, " ").slice(0, 60);
+  if (!perms) return { ok: false, error: "sheet_not_allowed" };
+  if (["create", "update", "remove"].indexOf(action) === -1) return { ok: false, error: "bad_action" };
+  if (!perms[action]) return { ok: false, error: "action_not_allowed" };
+
+  var lock = LockService.getScriptLock();
+  lock.waitLock(15000);
+  try {
+    var sh = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(name);
+    if (!sh) return { ok: false, error: "sheet_missing" };
+    var lastCol = sh.getLastColumn();
+    var headers = sh.getRange(1, 1, 1, lastCol).getDisplayValues()[0];
+    var data = body.data || {};
+
+    if (action === "create") {
+      var row = headers.map(function (h) { return data.hasOwnProperty(h) ? clean_(data[h], ADMIN_MAX_LEN) : ""; });
+      var newRow = sh.getLastRow() + 1;
+      writeRow_(sh, newRow, headers, row);
+      log_(actor, "Creó", name, describe_(data));
+      return { ok: true, row: newRow };
+    }
+
+    var rowNum = Number(body.row);
+    if (!(rowNum >= 2 && rowNum <= sh.getLastRow() && Math.floor(rowNum) === rowNum)) return { ok: false, error: "bad_row" };
+    var current = sh.getRange(rowNum, 1, 1, headers.length).getDisplayValues()[0];
+
+    // Control de conflictos: la fila debe seguir igual a como la vio quien la edita.
+    var expected = body.expected || {};
+    for (var key in expected) {
+      if (key === "_row" || !expected.hasOwnProperty(key)) continue;
+      var idx = headers.indexOf(key);
+      if (idx !== -1 && String(current[idx]) !== String(expected[key])) return { ok: false, error: "conflict" };
+    }
+
+    if (action === "remove") {
+      sh.deleteRow(rowNum);
+      var before = {};
+      headers.forEach(function (h, i) { before[h] = current[i]; });
+      log_(actor, "Borró", name, describe_(before));
+      return { ok: true };
+    }
+
+    // update
+    var allowed = perms.update === true ? headers : perms.update;
+    var next = current.slice();
+    var changes = [];
+    Object.keys(data).forEach(function (k) {
+      var i = headers.indexOf(k);
+      if (i === -1 || allowed.indexOf(k) === -1) return;
+      var v = clean_(data[k], ADMIN_MAX_LEN);
+      if (String(next[i]) !== String(v)) {
+        changes.push(k + ": " + (current[i] || "—") + " → " + (v || "—"));
+        next[i] = v;
+      }
+    });
+    if (!changes.length) return { ok: true, unchanged: true };
+    writeRow_(sh, rowNum, headers, next);
+    log_(actor, "Editó", name, changes.join(" · "));
+    return { ok: true };
+  } finally {
+    lock.releaseLock();
+  }
+}
+
 // ---------- Lectura para la web ----------
 
 function doGet(e) {
@@ -225,6 +345,7 @@ function doGet(e) {
     var p = e.parameter || {};
     if (!secretOk_(p.secret)) return json_({ ok: false, error: "unauthorized" });
     var isPrivate = PRIVATE_READABLE.indexOf(p.sheet) !== -1;
+    var all = p.all === "1"; // el panel pide todas las filas (también las inactivas) con su número de fila
     if (READABLE.indexOf(p.sheet) === -1 && !isPrivate) return json_({ ok: false, error: "sheet_not_allowed" });
 
     var sh = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(p.sheet);
@@ -234,15 +355,17 @@ function doGet(e) {
     var headers = values.shift();
     var activoIdx = headers.indexOf("Activo");
     var rows = values
-      .filter(function (r) { return r.join("") !== "" && (activoIdx === -1 || String(r[activoIdx]).toUpperCase() !== "NO"); })
-      .map(function (r) {
+      .map(function (r, i) {
         var o = {};
-        headers.forEach(function (h, i) { o[h] = r[i]; });
-        return o;
-      });
+        headers.forEach(function (h, j) { o[h] = r[j]; });
+        if (all) o._row = String(i + 2);
+        return { o: o, r: r };
+      })
+      .filter(function (x) { return x.r.join("") !== "" && (all || activoIdx === -1 || String(x.r[activoIdx]).toUpperCase() !== "NO"); })
+      .map(function (x) { return x.o; });
     // Para el panel: solo las filas más recientes.
     if (isPrivate) rows = rows.slice(-PRIVATE_MAX_ROWS);
-    return json_({ ok: true, rows: rows });
+    return json_(all ? { ok: true, headers: headers, rows: rows } : { ok: true, rows: rows });
   } catch (err) {
     return json_({ ok: false, error: "server_error" });
   }

@@ -3,11 +3,12 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { CalendarDays, MessageCircle, UserPlus } from "lucide-react";
-import { whatsappUrl } from "@/config/site";
+import { useContact } from "./ContactProvider";
 
 // Acciones principales siempre a mano en el celular.
 export default function MobileBar() {
   const pathname = usePathname();
+  const { wa } = useContact();
   if (pathname.startsWith("/admin") || pathname.startsWith("/inscripciones")) return null;
 
   const base =
@@ -27,7 +28,7 @@ export default function MobileBar() {
         <CalendarDays size={18} className="text-[#F29A2E]" />
         <span>Horarios</span>
       </Link>
-      <a href={whatsappUrl()} target="_blank" rel="noopener noreferrer" className={`${base} text-white`}>
+      <a href={wa()} target="_blank" rel="noopener noreferrer" className={`${base} text-white`}>
         <MessageCircle size={18} className="text-[#25D366]" />
         <span>WhatsApp</span>
       </a>

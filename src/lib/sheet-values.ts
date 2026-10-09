@@ -17,12 +17,13 @@ export function normTime(raw: string): string {
 
 /**
  * Convierte un enlace de Google Drive ("Cualquier persona con el enlace") en una imagen directa.
- * Otras direcciones https se usan tal cual; cualquier otra cosa se descarta.
+ * Otras direcciones https y rutas locales (/store/...) se usan tal cual; cualquier otra cosa se descarta.
  */
 export function imageUrl(raw: string, width = 1600): string {
   const url = (raw || "").trim();
   const drive = url.match(/drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?(?:export=\w+&)?id=)([\w-]{20,})/);
   if (drive) return `https://lh3.googleusercontent.com/d/${drive[1]}=w${width}`;
+  if (/^\/(?!\/)/.test(url)) return url; // ruta local, pero no "//otro-dominio"
   return /^https:\/\//.test(url) ? url : "";
 }
 

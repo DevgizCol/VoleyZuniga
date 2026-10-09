@@ -24,6 +24,10 @@ describe("imageUrl", () => {
     expect(imageUrl(`https://drive.google.com/uc?export=view&id=${id}`)).toContain(id);
   });
   it("deja pasar otras URL https", () => expect(imageUrl("https://ejemplo.com/a.jpg")).toBe("https://ejemplo.com/a.jpg"));
+  it("acepta rutas locales pero no las que apuntan a otro dominio", () => {
+    expect(imageUrl("/store/jersey.svg")).toBe("/store/jersey.svg");
+    expect(imageUrl("//evil.test/a.png")).toBe("");
+  });
   it("descarta http y esquemas peligrosos", () => {
     expect(imageUrl("http://ejemplo.com/a.jpg")).toBe("");
     expect(imageUrl("javascript:alert(1)")).toBe("");

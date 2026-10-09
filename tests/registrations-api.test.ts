@@ -1,9 +1,13 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const appendToSheet = vi.fn(async () => true);
-vi.mock("@/lib/sheets", () => ({ appendToSheet, sheetsConfigured: () => true }));
+// Sin hoja conectada para lectura: horarios y ajustes salen de los valores del código.
+vi.mock("@/lib/sheets", () => ({ appendToSheet, sheetsConfigured: () => true, readSheet: async () => null }));
 
 const { POST } = await import("@/app/api/registrations/route");
+const { getSessions, validHorarios } = await import("@/lib/content");
+const [horario] = await validHorarios();
+const [session] = await getSessions();
 
 let ip = 0;
 const send = (body: unknown) =>
@@ -19,8 +23,8 @@ const valid = {
   age: 13,
   category: "Infantil Sub-14",
   level: "Iniciación Formativa",
-  sede: "Polideportivo 3 Canchas",
-  horario: "Martes y Jueves (5:30 PM – 7:00 PM)",
+  sede: session.sede,
+  horario,
   phone: "312 845 9210",
   consent: true,
   code: "vz14-4fgr",
@@ -41,6 +45,7 @@ describe("POST /api/registrations", () => {
     ["categoría inventada", { category: "Pro" }],
     ["teléfono inválido", { phone: "abc" }],
     ["nombre vacío", { name: " " }],
+    ["horario inventado", { horario: "Domingo 3 AM" }],
   ])("rechaza: %s", async (_, change) => {
     const res = await send({ ...valid, ...change });
     expect(res.status).toBe(400);

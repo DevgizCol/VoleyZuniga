@@ -39,6 +39,7 @@ const nextConfig: NextConfig = {
   ...(process.env.VERCEL ? {} : { output: "standalone" }),
   images: {
     formats: ["image/avif", "image/webp"],
+    remotePatterns: [{ protocol: "https", hostname: "lh3.googleusercontent.com", pathname: "/**" }],
   },
   redirects: async () => OLD_ROUTES.map(([source, destination]) => ({ source, destination, permanent: true })),
   headers: async () => [

@@ -4,34 +4,42 @@ import { checkAdminPassword, createSessionToken, verifySessionToken } from "@/li
 beforeEach(() => {
   vi.stubEnv("SESSION_SECRET", "s".repeat(40));
   vi.stubEnv("ADMIN_PASSWORD", "una frase larga y segura");
+  vi.stubEnv("ADMIN_USERS", "Profe Carlos:clave-larga-1; Corta:123");
 });
 
 describe("contraseña del panel", () => {
-  it("acepta la correcta y rechaza las demás", () => {
-    expect(checkAdminPassword("una frase larga y segura")).toBe(true);
-    expect(checkAdminPassword("otra")).toBe(false);
-    expect(checkAdminPassword("")).toBe(false);
+  it("reconoce a cada usuario y rechaza las demás", () => {
+    expect(checkAdminPassword("una frase larga y segura")).toEqual({ name: "Administrador" });
+    expect(checkAdminPassword("clave-larga-1")).toEqual({ name: "Profe Carlos" });
+    expect(checkAdminPassword("otra")).toBeNull();
+    expect(checkAdminPassword("")).toBeNull();
   });
-  it("falla cerrado si falta la configuración", () => {
-    vi.stubEnv("ADMIN_PASSWORD", "");
-    expect(checkAdminPassword("")).toBe(false);
-    vi.stubEnv("ADMIN_PASSWORD", "x");
+  it("ignora contraseñas adicionales de menos de 8 caracteres", () => {
+    expect(checkAdminPassword("123")).toBeNull();
+  });
+  it("falla cerrado si el secreto de sesión es corto", () => {
     vi.stubEnv("SESSION_SECRET", "corto");
-    expect(checkAdminPassword("x")).toBe(false);
+    expect(checkAdminPassword("una frase larga y segura")).toBeNull();
   });
 });
 
 describe("sesión", () => {
-  it("valida un token recién creado", () => {
-    expect(verifySessionToken(createSessionToken()!)).toBe(true);
+  const user = { name: "Profe Carlos" };
+  it("valida un token recién creado y conserva el nombre", () => {
+    expect(verifySessionToken(createSessionToken(user)!)).toEqual(user);
   });
   it("rechaza tokens alterados, vencidos o firmados con otro secreto", () => {
-    const token = createSessionToken()!;
-    const [role, exp, sig] = token.split(".");
-    expect(verifySessionToken(`${role}.${Number(exp) + 1000}.${sig}`)).toBe(false);
-    expect(verifySessionToken(`${role}.1.${sig}`)).toBe(false);
-    expect(verifySessionToken(undefined)).toBe(false);
+    const token = createSessionToken(user)!;
+    const [role, name, exp, sig] = token.split(".");
+    expect(verifySessionToken(`${role}.${name}.${Number(exp) + 1000}.${sig}`)).toBeNull();
+    expect(verifySessionToken(`${role}.${name}.1.${sig}`)).toBeNull();
+    expect(verifySessionToken(undefined)).toBeNull();
     vi.stubEnv("SESSION_SECRET", "o".repeat(40));
-    expect(verifySessionToken(token)).toBe(false);
+    expect(verifySessionToken(token)).toBeNull();
+  });
+  it("deja de valer si el usuario se retira de ADMIN_USERS", () => {
+    const token = createSessionToken(user)!;
+    vi.stubEnv("ADMIN_USERS", "");
+    expect(verifySessionToken(token)).toBeNull();
   });
 });

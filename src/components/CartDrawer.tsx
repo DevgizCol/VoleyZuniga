@@ -3,13 +3,14 @@
 import React, { useEffect, useRef } from "react";
 import Image from "next/image";
 import { X, ShoppingBag, Trash2 } from "lucide-react";
-import { whatsappUrl } from "@/config/site";
 import { cop } from "@/data/products";
 import { useCart } from "@/context/CartContext";
+import { useContact } from "./ContactProvider";
 
 const FOCUSABLE = 'a[href], button:not([disabled]), input, select, textarea, [tabindex]:not([tabindex="-1"])';
 
 export default function CartDrawer() {
+  const { wa } = useContact();
   const {
     items,
     isCartOpen,
@@ -64,7 +65,7 @@ export default function CartDrawer() {
     });
     message += `\nTotal: ${cop(cartTotal)}\n\nPor favor envíenme los pasos de pago.`;
 
-    window.open(whatsappUrl(message), "_blank", "noopener");
+    window.open(wa(message), "_blank", "noopener");
   };
 
   return (
@@ -125,7 +126,8 @@ export default function CartDrawer() {
                       src={item.image}
                       alt=""
                       fill
-                      className="object-cover"
+                      unoptimized
+                      className="object-contain"
                     />
                   </div>
                   <div className="flex-1 flex flex-col justify-between py-1">
