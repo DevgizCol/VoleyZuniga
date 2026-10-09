@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" role="img" aria-label="Club Voley Zúñiga">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0F284B"/>
+      <stop offset="0.55" stop-color="#08172D"/>
+      <stop offset="1" stop-color="#040B16"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#FFB14A"/>
+      <stop offset="1" stop-color="#F29A2E"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="800" fill="url(#bg)"/>
+  <circle cx="400" cy="400" r="230" fill="none" stroke="url(#gold)" stroke-width="10" opacity="0.9"/>
+  <circle cx="400" cy="400" r="190" fill="none" stroke="#F29A2E" stroke-width="2" opacity="0.35"/>
+  <text x="400" y="440" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="150" font-weight="700" fill="url(#gold)" letter-spacing="6">VZ</text>
+</svg>

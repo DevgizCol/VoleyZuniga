@@ -6,6 +6,9 @@ import { isOneOf } from "@/data/contact";
 
 const PHONE_RE = /^[+\d][\d\s().-]{6,19}$/;
 
+// Fecha de hoy en hora de Bogotá (AAAA-MM-DD), no en UTC, para que coincida con el día local.
+const bogotaDate = () => new Intl.DateTimeFormat("en-CA", { timeZone: "America/Bogota" }).format(new Date());
+
 const text = (v: unknown, max: number) => (typeof v === "string" ? v.trim().slice(0, max) : "");
 
 export async function POST(request: Request) {
@@ -53,7 +56,7 @@ export async function POST(request: Request) {
     Sede: body.sede as string,
     Horario: body.horario as string,
     WhatsApp: phone,
-    Consentimiento: `Sí (${new Date().toISOString().slice(0, 10)})`,
+    Consentimiento: `Sí (${bogotaDate()})`,
   });
 
   if (!saved) return NextResponse.json({ ok: false, error: "No se pudo guardar." }, { status: 502 });
