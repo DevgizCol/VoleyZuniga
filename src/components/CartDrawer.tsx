@@ -1,6 +1,6 @@
 "use client";
 
-import { whatsappUrl } from "@/config/site";
+import { useContact } from "./ContactProvider";
 
 import React, { useEffect } from "react";
 import { X, ShoppingBag, Trash2 } from "lucide-react";
@@ -8,6 +8,7 @@ import { useCart } from "@/context/CartContext";
 import Image from "next/image";
 
 export default function CartDrawer() {
+  const { wa } = useContact();
   const {
     items,
     isCartOpen,
@@ -43,7 +44,7 @@ export default function CartDrawer() {
     });
     message += `\nTotal: $${cartTotal.toLocaleString("es-CO")}\n\nPor favor envíenme los pasos de pago.`;
     
-    window.open(whatsappUrl(message), "_blank", "noopener");
+    window.open(wa(message), "_blank", "noopener");
   };
 
   return (
@@ -94,7 +95,8 @@ export default function CartDrawer() {
                     src={item.image} 
                     alt={item.name} 
                     fill 
-                    className="object-cover"
+                    unoptimized
+                    className="object-contain"
                   />
                 </div>
                 <div className="flex-1 flex flex-col justify-between py-1">

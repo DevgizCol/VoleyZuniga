@@ -1,11 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
-import MobileBar from "@/components/MobileBar";
-import { getCourtNotices } from "@/lib/court";
 import { siteUrl } from "@/lib/site-url";
-import CartDrawer from "@/components/CartDrawer";
 import VercelAnalytics from "@/components/VercelAnalytics";
 import { CartProvider } from "@/context/CartContext";
 import "./globals.css";
@@ -104,12 +99,11 @@ export const viewport: Viewport = {
   viewportFit: "cover",
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const notices = await getCourtNotices();
   return (
     <html
       lang="es"
@@ -120,15 +114,7 @@ export default async function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-        <CartProvider>
-          <Header notices={notices} />
-          <CartDrawer />
-          <main id="contenido" className="flex-1">
-            {children}
-          </main>
-          <Footer />
-          <MobileBar />
-        </CartProvider>
+        <CartProvider>{children}</CartProvider>
         <VercelAnalytics />
       </body>
     </html>

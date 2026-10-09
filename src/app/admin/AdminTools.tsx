@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { LogOut, MessageCircle, Copy, Check } from "lucide-react";
 
-export function LogoutButton() {
+export function LogoutButton({ compact = false }: { compact?: boolean }) {
   const router = useRouter();
   return (
     <button
@@ -13,9 +13,13 @@ export function LogoutButton() {
         await fetch("/api/admin/logout", { method: "POST" }).catch(() => {});
         router.refresh();
       }}
-      className="h-11 px-4 inline-flex items-center gap-2 rounded-md border border-white/20 hover:border-white font-semibold"
+      className={
+        compact
+          ? "h-10 px-3 inline-flex items-center gap-1.5 rounded-lg border border-white/15 text-sm font-semibold hover:bg-white/5"
+          : "h-11 px-4 inline-flex items-center gap-2 rounded-md border border-white/20 hover:border-white font-semibold"
+      }
     >
-      <LogOut size={18} /> Salir
+      <LogOut size={compact ? 14 : 18} /> Salir
     </button>
   );
 }

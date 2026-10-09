@@ -1,7 +1,7 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
-import { DAY_NAMES, SESSIONS, formatTime, type Session } from "@/data/schedule";
+import { DAY_NAMES, formatTime, type Session } from "@/data/schedule";
 
 // Hora actual en Bogotá como { day, minutes }.
 function bogotaNow() {
@@ -19,7 +19,7 @@ function bogotaNow() {
 
 const toMin = (t: string) => Number(t.slice(0, 2)) * 60 + Number(t.slice(3));
 
-function nextSession(): { s: Session; live: boolean; inDays: number } {
+function nextSession(SESSIONS: Session[]): { s: Session; live: boolean; inDays: number } | null {
   const now = bogotaNow();
   for (let offset = 0; offset < 8; offset++) {
     const day = (now.day + offset) % 7;
@@ -29,7 +29,7 @@ function nextSession(): { s: Session; live: boolean; inDays: number } {
       return { s, live: offset === 0 && toMin(s.start) <= now.minutes, inDays: offset };
     }
   }
-  return { s: SESSIONS[0], live: false, inDays: 0 };
+  return null;
 }
 
 const subscribe = (cb: () => void) => {
@@ -37,11 +37,13 @@ const subscribe = (cb: () => void) => {
   return () => clearInterval(t);
 };
 
-export default function NextSession() {
+export default function NextSession({ sessions }: { sessions: Session[] }) {
   // Se calcula solo en el navegador (minuto a minuto) para no fijar la hora del servidor.
   const key = useSyncExternalStore(subscribe, () => Math.floor(Date.now() / 60_000), () => 0);
   if (key === 0) return <div className="h-[132px]" />;
-  const { s, live, inDays } = nextSession();
+  const next = nextSession(sessions);
+  if (!next) return null;
+  const { s, live, inDays } = next;
   const when = live ? "En la cancha ahora" : inDays === 0 ? "Hoy" : inDays === 1 ? "Mañana" : DAY_NAMES[s.day];
 
   return (

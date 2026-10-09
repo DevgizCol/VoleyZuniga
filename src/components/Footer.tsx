@@ -2,10 +2,13 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Phone, Mail, MapPin, Camera } from "lucide-react";
-import { NAV_LINKS, SITE, telUrl } from "@/config/site";
+import { NAV_LINKS, SITE } from "@/config/site";
+import { telLink } from "@/config/contact";
+import { getSettings } from "@/lib/content";
 import { SEDES } from "@/data/registration";
 
-export default function Footer() {
+export default async function Footer() {
+  const { contact } = await getSettings();
   return (
     <footer className="w-full bg-[#050E1C] text-white pt-14 pb-[calc(6rem+env(safe-area-inset-bottom,0px))] md:pb-10">
       <div className="court-rule mb-12" />
@@ -20,12 +23,12 @@ export default function Footer() {
               Escuela y club de voleibol en {SITE.city}. Formamos deportistas, y cuando se puede, campeones.
             </p>
             <a
-              href={SITE.instagram.url}
+              href={contact.instagramUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 w-fit text-sm font-semibold text-white hover:text-[#F29A2E] transition-colors"
             >
-              <Camera size={18} className="text-[#F29A2E]" /> Instagram {SITE.instagram.handle}
+              <Camera size={18} className="text-[#F29A2E]" /> Instagram {contact.instagramHandle}
             </a>
           </div>
 
@@ -50,11 +53,11 @@ export default function Footer() {
               ))}
               <li className="flex items-center gap-3">
                 <Phone size={18} className="text-[#F29A2E] shrink-0" />
-                <a href={telUrl} className="hover:text-white">{SITE.phoneDisplay}</a>
+                <a href={telLink(contact)} className="hover:text-white">{contact.phoneDisplay}</a>
               </li>
               <li className="flex items-center gap-3">
                 <Mail size={18} className="text-[#F29A2E] shrink-0" />
-                <a href={`mailto:${SITE.email}`} className="hover:text-white break-all">{SITE.email}</a>
+                <a href={`mailto:${contact.email}`} className="hover:text-white break-all">{contact.email}</a>
               </li>
             </ul>
           </div>
