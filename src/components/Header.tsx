@@ -123,6 +123,14 @@ export default function Header({ notices = [] }: { notices?: CourtNotice[] }) {
       >
         <div className="px-4 h-16 flex items-center justify-between">
           <span className="font-heading font-extrabold text-2xl text-white">Voley Zúñiga</span>
+          <div className="flex items-center gap-1">
+            <Link
+              href="/admin"
+              onClick={() => setMenuOpen(false)}
+              className="h-11 px-3 inline-flex items-center gap-1.5 rounded-md text-sm text-[#B7C4D8] hover:text-white border border-white/15"
+            >
+              <Shield size={16} /> Entrenadores
+            </Link>
           <button
             onClick={() => setMenuOpen(false)}
             aria-label="Cerrar menú"
@@ -130,10 +138,11 @@ export default function Header({ notices = [] }: { notices?: CourtNotice[] }) {
           >
             <X size={26} />
           </button>
+          </div>
         </div>
         <div className="court-rule" />
 
-        <nav aria-label="Menú móvil" className="flex-1 px-4 py-4 flex flex-col">
+        <nav aria-label="Menú móvil" className="flex-1 px-4 py-2 flex flex-col">
           {NAV_LINKS.map((link) => (
             <Link
               key={link.href}
@@ -141,7 +150,7 @@ export default function Header({ notices = [] }: { notices?: CourtNotice[] }) {
               onClick={() => setMenuOpen(false)}
               aria-current={isActive(link.href) ? "page" : undefined}
               className={clsx(
-                "py-4 border-b border-white/10 font-heading font-bold text-3xl",
+                "py-3 border-b border-white/10 font-heading font-bold text-[1.7rem] leading-tight",
                 isActive(link.href) ? "text-[#F29A2E]" : "text-white"
               )}
             >
@@ -171,13 +180,6 @@ export default function Header({ notices = [] }: { notices?: CourtNotice[] }) {
               <Phone size={18} className="text-[#F29A2E]" /> Llamar
             </a>
           </div>
-          <Link
-            href="/admin"
-            onClick={() => setMenuOpen(false)}
-            className="mt-2 h-11 flex items-center justify-center gap-2 text-sm text-[#8FA3BF] hover:text-white"
-          >
-            <Shield size={16} /> Acceso entrenadores
-          </Link>
         </div>
       </div>
     </>
