@@ -1,14 +1,14 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { Menu, X, ShoppingCart, MessageCircle, Phone, Shield } from "lucide-react";
+import { Menu, X, ShoppingCart, MessageCircle, Phone, ChevronDown } from "lucide-react";
 import clsx from "clsx";
 import { useCart } from "@/context/CartContext";
 import CourtStatusBanner from "./CourtStatusBanner";
-import { NAV_LINKS, SITE } from "@/config/site";
+import { NAV_LINKS, NAV_MENU, SITE } from "@/config/site";
 import { useContact } from "./ContactProvider";
 import type { CourtNotice } from "@/lib/court";
 
@@ -35,6 +35,23 @@ export default function Header({ notices = [] }: { notices?: CourtNotice[] }) {
   }, [menuOpen]);
 
   const isActive = (href: string) => pathname === href || pathname.startsWith(href + "/");
+
+  // Submenú "Competencia": se abre con clic o al pasar el mouse y se cierra con Escape o al salir.
+  const [groupOpen, setGroupOpen] = useState(false);
+  const groupRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!groupOpen) return;
+    const onDown = (e: PointerEvent) => {
+      if (!groupRef.current?.contains(e.target as Node)) setGroupOpen(false);
+    };
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setGroupOpen(false);
+    document.addEventListener("pointerdown", onDown);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("pointerdown", onDown);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [groupOpen]);
 
   return (
     <>
@@ -63,21 +80,57 @@ export default function Header({ notices = [] }: { notices?: CourtNotice[] }) {
           </Link>
 
           <nav aria-label="Principal" className="hidden lg:flex items-center gap-1">
-            {NAV_LINKS.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                aria-current={isActive(link.href) ? "page" : undefined}
-                className={clsx(
+            {NAV_MENU.map((item) => {
+              const itemCls = (active: boolean) =>
+                clsx(
                   "px-3 py-2 text-sm font-medium transition-colors border-b-2",
-                  isActive(link.href)
-                    ? "text-white border-[#F29A2E]"
-                    : "text-[#B7C4D8] border-transparent hover:text-white"
-                )}
-              >
-                {link.name}
-              </Link>
-            ))}
+                  active ? "text-white border-[#F29A2E]" : "text-[#B7C4D8] border-transparent hover:text-white"
+                );
+              if (!("children" in item)) {
+                return (
+                  <Link key={item.href} href={item.href} aria-current={isActive(item.href) ? "page" : undefined} className={itemCls(isActive(item.href))}>
+                    {item.name}
+                  </Link>
+                );
+              }
+              const active = item.children.some((c) => isActive(c.href));
+              return (
+                <div key={item.name} ref={groupRef} className="relative" onMouseEnter={() => setGroupOpen(true)} onMouseLeave={() => setGroupOpen(false)}>
+                  <button
+                    type="button"
+                    aria-expanded={groupOpen}
+                    aria-controls="nav-competencia"
+                    onClick={() => setGroupOpen((o) => !o)}
+                    className={clsx(itemCls(active), "inline-flex items-center gap-1")}
+                  >
+                    {item.name}
+                    <ChevronDown size={14} className={clsx("transition-transform", groupOpen && "rotate-180")} aria-hidden="true" />
+                  </button>
+                  <ul
+                    id="nav-competencia"
+                    hidden={!groupOpen}
+                    className="absolute left-0 top-full pt-2 min-w-44"
+                  >
+                    <li className="rounded-lg border border-white/10 bg-[#0B1E38] shadow-[0_20px_40px_-12px_rgba(0,0,0,0.6)] py-2">
+                      {item.children.map((c) => (
+                        <Link
+                          key={c.href}
+                          href={c.href}
+                          aria-current={isActive(c.href) ? "page" : undefined}
+                          onClick={() => setGroupOpen(false)}
+                          className={clsx(
+                            "block px-4 py-2 text-sm font-medium transition-colors",
+                            isActive(c.href) ? "text-[#F29A2E]" : "text-[#C9D5E6] hover:text-white hover:bg-white/5"
+                          )}
+                        >
+                          {c.name}
+                        </Link>
+                      ))}
+                    </li>
+                  </ul>
+                </div>
+              );
+            })}
           </nav>
 
           <div className="flex items-center gap-1">
@@ -85,7 +138,7 @@ export default function Header({ notices = [] }: { notices?: CourtNotice[] }) {
               href="/inscripciones"
               className="hidden lg:inline-flex ml-2 px-5 h-10 items-center bg-[#F29A2E] hover:bg-[#FFB14A] text-[#071426] font-bold text-sm rounded-md transition-colors"
             >
-              Inscribirme
+              Clase gratis
             </Link>
             <button
               onClick={() => setIsCartOpen(true)}
@@ -126,14 +179,7 @@ export default function Header({ notices = [] }: { notices?: CourtNotice[] }) {
       >
         <div className="px-4 h-16 flex items-center justify-between">
           <span className="font-heading font-extrabold text-2xl text-white">Voley Zúñiga</span>
-          <div className="flex items-center gap-1">
-            <Link
-              href="/admin"
-              onClick={() => setMenuOpen(false)}
-              className="h-11 px-3 inline-flex items-center gap-1.5 rounded-md text-sm text-[#B7C4D8] hover:text-white border border-white/15"
-            >
-              <Shield size={16} /> Entrenadores
-            </Link>
+          {/* El acceso al panel queda en el pie de página, lejos de lo que busca un visitante. */}
           <button
             onClick={() => setMenuOpen(false)}
             aria-label="Cerrar menú"
@@ -141,7 +187,6 @@ export default function Header({ notices = [] }: { notices?: CourtNotice[] }) {
           >
             <X size={26} />
           </button>
-          </div>
         </div>
         <div className="court-rule" />
 
@@ -168,7 +213,7 @@ export default function Header({ notices = [] }: { notices?: CourtNotice[] }) {
             onClick={() => setMenuOpen(false)}
             className="flex items-center justify-center h-14 bg-[#F29A2E] text-[#071426] font-bold text-lg rounded-md"
           >
-            Inscribirme
+            Reservar clase gratis
           </Link>
           <div className="grid grid-cols-2 gap-3">
             <a
