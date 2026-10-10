@@ -66,6 +66,9 @@ export function createStage(canvas: HTMLCanvasElement, opts: Options): Stage {
   let lastX = 0;
   let lastY = 0;
   let idleSince = performance.now();
+  // Tras un rato sin tocarla deja de dibujar (ahorra batería en celulares); se despierta al tocarla.
+  const REST_AFTER_MS = 12000;
+  let resting = false;
   let visibleSide: JerseySide = opts.side;
 
   const facing = (a: number): JerseySide => (Math.cos(a) >= 0 ? "front" : "back");
@@ -76,6 +79,7 @@ export function createStage(canvas: HTMLCanvasElement, opts: Options): Stage {
     renderer.setSize(w, h, false);
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
+    if (resting) renderer.render(scene, camera); // en reposo no hay bucle que redibuje
   };
   const ro = new ResizeObserver(resize);
   ro.observe(canvas);
@@ -85,7 +89,7 @@ export function createStage(canvas: HTMLCanvasElement, opts: Options): Stage {
   let onScreen = true;
   const io = new IntersectionObserver(([entry]) => {
     onScreen = entry.isIntersecting;
-    if (onScreen) loop();
+    if (onScreen && !resting) loop();
   });
   io.observe(canvas);
 
@@ -122,16 +126,29 @@ export function createStage(canvas: HTMLCanvasElement, opts: Options): Stage {
       opts.onSideChange(side);
     }
     renderer.render(scene, camera);
+
+    const settled = !dragging && velocity === 0 && Math.abs(target - angle) < 0.001 && Math.abs(tilt) < 0.001;
+    if (settled && now - idleSince > REST_AFTER_MS && Math.abs(sway) < 0.004) {
+      cancelAnimationFrame(frame);
+      resting = true;
+    }
+  };
+  const wake = () => {
+    if (resting) idleSince = performance.now();
+    resting = false;
+    last = performance.now();
+    loop();
   };
   const onVisibility = () => {
     last = performance.now();
-    loop();
+    if (!resting) loop();
   };
   document.addEventListener("visibilitychange", onVisibility);
   loop();
 
   // Arrastre
   const onDown = (e: PointerEvent) => {
+    wake();
     dragging = true;
     velocity = 0;
     lastX = e.clientX;
@@ -158,6 +175,7 @@ export function createStage(canvas: HTMLCanvasElement, opts: Options): Stage {
     if (canvas.hasPointerCapture(e.pointerId)) canvas.releasePointerCapture(e.pointerId);
   };
   canvas.addEventListener("pointerdown", onDown);
+  canvas.addEventListener("pointerenter", wake);
   canvas.addEventListener("pointermove", onMove);
   canvas.addEventListener("pointerup", onUp);
   canvas.addEventListener("pointercancel", onUp);
@@ -166,6 +184,7 @@ export function createStage(canvas: HTMLCanvasElement, opts: Options): Stage {
     setPrint: (print) => {
       redrawJerseyTexture(frontMap, "front", print);
       redrawJerseyTexture(backMap, "back", print);
+      wake();
     },
     showSide: (side) => {
       // Gira por el camino más corto hasta el lado pedido.
@@ -174,11 +193,13 @@ export function createStage(canvas: HTMLCanvasElement, opts: Options): Stage {
       const turns = Math.round((target - base) / TAU);
       target = base + turns * TAU;
       if (Math.abs(target - angle) < 0.01 && facing(angle) !== side) target += Math.PI;
+      wake();
       idleSince = performance.now();
     },
     rotateBy: (radians) => {
       velocity = 0;
       target += radians;
+      wake();
       idleSince = performance.now();
     },
     dispose: () => {
@@ -187,6 +208,7 @@ export function createStage(canvas: HTMLCanvasElement, opts: Options): Stage {
       io.disconnect();
       document.removeEventListener("visibilitychange", onVisibility);
       canvas.removeEventListener("pointerdown", onDown);
+      canvas.removeEventListener("pointerenter", wake);
       canvas.removeEventListener("pointermove", onMove);
       canvas.removeEventListener("pointerup", onUp);
       canvas.removeEventListener("pointercancel", onUp);

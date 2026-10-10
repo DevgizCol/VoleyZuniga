@@ -5,6 +5,7 @@ import MobileBar from "@/components/MobileBar";
 import { getCourtNotices } from "@/lib/court";
 import { getSettings } from "@/lib/content";
 import { ContactProvider } from "@/components/ContactProvider";
+import SiteTracker from "@/components/SiteTracker";
 
 // Estructura del sitio público: encabezado con aviso de canchas, carrito, pie y barra móvil.
 export default async function SiteLayout({ children }: { children: React.ReactNode }) {
@@ -18,6 +19,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
       </main>
       <Footer />
       <MobileBar />
+      <SiteTracker />
     </ContactProvider>
   );
 }

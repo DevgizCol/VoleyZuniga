@@ -1,22 +1,25 @@
 import type { NextConfig } from "next";
+import { umamiOrigins } from "./src/lib/umami";
 
 const isDev = process.env.NODE_ENV === "development";
 // En las vistas previas de Vercel se inyecta la barra de comentarios (vercel.live); en producción no.
 const isPreview = process.env.VERCEL_ENV === "preview";
 const live = isPreview ? " https://vercel.live" : "";
+// Analítica de Umami, solo si está configurada.
+const umami = umamiOrigins().map((o) => ` ${o}`).join("");
 
 // Política de contenido: solo recursos del propio sitio, más las imágenes de noticias (enlaces https)
 // y el mapa de Google embebido en /contacto. 'unsafe-inline' en scripts es necesario sin nonce
 // (que obligaría a renderizar todo en cada visita); en desarrollo React además necesita 'unsafe-eval'.
 const csp = [
   "default-src 'self'",
-  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}${live}`,
+  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}${live}${umami}`,
   `style-src 'self' 'unsafe-inline'${live}`,
   "img-src 'self' data: blob: https:",
   // Video de la portada: archivo del propio sitio o enlace https que el club ponga en Ajustes.
   "media-src 'self' https:",
   `font-src 'self'${isPreview ? " https://vercel.live https://assets.vercel.com" : ""}`,
-  `connect-src 'self'${isPreview ? " https://vercel.live wss://ws-us3.pusher.com" : ""}`,
+  `connect-src 'self'${isPreview ? " https://vercel.live wss://ws-us3.pusher.com" : ""}${umami}`,
   `frame-src https://www.google.com${live}`,
   "object-src 'none'",
   "base-uri 'self'",

@@ -1,7 +1,9 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import { siteUrl } from "@/lib/site-url";
+import Script from "next/script";
 import VercelAnalytics from "@/components/VercelAnalytics";
+import { UMAMI_SCRIPT_URL, UMAMI_WEBSITE_ID } from "@/lib/umami";
 import JsonLd from "@/components/JsonLd";
 import { SITE } from "@/config/site";
 import { VENUES, mapsLink } from "@/data/venues";
@@ -126,6 +128,10 @@ export default function RootLayout({
         <CartProvider>{children}</CartProvider>
         {/* Los scripts de analítica solo existen en Vercel; en Docker u otro hosting darían 404. */}
         {process.env.VERCEL ? <VercelAnalytics /> : null}
+        {/* Eventos de conversión (opcional, sin cookies): se activa con NEXT_PUBLIC_UMAMI_WEBSITE_ID. */}
+        {UMAMI_WEBSITE_ID ? (
+          <Script src={UMAMI_SCRIPT_URL} data-website-id={UMAMI_WEBSITE_ID} strategy="afterInteractive" />
+        ) : null}
       </body>
     </html>
   );

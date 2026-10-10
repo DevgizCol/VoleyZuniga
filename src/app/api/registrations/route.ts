@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { appendToSheet, sheetsConfigured } from "@/lib/sheets";
 import { clientIp, isRateLimited } from "@/lib/rate-limit";
+import { sanitizeOrigin } from "@/lib/origin";
 import { CATEGORIES, NIVELES, SEDES } from "@/data/registration";
 import { getSessions, getSettings, validHorarios } from "@/lib/content";
 import { isOneOf } from "@/data/contact";
@@ -67,6 +68,7 @@ export async function POST(request: Request) {
     WhatsApp: phone,
     Consentimiento: `Sí (${bogotaDate()})`,
     Código: CODE_RE.test(code) ? code : "",
+    Origen: sanitizeOrigin(body.origin),
   });
 
   if (!saved) return NextResponse.json({ ok: false, error: "No se pudo guardar." }, { status: 502 });

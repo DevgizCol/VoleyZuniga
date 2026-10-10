@@ -5,7 +5,10 @@ import "server-only";
 //
 // Variables de entorno (Vercel):
 //   SHEETS_WEBAPP_URL  URL de la implementación, termina en /exec
-//   SHEETS_SECRET      mismo valor que SHARED_SECRET en las propiedades del script
+//   SHEETS_SECRET      mismo valor que SHARED_SECRET en las propiedades del script (clave principal)
+//   SHEETS_READ_SECRET (recomendada) mismo valor que READ_SECRET: solo lee las pestañas públicas.
+//                      Es la única clave que viaja en la dirección de las consultas; la principal va
+//                      siempre dentro del cuerpo de la petición.
 
 export type WritableSheet = "Inscripciones" | "Contacto";
 export type ReadableSheet =
@@ -23,6 +26,36 @@ export function sheetsConfigured(): boolean {
 }
 
 const TIMEOUT_MS = 15000;
+const PRIVATE_SHEETS = new Set<string>(["Inscripciones", "Contacto", "Historial"]);
+
+/** Clave para leer pestañas públicas: la de solo lectura si existe, si no la principal. */
+const readSecret = () => process.env.SHEETS_READ_SECRET || process.env.SHEETS_SECRET;
+
+// Códigos con los que un Apps Script anterior (sin lectura por POST) rechaza la petición.
+const OLD_SCRIPT = new Set(["sheet_not_allowed", "bad_action"]);
+
+/**
+ * Lee por POST (la clave principal no queda en la dirección). Si el Apps Script publicado todavía es
+ * la versión anterior, devuelve "old_script" para que se use la lectura de antes.
+ */
+async function postRead(url: string, secret: string, sheet: string, all: boolean): Promise<{ ok?: boolean; error?: string; headers?: string[]; rows?: Row[] } | "old_script" | null> {
+  const res = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "text/plain;charset=utf-8" },
+    // "admin.read": un Apps Script anterior lo rechaza (bad_action) en vez de tratarlo como un formulario.
+    body: JSON.stringify({ secret, action: "admin.read", sheet, all }),
+    redirect: "follow",
+    cache: "no-store",
+    signal: AbortSignal.timeout(TIMEOUT_MS),
+  });
+  if (!res.ok) return null;
+  const json = (await res.json()) as { ok?: boolean; error?: string; headers?: string[]; rows?: Row[] };
+  if (!json.ok && json.error && OLD_SCRIPT.has(json.error)) return "old_script";
+  return json;
+}
+
+const getUrl = (url: string, sheet: string, secret: string, all: boolean) =>
+  `${url}?sheet=${encodeURIComponent(sheet)}${all ? "&all=1" : ""}&secret=${encodeURIComponent(secret)}`;
 
 /** Agrega una fila a Inscripciones o Contacto. Devuelve false si no se pudo guardar. */
 export async function appendToSheet(sheet: WritableSheet, data: Row): Promise<boolean> {
@@ -60,9 +93,14 @@ export async function readSheet(sheet: ReadableSheet | PrivateSheet, revalidateS
   if (!url || !secret) return null;
 
   try {
-    // Apps Script no permite leer cabeceras personalizadas, por eso el secreto va en la consulta
-    // (servidor a servidor, sobre HTTPS; nunca llega al navegador).
-    const target = `${url}?sheet=${encodeURIComponent(sheet)}&secret=${encodeURIComponent(secret)}`;
+    // Datos personales: por POST con la clave principal y sin caché.
+    if (PRIVATE_SHEETS.has(sheet)) {
+      const json = await postRead(url, secret, sheet, false);
+      if (json !== "old_script") return json?.ok && Array.isArray(json.rows) ? json.rows : null;
+    }
+    // Apps Script no permite leer cabeceras personalizadas, por eso la clave de lectura va en la consulta
+    // (servidor a servidor, sobre HTTPS; nunca llega al navegador). Las lecturas por GET se pueden cachear.
+    const target = getUrl(url, sheet, PRIVATE_SHEETS.has(sheet) ? secret : readSecret()!, false);
     const res = await fetch(target, {
       redirect: "follow",
       ...(revalidateSeconds > 0
@@ -91,11 +129,12 @@ export async function adminRead(sheet: AdminSheet): Promise<AdminTable | null> {
   const secret = process.env.SHEETS_SECRET;
   if (!url || !secret) return null;
   try {
-    const target = `${url}?sheet=${encodeURIComponent(sheet)}&all=1&secret=${encodeURIComponent(secret)}`;
-    const res = await fetch(target, { redirect: "follow", cache: "no-store", signal: AbortSignal.timeout(TIMEOUT_MS) });
-    if (!res.ok) return null;
-    const json = (await res.json()) as { ok?: boolean; headers?: string[]; rows?: AdminRow[] };
-    return json.ok && Array.isArray(json.rows) ? { headers: json.headers ?? [], rows: json.rows } : null;
+    let json = await postRead(url, secret, sheet, true);
+    if (json === "old_script") {
+      const res = await fetch(getUrl(url, sheet, secret, true), { redirect: "follow", cache: "no-store", signal: AbortSignal.timeout(TIMEOUT_MS) });
+      json = res.ok ? ((await res.json()) as { ok?: boolean; headers?: string[]; rows?: Row[] }) : null;
+    }
+    return json?.ok && Array.isArray(json.rows) ? { headers: json.headers ?? [], rows: json.rows as AdminRow[] } : null;
   } catch (err) {
     console.error(`[sheets] lectura admin de ${sheet} falló:`, err instanceof Error ? err.message : err);
     return null;

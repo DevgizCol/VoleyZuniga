@@ -8,6 +8,8 @@ import { downloadPass, makeCode, passQrText, qrMatrix, sharePass, type PassData 
 import { CATEGORIES, NIVELES, SEDES, categoryForAge } from "@/data/registration";
 import { useContact } from "@/components/ContactProvider";
 import { ChoiceCard, Field, Honeypot, inputCls } from "@/components/forms/fields";
+import { storedOrigin } from "@/lib/origin";
+import { track } from "@/lib/track";
 
 const PHONE_RE = /^[+\d][\d\s().-]{6,19}$/;
 const STEPS = ["Deportista", "Categoría", "Contacto"] as const;
@@ -89,7 +91,9 @@ export default function RegistrationForm({ horarios, perCategory }: Props) {
     setTouched(true);
     if (!stepValid) return;
     setTouched(false);
-    goTo(Math.min(step + 1, STEPS.length - 1));
+    const n = Math.min(step + 1, STEPS.length - 1);
+    track("inscripcion_paso", { paso: n + 1 });
+    goTo(n);
   };
 
   const submit = async (e: React.FormEvent) => {
@@ -111,9 +115,10 @@ export default function RegistrationForm({ horarios, perCategory }: Props) {
       const res = await fetch("/api/registrations", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, age, category, level, sede, horario, phone, consent, code: passCode, website: honeypot }),
+        body: JSON.stringify({ name, age, category, level, sede, horario, phone, consent, code: passCode, origin: storedOrigin(), website: honeypot }),
       });
       if (res.ok) {
+        track("inscripcion_enviada", { categoria: category });
         setStatus("saved");
         return showResult();
       }
