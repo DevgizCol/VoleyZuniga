@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { ViewTransition } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, MessageCircle } from "lucide-react";
@@ -16,7 +17,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     title: a.title,
     description: a.summary,
     alternates: { canonical: `/noticias/${a.slug}` },
-    openGraph: { type: "article", title: a.title, description: a.summary, publishedTime: a.date, images: a.image ? [a.image] : undefined },
+    openGraph: { type: "article", title: a.title, description: a.summary, publishedTime: a.date },
   };
 }
 
@@ -41,9 +42,11 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
     <article className="bg-[#071426] text-white">
       <JsonLd data={jsonLd} />
       <header className="relative isolate overflow-hidden pt-40 sm:pt-44 pb-12">
-        <div className="absolute inset-0 -z-10 opacity-40">
-          <ArticleCover image={a.image} title={a.title} category={a.category} large id="article" />
-        </div>
+        <ViewTransition name={`news-${a.slug}`} share="morph" default="none">
+          <div className="absolute inset-0 -z-10 opacity-40">
+            <ArticleCover image={a.image} title={a.title} category={a.category} large id="article" />
+          </div>
+        </ViewTransition>
         <div className="absolute inset-0 -z-10 bg-gradient-to-t from-[#071426] via-[#071426]/80 to-[#071426]/40" />
         <div className="container mx-auto px-4 sm:px-6 max-w-3xl">
           <Link href="/noticias" className="inline-flex items-center gap-2 text-sm text-[#C9D5E6] hover:text-white"><ArrowLeft size={16} /> Todas las noticias</Link>

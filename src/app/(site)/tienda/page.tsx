@@ -21,7 +21,7 @@ export default async function StorePage() {
   const products = await getProducts();
   return (
     <>
-      <PageHero kicker="Tienda del club" title="Viste los colores" intro="Pides aquí y confirmas por WhatsApp. Sin pasarelas ni registros: pagas por transferencia y recoges en la sede." />
+      <PageHero tone="accent" kicker="Tienda del club" title="Viste los colores" intro="Pides aquí y confirmas por WhatsApp. Sin pasarelas ni registros: pagas por transferencia y recoges en la sede." />
       <StoreClient products={products} />
       <section className="bg-[#071426] text-white py-20 sm:py-24">
         <div className="container mx-auto px-4 sm:px-6">

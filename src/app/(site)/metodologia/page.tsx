@@ -43,7 +43,7 @@ const PILLARS = [
 export default function MethodologyPage() {
   return (
     <>
-      <PageHero kicker="Cómo entrenamos" title="Metodología" intro="Cuatro pilares que trabajamos en todas las categorías, con la exigencia ajustada a cada edad." />
+      <PageHero art="trajectory" kicker="Cómo entrenamos" title="Metodología" intro="Cuatro pilares que trabajamos en todas las categorías, con la exigencia ajustada a cada edad." />
       <section className="bg-[#071426] text-white pb-24 sm:pb-32">
         <div className="container mx-auto px-4 sm:px-6 grid md:grid-cols-2 gap-5">
           {PILLARS.map(({ Icon, title, subtitle, text, points }) => (

@@ -10,7 +10,7 @@ import "server-only";
 export type WritableSheet = "Inscripciones" | "Contacto";
 export type ReadableSheet =
   | "Fixture" | "Tabla" | "Noticias" | "Cancha" | "Horarios" | "Productos" | "Ajustes"
-  | "Galería" | "Entrenadores" | "Testimonios";
+  | "Galería" | "Entrenadores" | "Testimonios" | "Plantel";
 // Solo para el panel de administración (contienen datos personales; nunca se cachean).
 export type PrivateSheet = "Inscripciones" | "Contacto";
 export type Row = Record<string, string>;

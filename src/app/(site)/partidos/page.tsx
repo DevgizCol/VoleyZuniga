@@ -59,6 +59,7 @@ export default async function GamesPage({ searchParams }: { searchParams: Promis
         <JsonLd data={jsonLd} />
       )}
       <PageHero
+        art="scoreboard"
         kicker="Calendario y resultados"
         title="Partidos"
         intro="Dónde y cuándo juegan nuestros equipos, y cómo nos fue. Ven a la tribuna: el apoyo también suma puntos."
@@ -136,13 +137,13 @@ function FeaturedMatch({ m }: { m: Match }) {
       </div>
 
       <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3 sm:gap-8 px-5 sm:px-8 py-10">
-        <TeamSide name={m.home} isClub={m.clubIsHome} label="Local" />
+        <TeamSide name={m.home} isClub={m.clubIsHome} logo={m.clubIsHome ? "" : m.rivalLogo} label="Local" />
         <div className="text-center">
           <p className="font-heading font-black text-5xl sm:text-7xl leading-none tabular-nums">{d.day}</p>
           <p className="font-heading font-bold uppercase text-xl sm:text-2xl text-[#F29A2E]">{d.month}</p>
           <p className="mt-2 font-heading font-black text-white/30 text-2xl">VS</p>
         </div>
-        <TeamSide name={m.away} isClub={m.clubPlays && !m.clubIsHome} label="Visitante" />
+        <TeamSide name={m.away} isClub={m.clubPlays && !m.clubIsHome} logo={m.clubIsHome ? m.rivalLogo : ""} label="Visitante" />
       </div>
 
       <div className="border-t border-white/10 px-5 sm:px-8 py-5 flex flex-col lg:flex-row lg:items-center gap-4 lg:justify-between">
@@ -181,10 +182,10 @@ function FeaturedMatch({ m }: { m: Match }) {
   );
 }
 
-function TeamSide({ name, isClub, label }: { name: string; isClub: boolean; label: string }) {
+function TeamSide({ name, isClub, logo, label }: { name: string; isClub: boolean; logo: string; label: string }) {
   return (
     <div className="flex flex-col items-center text-center gap-3 min-w-0">
-      <TeamBadge name={name} isClub={isClub} size="lg" />
+      <TeamBadge name={name} isClub={isClub} logo={logo} size="lg" />
       <div className="min-w-0">
         <p className={`font-heading font-black uppercase text-xl sm:text-3xl leading-tight break-words ${isClub ? "text-white" : "text-[#C9D5E6]"}`}>
           {name}

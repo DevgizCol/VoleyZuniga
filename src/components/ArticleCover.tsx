@@ -1,10 +1,10 @@
-/* eslint-disable @next/next/no-img-element */
 import Volleyball from "./Volleyball";
+import BrandPhoto from "./BrandPhoto";
 
 // Imagen de la noticia (URL pública de la hoja) o, si no hay, una portada ilustrada.
 export default function ArticleCover({ image, title, category, large = false, id }: { image: string; title: string; category: string; large?: boolean; id: string }) {
   if (image) {
-    return <img src={image} alt="" loading="lazy" className="absolute inset-0 w-full h-full object-cover" />;
+    return <BrandPhoto src={image} alt="" hover className="absolute inset-0" />;
   }
   return (
     <div className="absolute inset-0 bg-gradient-to-br from-[#0F2347] via-[#0B1E38] to-[#071426] overflow-hidden" aria-hidden="true">

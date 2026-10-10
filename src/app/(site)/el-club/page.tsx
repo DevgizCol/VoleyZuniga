@@ -1,10 +1,11 @@
-/* eslint-disable @next/next/no-img-element -- las fotos de los entrenadores vienen de la hoja */
 import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight } from "lucide-react";
 import PageHero from "@/components/PageHero";
-import { getCoaches } from "@/lib/club";
+import BrandPhoto from "@/components/BrandPhoto";
+import { getCoaches, getGallery } from "@/lib/club";
+import { getSettings } from "@/lib/content";
 
 export const metadata: Metadata = {
   title: "El club",
@@ -29,14 +30,15 @@ const VALUES = [
 export const revalidate = 300;
 
 export default async function HistoryPage() {
-  const coaches = await getCoaches();
+  const [coaches, photos, settings] = await Promise.all([getCoaches(), getGallery(), getSettings()]);
+  const heroPhoto = settings.clubPhoto || photos[0]?.image;
   return (
     <>
-      <PageHero kicker="Quiénes somos" title="El club" intro="Nacimos con una convicción: el voleibol es una de las mejores herramientas para formar jóvenes disciplinados, competitivos y con valores." />
+      <PageHero art="net" photo={heroPhoto} kicker="Quiénes somos" title="El club" intro="Nacimos con una convicción: el voleibol es una de las mejores herramientas para formar jóvenes disciplinados, competitivos y con valores." />
 
       <section className="bg-[#071426] text-white pb-20 sm:pb-28">
         <div className="container mx-auto px-4 sm:px-6 grid lg:grid-cols-12 gap-10 items-center">
-          <div className="lg:col-span-7">
+          <div className="lg:col-span-7 reveal-left">
             <p className="font-heading font-black uppercase text-5xl sm:text-7xl leading-[0.9]">
               No formamos jugadores, <span className="text-[#F29A2E]">formamos campeones.</span>
             </p>
@@ -45,7 +47,7 @@ export default async function HistoryPage() {
               y saca adelante el colegio. Eso es lo que entrenamos, dentro y fuera de la cancha.
             </p>
           </div>
-          <div className="lg:col-span-5 flex justify-center">
+          <div className="lg:col-span-5 flex justify-center reveal-zoom">
             <div className="relative w-full max-w-sm aspect-square rounded-full border border-[#F29A2E]/30 flex items-center justify-center bg-[radial-gradient(circle,rgba(242,154,46,0.15),transparent_65%)]">
               <div className="absolute inset-6 rounded-full border border-white/10" />
               <Image src="/logo-trim.png" alt="Escudo del Club Voley Zúñiga" width={800} height={473} className="w-3/4 h-auto" />
@@ -59,12 +61,12 @@ export default async function HistoryPage() {
           <div className="container mx-auto px-4 sm:px-6">
             <h2 className="font-heading font-black uppercase text-5xl sm:text-6xl leading-none mb-4">Cuerpo técnico</h2>
             <p className="text-[#B7C4D8] text-lg max-w-2xl mb-12">Las personas que acompañan a cada deportista en la cancha.</p>
-            <ul className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <ul className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 reveal-stagger">
               {coaches.map((c) => (
-                <li key={c.name} className="rounded-xl border border-white/10 bg-[#071426] overflow-hidden flex flex-col">
+                <li key={c.name} className="group rounded-xl border border-white/10 bg-[#071426] overflow-hidden flex flex-col transition-colors hover:border-[#F29A2E]/50">
                   <div className="relative aspect-[4/3] bg-gradient-to-br from-[#0F2347] to-[#071426]">
                     {c.photo ? (
-                      <img src={c.photo} alt={`Foto de ${c.name}`} loading="lazy" className="absolute inset-0 w-full h-full object-cover" />
+                      <BrandPhoto src={c.photo} alt={`Foto de ${c.name}`} hover className="absolute inset-0" />
                     ) : (
                       <span className="absolute inset-0 flex items-center justify-center font-heading font-black text-7xl text-[#F29A2E]/40" aria-hidden="true">
                         {c.name.split(/\s+/).slice(0, 2).map((w) => w[0]).join("")}
@@ -84,10 +86,11 @@ export default async function HistoryPage() {
         </section>
       )}
 
-      <section className="bg-[#EEF2F7] text-[#0F2347] py-20 sm:py-28">
+      <section className="relative isolate bg-[#EEF2F7] text-[#0F2347] py-20 sm:py-28 overflow-hidden">
+        <div className="net-texture net-texture-dark" aria-hidden="true" />
         <div className="container mx-auto px-4 sm:px-6">
           <h2 className="font-heading font-black uppercase text-5xl sm:text-6xl leading-none mb-12">El camino del deportista</h2>
-          <ol className="relative grid md:grid-cols-4 gap-8">
+          <ol className="relative grid md:grid-cols-4 gap-8 reveal-stagger">
             <div className="hidden md:block absolute top-6 left-0 right-0 h-0.5 bg-[#0F2347]/15" aria-hidden="true" />
             {PATH.map((s, i) => (
               <li key={s.title} className="relative">
@@ -104,9 +107,9 @@ export default async function HistoryPage() {
       <section className="bg-[#071426] text-white py-20 sm:py-28">
         <div className="container mx-auto px-4 sm:px-6">
           <h2 className="font-heading font-black uppercase text-5xl sm:text-6xl leading-none mb-12">Lo que nos mueve</h2>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 reveal-stagger">
             {VALUES.map((v) => (
-              <div key={v.title} className="rounded-xl border border-white/10 bg-white/[0.03] p-6">
+              <div key={v.title} className="rounded-xl border border-white/10 bg-white/[0.03] p-6 transition-all hover:-translate-y-1 hover:border-[#F29A2E]/50">
                 <div className="court-rule mb-5" />
                 <h3 className="font-heading font-black uppercase text-3xl">{v.title}</h3>
                 <p className="mt-2 text-[#B7C4D8]">{v.text}</p>

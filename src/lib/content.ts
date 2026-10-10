@@ -14,7 +14,14 @@ export type Settings = {
   contact: Contact;
   homeNotice: string;
   registrationsOpen: boolean;
+  /** Foto o video corto (MP4) detrás del titular de la portada, y foto del encabezado de "El club". */
+  heroPhoto: string;
+  heroVideo: string;
+  clubPhoto: string;
 };
+
+// Solo enlaces https o archivos del propio sitio ("/portada.mp4").
+const mediaUrl = (raw: string) => (/^(https:\/\/|\/[\w.-])/.test(raw) ? raw.slice(0, 500) : "");
 
 export const getSettings = cache(async (): Promise<Settings> => {
   const rows = (await readSheet("Ajustes", 300)) ?? [];
@@ -33,6 +40,9 @@ export const getSettings = cache(async (): Promise<Settings> => {
     },
     homeNotice: (map.get("aviso_inicio") || "").slice(0, 160),
     registrationsOpen: !/^no$/i.test(map.get("inscripciones_abiertas") || "SI"),
+    heroPhoto: imageUrl(map.get("portada_foto") || "") || "",
+    heroVideo: mediaUrl(map.get("portada_video") || ""),
+    clubPhoto: imageUrl(map.get("foto_club") || "") || "",
   };
 });
 

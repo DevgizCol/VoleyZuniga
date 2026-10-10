@@ -7,10 +7,12 @@ import { imageUrl, normDate } from "./sheet-values";
 //   Galería:      Fecha | Título | Imagen (URL) | Activo
 //   Entrenadores: Nombre | Cargo | Categorías | Foto (URL) | Perfil | Activo
 //   Testimonios:  Nombre | Relación | Testimonio | Activo
+//   Plantel:      Nombre | Número | Posición | Categoría | Foto (URL) | Activo
 
 export type Photo = { date: string; title: string; image: string };
 export type Coach = { name: string; role: string; categories: string; photo: string; bio: string };
 export type Testimonial = { name: string; relation: string; text: string };
+export type Player = { name: string; number: string; position: string; category: string; photo: string };
 
 const t = (v: string | undefined) => (v || "").trim();
 
@@ -40,4 +42,18 @@ export async function getTestimonials(): Promise<Testimonial[]> {
   return rows
     .map((r) => ({ name: t(r["Nombre"]), relation: t(r["Relación"]), text: t(r["Testimonio"]) }))
     .filter((x) => x.name && x.text);
+}
+
+export async function getRoster(): Promise<Player[]> {
+  const rows = (await readSheet("Plantel")) ?? [];
+  return rows
+    .map((r) => ({
+      name: t(r["Nombre"]),
+      number: t(r["Número"]).replace(/[^\d]/g, "").slice(0, 2),
+      position: t(r["Posición"]),
+      category: t(r["Categoría"]),
+      photo: imageUrl(r["Foto (URL)"], 800),
+    }))
+    .filter((p) => p.name && p.category)
+    .sort((a, b) => Number(a.number || 99) - Number(b.number || 99));
 }
