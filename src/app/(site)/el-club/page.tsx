@@ -118,7 +118,7 @@ export default async function HistoryPage() {
           </div>
           <div className="mt-12 flex flex-wrap gap-3">
             <Link href="/metodologia" className="h-12 px-6 inline-flex items-center gap-2 rounded-md border border-white/25 hover:border-white font-semibold">Cómo entrenamos <ArrowRight size={18} /></Link>
-            <Link href="/inscripciones" className="h-12 px-6 inline-flex items-center gap-2 rounded-md bg-[#F29A2E] hover:bg-[#FFB14A] text-[#071426] font-bold">Inscribirme <ArrowRight size={18} /></Link>
+            <Link href="/inscripciones" className="h-12 px-6 inline-flex items-center gap-2 rounded-md bg-[#F29A2E] hover:bg-[#FFB14A] text-[#071426] font-bold">Reservar clase gratis <ArrowRight size={18} /></Link>
           </div>
         </div>
       </section>

@@ -34,14 +34,14 @@ export default async function Footer() {
               href="/inscripciones"
               className="group mt-1 h-12 px-5 w-fit inline-flex items-center gap-2 rounded-md bg-[#F29A2E] hover:bg-[#FFB14A] text-[#071426] font-bold transition-colors"
             >
-              Clase de prueba sin costo <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
+              Reservar clase gratis <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
             </Link>
           </div>
 
           <nav aria-label="Pie de página" className="md:col-span-3">
             <h2 className="font-heading font-bold text-xl mb-4 text-white">Navegar</h2>
             <ul className="grid grid-cols-2 gap-x-6 gap-y-2.5 text-sm text-[#B7C4D8]">
-              <li><Link href="/inscripciones" className="hover:text-[#F29A2E] transition-colors">Inscribirme</Link></li>
+              <li><Link href="/inscripciones" className="hover:text-[#F29A2E] transition-colors">Clase gratis</Link></li>
               {NAV_LINKS.map((l) => (
                 <li key={l.href}><Link href={l.href} className="hover:text-[#F29A2E] transition-colors">{l.name}</Link></li>
               ))}

@@ -22,9 +22,9 @@ export default function MobileBar() {
     >
       <Link href="/inscripciones" className={`${base} bg-[#F29A2E] text-[#071426]`}>
         <UserPlus size={18} />
-        <span>Inscribirme</span>
+        <span>Clase gratis</span>
       </Link>
-      <Link href="/contacto" className={`${base} text-white`}>
+      <Link href="/#semana" className={`${base} text-white`}>
         <CalendarDays size={18} className="text-[#F29A2E]" />
         <span>Horarios</span>
       </Link>

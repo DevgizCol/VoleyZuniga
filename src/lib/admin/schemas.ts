@@ -133,6 +133,34 @@ export const SETTING_RULES: Record<string, { label: string; help: string; schema
     help: "Foto grupal para el encabezado de la página El club. Si queda vacía se usa la foto más reciente de la Galería.",
     schema: mediaLink("La foto"),
   },
+  cifras: {
+    label: "Cifras del club",
+    help: "Hasta 4 líneas con el formato número | texto, por ejemplo “12 | años formando deportistas” o “120 | deportistas activos”. Solo datos reales. Vacío: se muestran categorías, entrenamientos y sedes.",
+    schema: text(400, "Las cifras"),
+    type: "textarea",
+  },
+  precio_desde: {
+    label: "Mensualidad desde",
+    help: "Valor de referencia, por ejemplo “$80.000”. Se muestra en la ruta del deportista y en las preguntas frecuentes. Vacío: se dice que el valor se envía por WhatsApp.",
+    schema: text(40, "El valor"),
+  },
+  cupos: {
+    label: "Cupos por categoría",
+    help: "Una línea por categoría con los cupos que quedan, por ejemplo “Sub-14: 4” o “Élite: 0”. Con 5 o menos se muestra “Quedan N cupos”; con 0, “Lista de espera”. Vacío: no se muestra nada.",
+    schema: text(300, "Los cupos"),
+    type: "textarea",
+  },
+  afiliaciones: {
+    label: "Afiliaciones",
+    help: "Ligas o entidades a las que el club está afiliado de verdad, separadas por comas. Por ejemplo “Liga de Voleibol de Antioquia, INDER Medellín”. Vacío: no se muestra.",
+    schema: text(300, "Las afiliaciones"),
+  },
+  cuidado: {
+    label: "Así cuidamos a los deportistas",
+    help: "Hasta 6 compromisos reales, uno por línea. Por ejemplo “Entrenadores con formación en primeros auxilios”. Se muestran en la portada para las familias. Vacío: no se muestra.",
+    schema: text(900, "Los compromisos"),
+    type: "textarea",
+  },
 };
 
 export const SCHEMAS = {

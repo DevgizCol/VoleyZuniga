@@ -18,6 +18,50 @@ export type Settings = {
   heroPhoto: string;
   heroVideo: string;
   clubPhoto: string;
+  /** Cifras del club para la portada ("12 | años formando deportistas"). Vacío: se usan las del código. */
+  stats: { value: number; label: string }[];
+  /** Mensualidad de referencia, por ejemplo "$80.000". Vacío: no se muestra. */
+  priceFrom: string;
+  /** Cupos disponibles por categoría (clave: la categoría, por ejemplo "Sub-14"). */
+  spots: Record<string, number>;
+  /** Ligas o entidades a las que el club está afiliado. */
+  affiliations: string[];
+  /** Compromisos de cuidado de los deportistas, uno por línea. */
+  care: string[];
+};
+
+const lines = (raw: string) =>
+  raw
+    .split(/\r?\n/)
+    .map((l) => l.trim())
+    .filter(Boolean);
+
+// "12 | años formando deportistas" -> { value: 12, label: "años formando deportistas" }
+const parseStats = (raw: string) =>
+  lines(raw)
+    .map((l) => {
+      const [num, ...rest] = l.split("|");
+      const value = Number((num || "").replace(/[^\d]/g, ""));
+      const label = rest.join("|").trim().slice(0, 60);
+      return value > 0 && label ? { value: Math.min(value, 99999), label } : null;
+    })
+    .filter((s): s is { value: number; label: string } => s !== null)
+    .slice(0, 4);
+
+// "Sub-14: 4" -> { "Sub-14": 4 }. La clave se compara luego contra el nombre de cada categoría.
+const parseSpots = (raw: string) =>
+  Object.fromEntries(
+    lines(raw)
+      .map((l) => l.match(/^(.+?)\s*[:=]\s*(\d{1,3})$/))
+      .filter((m): m is RegExpMatchArray => m !== null)
+      .map((m) => [m[1].trim().toLowerCase(), Number(m[2])])
+  ) as Record<string, number>;
+
+/** Cupos que quedan en una categoría, o null si el club no los publicó. */
+export const spotsFor = (spots: Record<string, number>, category: string): number | null => {
+  const name = category.toLowerCase();
+  const key = Object.keys(spots).find((k) => name === k || name.includes(k));
+  return key === undefined ? null : spots[key];
 };
 
 // Solo enlaces https o archivos del propio sitio ("/portada.mp4").
@@ -43,6 +87,15 @@ export const getSettings = cache(async (): Promise<Settings> => {
     heroPhoto: imageUrl(map.get("portada_foto") || "") || "",
     heroVideo: mediaUrl(map.get("portada_video") || ""),
     clubPhoto: imageUrl(map.get("foto_club") || "") || "",
+    stats: parseStats(map.get("cifras") || ""),
+    priceFrom: (map.get("precio_desde") || "").slice(0, 40),
+    spots: parseSpots(map.get("cupos") || ""),
+    affiliations: (map.get("afiliaciones") || "")
+      .split(/[,\n]/)
+      .map((a) => a.trim().slice(0, 60))
+      .filter(Boolean)
+      .slice(0, 6),
+    care: lines(map.get("cuidado") || "").map((l) => l.slice(0, 160)).slice(0, 6),
   };
 });
 
@@ -86,7 +139,7 @@ export function scheduleOptions(sessions: Session[]) {
   }
   return Array.from(groups.values()).map(({ days, s }) => {
     const value = `${joinDays(days)} (${formatTime(s.start)} – ${formatTime(s.end)})`;
-    return { value, label: `${value} · ${s.group}`, group: s.group, sede: s.sede };
+    return { value, label: `${value} · ${s.group}`, group: s.group, sede: s.sede, days, start: s.start, end: s.end };
   });
 }
 
@@ -131,4 +184,15 @@ export const getProducts = cache(async (): Promise<Product[]> => {
     })
     .filter((p): p is Product => p !== null);
   return list.length ? list : PRODUCTS;
+});
+
+/**
+ * Solicitudes de clase de prueba de los últimos 30 días (prueba social con datos reales).
+ * Solo sale del servidor el número; devuelve 0 si la hoja no responde.
+ */
+export const getRecentRegistrations = cache(async (): Promise<number> => {
+  const rows = await readSheet("Inscripciones", 1800);
+  if (!rows) return 0;
+  const since = new Intl.DateTimeFormat("en-CA", { timeZone: "America/Bogota" }).format(new Date(Date.now() - 30 * 86400000));
+  return rows.filter((r) => String(r["Fecha"] || "").slice(0, 10) >= since).length;
 });

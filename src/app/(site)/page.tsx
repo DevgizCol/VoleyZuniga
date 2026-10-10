@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, ChevronDown, Camera, MessageCircle, MapPin, Clock, Quote } from "lucide-react";
+import { ArrowRight, ChevronDown, Camera, MessageCircle, MapPin, Clock, Quote, Check, ShieldCheck, Users } from "lucide-react";
 import HeroCourt from "@/components/HeroCourt";
 import JsonLd from "@/components/JsonLd";
 import NextSession from "@/components/NextSession";
@@ -10,10 +10,10 @@ import BrandPhoto from "@/components/BrandPhoto";
 import { PictoGrowth, PictoScore, PictoTechnique } from "@/components/Pictograms";
 import { SITE } from "@/config/site";
 import { waLink } from "@/config/contact";
-import { categorySchedules, getSessions, getSettings, trainingDays } from "@/lib/content";
+import { categorySchedules, getRecentRegistrations, getSessions, getSettings, spotsFor, trainingDays } from "@/lib/content";
 import { CATEGORIES, SEDES } from "@/data/registration";
 import { DAY_NAMES, formatTime } from "@/data/schedule";
-import { getGallery, getTestimonials } from "@/lib/club";
+import { getCoaches, getGallery, getTestimonials } from "@/lib/club";
 
 export const metadata: Metadata = { alternates: { canonical: "/" } };
 
@@ -57,7 +57,7 @@ const METHOD = [
 
 const VALUES = ["Puntualidad", "Resiliencia", "Humildad", "Respeto"];
 
-const FAQS = [
+const faqs = (priceFrom: string) => [
   {
     q: "¿Desde qué edad pueden entrar?",
     a: "Desde los 7 años, en Semillero Sub-12. Luego siguen Infantil Sub-14, Menores Sub-16, Juvenil Sub-18 y Mayores Élite, para 18 años en adelante.",
@@ -72,7 +72,9 @@ const FAQS = [
   },
   {
     q: "¿Cuánto cuesta?",
-    a: "La clase de prueba no tiene costo. El valor de la mensualidad y las formas de pago te los enviamos por WhatsApp cuando confirmamos tu clase, para que decidas con toda la información.",
+    a: priceFrom
+      ? `La clase de prueba no tiene costo. La mensualidad está desde ${priceFrom}; el valor exacto de tu categoría y las formas de pago te los enviamos por WhatsApp cuando confirmamos tu clase.`
+      : "La clase de prueba no tiene costo. El valor de la mensualidad y las formas de pago te los enviamos por WhatsApp cuando confirmamos tu clase, para que decidas con toda la información.",
   },
   {
     q: "¿Qué debo llevar el primer día?",
@@ -84,31 +86,46 @@ const FAQS = [
   },
 ];
 
-const faqJsonLd = {
+const faqJsonLd = (list: ReturnType<typeof faqs>) => ({
   "@context": "https://schema.org",
   "@type": "FAQPage",
-  mainEntity: FAQS.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
-};
+  mainEntity: list.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
+});
+
+// Por debajo de este número el contador de inscripciones no se muestra: con pocas, juega en contra.
+const MIN_SOCIAL_PROOF = 5;
+const spotsLabel = (n: number) => (n === 0 ? "Lista de espera" : n === 1 ? "Queda 1 cupo" : `Quedan ${n} cupos`);
 
 export const revalidate = 300;
 
 export default async function Home() {
-  const [SESSIONS, settings, photos, testimonials] = await Promise.all([getSessions(), getSettings(), getGallery(), getTestimonials()]);
+  const [SESSIONS, settings, photos, testimonials, coaches, recent] = await Promise.all([
+    getSessions(),
+    getSettings(),
+    getGallery(),
+    getTestimonials(),
+    getCoaches(),
+    getRecentRegistrations(),
+  ]);
   const TRAINING_DAYS = trainingDays(SESSIONS);
   const perCategory = categorySchedules(SESSIONS);
   const { contact } = settings;
   const marqueeItems = CATEGORIES.map((c) => c.value);
   const heroMedia = settings.heroVideo || settings.heroPhoto;
-  const STATS = [
-    { value: CATEGORIES.length, label: "categorías, de los 7 años a mayores" },
-    { value: SESSIONS.length, label: "entrenamientos cada semana" },
-    { value: SEDES.length, label: "sedes en Medellín" },
-    { value: 0, label: "pesos cuesta la clase de prueba" },
-  ];
+  const FAQS = faqs(settings.priceFrom);
+  // Las cifras reales del club (Ajustes) anclan trayectoria; si no están, se usan las del código.
+  const STATS = settings.stats.length
+    ? settings.stats
+    : [
+        { value: CATEGORIES.length, label: "categorías, de los 7 años a mayores" },
+        { value: SESSIONS.length, label: "entrenamientos cada semana" },
+        { value: SEDES.length, label: "sedes en Medellín" },
+      ];
+  const statCols = STATS.length >= 4 ? "lg:grid-cols-4" : STATS.length === 3 ? "lg:grid-cols-3" : "lg:grid-cols-2";
 
   return (
     <>
-      <JsonLd data={faqJsonLd} />
+      <JsonLd data={faqJsonLd(FAQS)} />
       {/* ================= PORTADA ================= */}
       <section className="relative isolate overflow-hidden floodlights grain text-white min-h-[100svh] flex flex-col">
         {heroMedia ? (
@@ -143,28 +160,48 @@ export default async function Home() {
             <p className="flex items-center gap-2 text-[#F29A2E] font-semibold">
               <span className="h-px w-8 bg-[#F29A2E]" /> Club de voleibol · {SITE.city}
             </p>
+            {/* Le habla a quien decide: en cuatro de las cinco categorías es el acudiente. */}
             <h1 className="mt-5 font-heading font-black uppercase leading-[0.86] tracking-tight text-[clamp(3rem,14.5vw,5.5rem)] lg:text-[6rem] xl:text-[6.6rem]">
-              No formamos jugadores,
-              <span className="block text-[#F29A2E]">formamos campeones.</span>
+              Voleibol, disciplina
+              <span className="block text-[#F29A2E]">y equipo.</span>
             </h1>
             <p className="mt-6 text-lg sm:text-xl text-[#C9D5E6] max-w-md leading-relaxed">
-              Entrenamiento para niños, jóvenes y adultos desde los 7 años. Tu primera clase es de prueba y no cuesta nada.
+              Para niños desde los 7 años, jóvenes y adultos. La primera clase va por nuestra cuenta.
             </p>
+            {/* Dos caminos: cada uno abre el formulario con la edad sugerida para esa persona. */}
             <div className="mt-8 flex flex-col sm:flex-row gap-3">
               <Link
-                href="/inscripciones"
+                href="/inscripciones?para=hijo"
                 className="group h-14 px-7 inline-flex items-center justify-center gap-2 bg-[#F29A2E] hover:bg-[#FFB14A] text-[#071426] font-bold text-lg rounded-md shadow-[0_10px_30px_-8px_rgba(242,154,46,0.7)] transition-all"
               >
-                Reservar clase de prueba
+                Clase gratis para mi hijo
                 <ArrowRight size={20} className="transition-transform group-hover:translate-x-1" />
               </Link>
-              <a
-                href="#semana"
-                className="h-14 px-7 inline-flex items-center justify-center border border-white/25 hover:border-white hover:bg-white/5 text-white font-semibold text-lg rounded-md transition-colors"
+              <Link
+                href="/inscripciones?para=mi"
+                className="group h-14 px-7 inline-flex items-center justify-center gap-2 border border-white/25 hover:border-white hover:bg-white/5 text-white font-semibold text-lg rounded-md transition-colors"
               >
-                Ver horarios
-              </a>
+                Clase gratis para mí
+              </Link>
             </div>
+            <ul className="mt-4 flex flex-wrap gap-x-4 gap-y-1 text-sm text-[#B7C4D8]">
+              {["Sin costo ni compromiso", "Solo trae ropa cómoda y agua", "Te confirmamos por WhatsApp"].map((t) => (
+                <li key={t} className="inline-flex items-center gap-1.5">
+                  <Check size={15} className="text-[#F29A2E]" aria-hidden="true" /> {t}
+                </li>
+              ))}
+            </ul>
+            {recent >= MIN_SOCIAL_PROOF ? (
+              <p className="mt-3 inline-flex items-center gap-2 text-sm font-semibold text-white">
+                <Users size={16} className="text-[#F29A2E]" aria-hidden="true" />
+                {recent} familias reservaron su clase de prueba en el último mes
+              </p>
+            ) : null}
+            <p className="mt-3 text-sm">
+              <a href="#semana" className="font-semibold text-[#F29A2E] hover:text-[#FFB14A] underline underline-offset-4">
+                Ver horarios y sedes
+              </a>
+            </p>
             <div className="mt-8 max-w-md">
               <NextSession sessions={SESSIONS} />
             </div>
@@ -201,6 +238,11 @@ export default async function Home() {
             </h2>
             <p className="lg:col-span-5 text-[#B7C4D8] text-lg leading-relaxed">
               Cinco categorías, una sola idea: que cada etapa prepare la siguiente. Entra en la de tu edad y avanza a tu ritmo.
+              {settings.priceFrom ? (
+                <span className="block mt-3 text-white font-semibold">
+                  Mensualidad desde {settings.priceFrom}. La clase de prueba no tiene costo.
+                </span>
+              ) : null}
             </p>
           </div>
 
@@ -209,6 +251,7 @@ export default async function Home() {
             {CATEGORIES.map((c, i) => {
               const { name, tag } = splitCategory(c.value);
               const { days, hours } = splitSchedule(perCategory[c.value]?.horario ?? c.horario);
+              const spots = spotsFor(settings.spots, c.value);
               return (
                 <li key={c.value} className="snap-start relative">
                   <div className="relative z-10 w-11 h-11 rounded-full bg-[#071426] border-2 border-[#F29A2E] flex items-center justify-center font-heading font-black text-lg text-[#F29A2E]">
@@ -220,6 +263,12 @@ export default async function Home() {
                     </p>
                     <h3 className="font-heading font-extrabold text-3xl mt-3">{name}</h3>
                     <p className="text-[#F29A2E] font-semibold mt-1">{ageLabel(c.minAge, c.maxAge)}</p>
+                    {/* Solo cupos reales y escasos: con muchos libres no se muestra nada. */}
+                    {spots !== null && spots <= 5 ? (
+                      <p className={`mt-3 inline-flex rounded-full px-3 py-1 text-xs font-bold ${spots === 0 ? "bg-white/10 text-[#C9D5E6]" : "bg-[#F29A2E] text-[#071426]"}`}>
+                        {spotsLabel(spots)}
+                      </p>
+                    ) : null}
                     <div className="mt-5 pt-5 border-t border-white/10 space-y-2 text-sm text-[#B7C4D8]">
                       <p className="flex gap-2">
                         <Clock size={16} className="shrink-0 mt-0.5 text-[#8FA3BF]" />
@@ -237,7 +286,7 @@ export default async function Home() {
           </ol>
 
           {/* El club en cifras: cuentan hacia arriba al entrar en pantalla */}
-          <dl className="mt-16 sm:mt-20 grid grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-10 border-t border-white/10 pt-12">
+          <dl className={`mt-16 sm:mt-20 grid grid-cols-2 ${statCols} gap-x-6 gap-y-10 border-t border-white/10 pt-12`}>
             {STATS.map((s) => (
               <div key={s.label} className="reveal">
                 <dt className="sr-only">{s.label}</dt>
@@ -297,7 +346,7 @@ export default async function Home() {
               href="/inscripciones"
               className="group h-14 px-7 inline-flex items-center justify-center gap-2 bg-[#0F2347] hover:bg-[#071426] text-white font-bold text-lg rounded-md transition-colors"
             >
-              Inscribirme <ArrowRight size={20} className="transition-transform group-hover:translate-x-1" />
+              Reservar clase gratis <ArrowRight size={20} className="transition-transform group-hover:translate-x-1" />
             </Link>
             <a
               href={waLink(contact, "Hola, quiero confirmar los horarios de entrenamiento del Club Voley Zúñiga")}
@@ -335,6 +384,71 @@ export default async function Home() {
           </div>
         </div>
       </section>
+
+      {/* ================= QUIÉN TE ENTRENA ================= */}
+      {coaches.length > 0 && (
+        <section className="bg-[#0B1E38] text-white py-20 sm:py-24">
+          <div className="container mx-auto px-4 sm:px-6">
+            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6 mb-10">
+              <h2 className="font-heading font-black uppercase leading-[0.9] text-5xl sm:text-6xl reveal">Quién te entrena</h2>
+              <Link href="/el-club" className="inline-flex items-center gap-2 font-semibold text-[#F29A2E] hover:text-[#FFB14A]">
+                Conoce al cuerpo técnico <ArrowRight size={16} />
+              </Link>
+            </div>
+            <ul className="grid grid-cols-2 md:grid-cols-4 gap-4 reveal-stagger">
+              {coaches.slice(0, 4).map((c) => (
+                <li key={c.name} className="flex flex-col">
+                  <div className="relative aspect-square rounded-xl overflow-hidden border border-white/10 bg-gradient-to-br from-[#0F2347] to-[#071426]">
+                    {c.photo ? (
+                      <BrandPhoto src={c.photo} alt={`Foto de ${c.name}`} hover className="absolute inset-0" />
+                    ) : (
+                      <span className="absolute inset-0 flex items-center justify-center font-heading font-black text-6xl text-[#F29A2E]/40" aria-hidden="true">
+                        {c.name.split(/\s+/).slice(0, 2).map((w) => w[0]).join("")}
+                      </span>
+                    )}
+                  </div>
+                  <p className="mt-3 font-heading font-extrabold text-2xl leading-none">{c.name}</p>
+                  {c.role ? <p className="mt-1 text-sm font-semibold text-[#F29A2E]">{c.role}</p> : null}
+                  {c.categories ? <p className="text-sm text-[#8FA3BF]">{c.categories}</p> : null}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      )}
+
+      {/* ================= CUIDADO Y AFILIACIONES ================= */}
+      {(settings.care.length > 0 || settings.affiliations.length > 0) && (
+        <section aria-label="Confianza" className="bg-[#EEF2F7] text-[#0F2347] py-20 sm:py-24">
+          <div className="container mx-auto px-4 sm:px-6 grid lg:grid-cols-12 gap-10 items-start">
+            {settings.care.length > 0 && (
+              <div className={settings.affiliations.length ? "lg:col-span-8" : "lg:col-span-12"}>
+                <h2 className="font-heading font-black uppercase leading-[0.9] text-5xl sm:text-6xl reveal">Así cuidamos a tu hijo</h2>
+                <ul className="mt-8 grid sm:grid-cols-2 gap-x-8 gap-y-4">
+                  {settings.care.map((item) => (
+                    <li key={item} className="flex gap-3 text-lg leading-snug">
+                      <ShieldCheck size={22} className="shrink-0 mt-0.5 text-[#C46F0A]" aria-hidden="true" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {settings.affiliations.length > 0 && (
+              <div className={settings.care.length ? "lg:col-span-4" : "lg:col-span-12"}>
+                <p className="text-sm font-bold uppercase tracking-wider text-[#44546F]">Club afiliado a</p>
+                <ul className="mt-4 flex flex-wrap gap-2">
+                  {settings.affiliations.map((a) => (
+                    <li key={a} className="rounded-md border border-[#0F2347]/20 bg-white px-4 py-2.5 font-semibold">
+                      {a}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        </section>
+      )}
 
       {/* ================= VALORES ================= */}
       <section aria-label="Nuestros valores" className="relative bg-[#0B1E38] text-white py-16 sm:py-20 overflow-hidden">
@@ -462,7 +576,7 @@ export default async function Home() {
                 href="/inscripciones"
                 className="group h-14 px-8 inline-flex items-center justify-center gap-2 bg-[#071426] hover:bg-[#0F2347] text-white font-bold text-lg rounded-md transition-colors"
               >
-                Reservar clase de prueba <ArrowRight size={20} className="transition-transform group-hover:translate-x-1" />
+                Reservar clase gratis <ArrowRight size={20} className="transition-transform group-hover:translate-x-1" />
               </Link>
               <a
                 href={contact.instagramUrl}

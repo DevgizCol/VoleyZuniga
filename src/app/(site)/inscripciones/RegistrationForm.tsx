@@ -1,9 +1,9 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import clsx from "clsx";
-import { ArrowLeft, ArrowRight, Check, Minus, Plus, MessageCircle, Loader2, Clock, MapPin, Download, Share2 } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, Minus, Plus, MessageCircle, Loader2, Clock, MapPin, Download, Share2, CalendarPlus, UserPlus } from "lucide-react";
 import { downloadPass, makeCode, passQrText, qrMatrix, sharePass, type PassData } from "@/lib/pass";
 import { CATEGORIES, NIVELES, SEDES, categoryForAge } from "@/data/registration";
 import { useContact } from "@/components/ContactProvider";
@@ -21,8 +21,32 @@ const LEVEL_HELP: Record<string, string> = {
 
 type Status = "idle" | "sending" | "saved" | "offline";
 
+type Horario = { value: string; label: string; days?: number[]; start?: string; end?: string; sede?: string };
+
+// Enlace de Google Calendar para el próximo día de entrenamiento del horario elegido (fecha tentativa).
+function calendarLink(h: Horario | undefined, name: string) {
+  if (!h?.days?.length || !h.start || !h.end) return null;
+  const today = new Date(new Intl.DateTimeFormat("en-CA", { timeZone: "America/Bogota" }).format(new Date()) + "T12:00:00Z");
+  for (let i = 1; i <= 7; i++) {
+    const d = new Date(today.getTime() + i * 86400000);
+    if (!h.days.includes(d.getUTCDay())) continue;
+    const ymd = d.toISOString().slice(0, 10).replace(/-/g, "");
+    const t = (hhmm: string) => `${ymd}T${hhmm.replace(":", "")}00`;
+    const q = new URLSearchParams({
+      action: "TEMPLATE",
+      text: `Clase de prueba de voleibol · ${name.trim()}`,
+      dates: `${t(h.start)}/${t(h.end)}`,
+      ctz: "America/Bogota",
+      details: "Clase de prueba en el Club Voley Zúñiga. El día lo confirmamos por WhatsApp. Lleva ropa cómoda, tenis y agua.",
+      location: h.sede ?? "",
+    });
+    return `https://calendar.google.com/calendar/render?${q}`;
+  }
+  return null;
+}
+
 type Props = {
-  horarios: { value: string; label: string }[];
+  horarios: Horario[];
   perCategory: Record<string, { horario: string; sede: string }>;
 };
 
@@ -71,6 +95,14 @@ export default function RegistrationForm({ horarios, perCategory }: Props) {
     setSede(sched(c.value).sede);
     setHorario(sched(c.value).horario);
   };
+  // "Clase gratis para mí" (portada) llega con ?para=mi: se sugiere la categoría de mayores.
+  // Se lee la dirección una sola vez al cargar, para que la página siga siendo estática.
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    if (new URLSearchParams(window.location.search).get("para") === "mi") changeAge(18);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const changeCategory = (value: string) => {
     const c = CATEGORIES.find((x) => x.value === value);
     setCategory(value);
@@ -142,6 +174,12 @@ export default function RegistrationForm({ horarios, perCategory }: Props) {
     `¿Cuándo puede asistir a la clase de prueba?`;
 
   const passData: PassData = { name, age, category, level, sede, horario, code, contact };
+  const calendarUrl = calendarLink(horarios.find((h) => h.value === horario), name);
+  // Solo se usa en la pantalla de confirmación, que nunca se pinta en el servidor.
+  const inviteUrl = () =>
+    `https://wa.me/?text=${encodeURIComponent(
+      `Voy a probar voleibol en el Club Voley Zúñiga, la primera clase es gratis. ¿Vienes? ${window.location.origin}/inscripciones`
+    )}`;
 
   if (status === "saved" || status === "offline") {
     return (
@@ -202,6 +240,28 @@ export default function RegistrationForm({ horarios, perCategory }: Props) {
               )}
             </div>
           </div>
+          {/* El momento de más entusiasmo: recordar la clase y traer a alguien más. */}
+          <div className="mt-8 pt-8 border-t border-white/10 flex flex-wrap gap-3">
+            {calendarUrl ? (
+              <a
+                href={calendarUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="h-12 px-5 inline-flex items-center gap-2 rounded-md border border-white/25 hover:border-white font-semibold"
+              >
+                <CalendarPlus size={18} className="text-[#F29A2E]" /> Agregar a mi calendario
+              </a>
+            ) : null}
+            <a
+              href={inviteUrl()}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="h-12 px-5 inline-flex items-center gap-2 rounded-md border border-white/25 hover:border-white font-semibold"
+            >
+              <UserPlus size={18} className="text-[#25D366]" /> Invitar a un amigo
+            </a>
+          </div>
+          {calendarUrl ? <p className="mt-2 text-sm text-[#8FA3BF]">La fecha del calendario es tentativa: el día exacto lo confirmamos por WhatsApp.</p> : null}
           <p className="mt-6 text-sm text-[#8FA3BF]">
             ¿Te equivocaste en algo?{" "}
             <button type="button" onClick={() => { setStatus("idle"); setStep(0); }} className="underline underline-offset-2 hover:text-white">
