@@ -8,14 +8,20 @@ import NextSession from "@/components/NextSession";
 import Volleyball from "@/components/Volleyball";
 import BrandPhoto from "@/components/BrandPhoto";
 import { PictoGrowth, PictoScore, PictoTechnique } from "@/components/Pictograms";
-import { SITE } from "@/config/site";
 import { waLink } from "@/config/contact";
 import { categorySchedules, getRecentRegistrations, getSessions, getSettings, spotsFor, trainingDays } from "@/lib/content";
 import { CATEGORIES, SEDES } from "@/data/registration";
 import { DAY_NAMES, formatTime } from "@/data/schedule";
 import { getCoaches, getGallery, getTestimonials } from "@/lib/club";
+import { faqList } from "@/data/faq";
+import { faqPage, pageMeta } from "@/lib/seo";
 
-export const metadata: Metadata = { alternates: { canonical: "/" } };
+export const metadata: Metadata = pageMeta({
+  title: "Club de voleibol en Medellín | Voley Zúñiga",
+  absoluteTitle: true,
+  path: "/",
+  description: "Club de voleibol en Medellín para niños, jóvenes y adultos desde los 7 años. Cinco categorías, dos sedes y clase de prueba sin costo.",
+});
 
 const ageLabel = (min: number, max: number) => (max >= 100 ? "18 años o más" : min === 0 ? "7 a 11 años" : `${min} a ${max} años`);
 
@@ -57,41 +63,6 @@ const METHOD = [
 
 const VALUES = ["Puntualidad", "Resiliencia", "Humildad", "Respeto"];
 
-const faqs = (priceFrom: string) => [
-  {
-    q: "¿Desde qué edad pueden entrar?",
-    a: "Desde los 7 años, en Semillero Sub-12. Luego siguen Infantil Sub-14, Menores Sub-16, Juvenil Sub-18 y Mayores Élite, para 18 años en adelante.",
-  },
-  {
-    q: "¿Cómo funciona la clase de prueba?",
-    a: "Llenas el formulario de inscripción y te escribimos por WhatsApp para acordar el día. En la clase conoces a los entrenadores y ellos valoran el nivel del deportista, sin compromiso.",
-  },
-  {
-    q: "¿Dónde y cuándo se entrena?",
-    a: "En el Polideportivo 3 Canchas (Buenos Aires) y en el Coliseo Yesid Santos (Atanasio Girardot). El horario de cada categoría está en la semana de entrenamientos, más arriba.",
-  },
-  {
-    q: "¿Cuánto cuesta?",
-    a: priceFrom
-      ? `La clase de prueba no tiene costo. La mensualidad está desde ${priceFrom}; el valor exacto de tu categoría y las formas de pago te los enviamos por WhatsApp cuando confirmamos tu clase.`
-      : "La clase de prueba no tiene costo. El valor de la mensualidad y las formas de pago te los enviamos por WhatsApp cuando confirmamos tu clase, para que decidas con toda la información.",
-  },
-  {
-    q: "¿Qué debo llevar el primer día?",
-    a: "Ropa deportiva cómoda, tenis con buen agarre para cancha y un termo con agua. La indumentaria oficial se entrega al formalizar la matrícula.",
-  },
-  {
-    q: "¿El club participa en torneos?",
-    a: "Sí: Liga de Voleibol de Antioquia, torneos municipales y festivales interclubes. Los partidos programados están en la página de Partidos.",
-  },
-];
-
-const faqJsonLd = (list: ReturnType<typeof faqs>) => ({
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  mainEntity: list.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
-});
-
 // Por debajo de este número el contador de inscripciones no se muestra: con pocas, juega en contra.
 const MIN_SOCIAL_PROOF = 5;
 const spotsLabel = (n: number) => (n === 0 ? "Lista de espera" : n === 1 ? "Queda 1 cupo" : `Quedan ${n} cupos`);
@@ -112,7 +83,7 @@ export default async function Home() {
   const { contact } = settings;
   const marqueeItems = CATEGORIES.map((c) => c.value);
   const heroMedia = settings.heroVideo || settings.heroPhoto;
-  const FAQS = faqs(settings.priceFrom);
+  const FAQS = faqList(settings.priceFrom);
   // Las cifras reales del club (Ajustes) anclan trayectoria; si no están, se usan las del código.
   const STATS = settings.stats.length
     ? settings.stats
@@ -125,7 +96,7 @@ export default async function Home() {
 
   return (
     <>
-      <JsonLd data={faqJsonLd(FAQS)} />
+      <JsonLd data={faqPage(FAQS)} />
       {/* ================= PORTADA ================= */}
       <section className="relative isolate overflow-hidden floodlights grain text-white min-h-[100svh] flex flex-col">
         {heroMedia ? (
@@ -157,13 +128,17 @@ export default async function Home() {
                 <span className="w-2 h-2 rounded-full bg-[#071426] animate-pulse" /> {settings.homeNotice} <ArrowRight size={14} />
               </Link>
             ) : null}
-            <p className="flex items-center gap-2 text-[#F29A2E] font-semibold">
-              <span className="h-px w-8 bg-[#F29A2E]" /> Club de voleibol · {SITE.city}
-            </p>
-            {/* Le habla a quien decide: en cuatro de las cinco categorías es el acudiente. */}
-            <h1 className="mt-5 font-heading font-black uppercase leading-[0.86] tracking-tight text-[clamp(3rem,14.5vw,5.5rem)] lg:text-[6rem] xl:text-[6.6rem]">
-              Voleibol, disciplina
-              <span className="block text-[#F29A2E]">y equipo.</span>
+            {/* Le habla a quien decide (en cuatro de las cinco categorías es el acudiente) e incluye
+                "Club de voleibol en Medellín", que es lo que la gente busca en Google. */}
+            <h1>
+              <span className="flex items-center gap-2 font-sans normal-case tracking-normal text-[#F29A2E] font-semibold text-base">
+                <span className="h-px w-8 bg-[#F29A2E]" aria-hidden="true" /> Club de voleibol en Medellín
+              </span>
+              <span className="sr-only">: </span>
+              <span className="block mt-5 font-heading font-black uppercase leading-[0.86] tracking-tight text-[clamp(3rem,14.5vw,5.5rem)] lg:text-[6rem] xl:text-[6.6rem]">
+                Voleibol, disciplina
+                <span className="block text-[#F29A2E]">y equipo.</span>
+              </span>
             </h1>
             <p className="mt-6 text-lg sm:text-xl text-[#C9D5E6] max-w-md leading-relaxed">
               Para niños desde los 7 años, jóvenes y adultos. La primera clase va por nuestra cuenta.

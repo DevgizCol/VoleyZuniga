@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { pageMeta } from "@/lib/seo";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight } from "lucide-react";
@@ -7,11 +8,11 @@ import BrandPhoto from "@/components/BrandPhoto";
 import { getCoaches, getGallery } from "@/lib/club";
 import { getSettings } from "@/lib/content";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMeta({
   title: "El club",
-  alternates: { canonical: "/el-club" },
-  description: "Quiénes somos, qué nos mueve y el camino que recorre cada deportista del Club Voley Zúñiga.",
-};
+  path: "/el-club",
+  description: "Quiénes somos, qué nos mueve y el camino que recorre cada deportista del Club Voley Zúñiga en Medellín.",
+});
 
 const PATH = [
   { title: "Semillero", age: "7 a 11 años", text: "Psicomotricidad, control del balón y disciplina básica, aprendidos jugando." },

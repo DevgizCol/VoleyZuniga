@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
+import { pageMeta } from "@/lib/seo";
 import Link from "next/link";
 import { ArrowRight, Dumbbell, Activity, Brain, ShieldCheck, Check } from "lucide-react";
 import PageHero from "@/components/PageHero";
 
-export const metadata: Metadata = {
-  title: "Metodología",
-  alternates: { canonical: "/metodologia" },
-  description: "Los cuatro pilares de entrenamiento del Club Voley Zúñiga.",
-};
+export const metadata: Metadata = pageMeta({
+  title: "Metodología de entrenamiento",
+  path: "/metodologia",
+  description: "Los cuatro pilares de entrenamiento del Club Voley Zúñiga: preparación física, técnica y táctica, fortaleza mental y código de honor.",
+});
 
 const PILLARS = [
   {

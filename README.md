@@ -50,7 +50,8 @@ de pestañas y columnas en el Apps Script.
 
 Ver `.env.example`. Obligatorias: `ADMIN_PASSWORD`, `SESSION_SECRET`, `SHEETS_WEBAPP_URL`, `SHEETS_SECRET`.
 Opcionales: `ADMIN_USERS` (más usuarios, `Nombre:clave; Nombre2:clave2`), `SHEET_URL` (botón "Abrir la hoja"
-del panel) y `NEXT_PUBLIC_SITE_URL` (dominio propio).
+del panel), `NEXT_PUBLIC_SITE_URL` (dominio propio), y `GOOGLE_SITE_VERIFICATION` / `BING_SITE_VERIFICATION`
+(código de verificación de Search Console y Bing Webmaster Tools; elige el método "Etiqueta HTML" y copia solo el valor de `content`).
 
 ## Apps Script (backend de la hoja)
 

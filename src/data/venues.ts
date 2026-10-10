@@ -4,6 +4,8 @@ export const VENUES = [
     id: "polideportivo-3-canchas",
     name: "Polideportivo 3 Canchas",
     role: "Sede principal de entrenamiento",
+    // Búsqueda local a la que apunta la página /sedes/[id].
+    search: "Voleibol en Buenos Aires, Medellín",
     address: "Sector Buenos Aires / Alejandro Echavarría, Medellín",
     lat: 6.231821,
     lng: -75.541992,
@@ -14,6 +16,7 @@ export const VENUES = [
     id: "yesid-santos",
     name: "Coliseo Yesid Santos",
     role: "Mayores Élite y partidos de liga",
+    search: "Voleibol en el Atanasio Girardot, Medellín",
     address: "Unidad Deportiva Atanasio Girardot, Medellín",
     lat: 6.2575,
     lng: -75.5905,

@@ -38,6 +38,7 @@ const OLD_ROUTES: [string, string][] = [
   ["/club/history", "/el-club"],
   ["/club/methodology", "/metodologia"],
   ["/club/contact", "/contacto"],
+  ["/sedes", "/contacto"],
 ];
 
 const nextConfig: NextConfig = {

@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import Link from "next/link";
+import { pageMeta } from "@/lib/seo";
 import { MapPin, Phone, Mail, Clock, Navigation, MessageCircle, Camera } from "lucide-react";
 import PageHero from "@/components/PageHero";
 import ContactForm from "./ContactForm";
@@ -7,11 +9,11 @@ import { getSessions, getSettings, trainingDays } from "@/lib/content";
 import { VENUES, mapEmbed, mapsLink, wazeLink } from "@/data/venues";
 import { DAY_NAMES, formatTime } from "@/data/schedule";
 
-export const metadata: Metadata = {
-  title: "Sedes y contacto",
-  alternates: { canonical: "/contacto" },
-  description: "Sedes, horarios y canales de contacto del Club Voley Zúñiga en Medellín.",
-};
+export const metadata: Metadata = pageMeta({
+  title: "Sedes y horarios de voleibol en Medellín",
+  path: "/contacto",
+  description: "Dónde y cuándo entrena el Club Voley Zúñiga en Medellín: Polideportivo 3 Canchas (Buenos Aires) y Coliseo Yesid Santos. WhatsApp, correo e Instagram.",
+});
 
 export const revalidate = 300;
 
@@ -43,7 +45,9 @@ export default async function ContactPage() {
             <article key={v.id} className="grid lg:grid-cols-2 rounded-2xl overflow-hidden border border-white/10 bg-[#0B1E38]">
               <div className={`p-7 sm:p-10 flex flex-col ${i % 2 ? "lg:order-2" : ""}`}>
                 <p className="text-sm font-semibold text-[#F29A2E]">{v.role}</p>
-                <h2 className="font-heading font-black uppercase text-4xl sm:text-5xl leading-none mt-2">{v.name}</h2>
+                <h2 className="font-heading font-black uppercase text-4xl sm:text-5xl leading-none mt-2">
+                  <Link href={`/sedes/${v.id}`} className="hover:text-[#F29A2E] transition-colors">{v.name}</Link>
+                </h2>
                 <p className="mt-4 text-[#C9D5E6]">{v.description}</p>
                 <ul className="mt-6 space-y-3 text-[#C9D5E6]">
                   <li className="flex gap-3"><MapPin size={20} className="text-[#F29A2E] shrink-0 mt-0.5" />{v.address}</li>
@@ -56,6 +60,9 @@ export default async function ContactPage() {
                   <a href={wazeLink(v)} target="_blank" rel="noopener noreferrer" className="h-12 px-5 inline-flex items-center gap-2 rounded-md border border-white/25 hover:border-white font-semibold">
                     Waze
                   </a>
+                  <Link href={`/sedes/${v.id}`} className="h-12 px-2 inline-flex items-center font-semibold text-[#C9D5E6] underline underline-offset-4 decoration-white/30 hover:text-white">
+                    Horarios de esta sede
+                  </Link>
                 </div>
               </div>
               <div className="relative min-h-[280px] lg:min-h-[380px] bg-[#0F2347]">

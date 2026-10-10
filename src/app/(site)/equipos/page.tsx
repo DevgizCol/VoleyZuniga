@@ -1,44 +1,18 @@
 import type { Metadata } from "next";
+import { pageMeta } from "@/lib/seo";
 import Link from "next/link";
 import { ArrowRight, Clock, MapPin, Check } from "lucide-react";
 import PageHero from "@/components/PageHero";
 import Volleyball from "@/components/Volleyball";
 import PlayerCard from "@/components/PlayerCard";
-import { CATEGORIES } from "@/data/registration";
+import { CATEGORY_PAGES, agesOf, nameOf, tagOf } from "@/data/categories";
 import { getRoster } from "@/lib/club";
 
-export const metadata: Metadata = {
-  title: "Equipos",
-  alternates: { canonical: "/equipos" },
-  description: "Las cinco categorías del Club Voley Zúñiga: edades, horarios y enfoque de entrenamiento.",
-};
-
-const FOCUS: Record<string, { lead: string; points: string[] }> = {
-  "Semillero Sub-12": {
-    lead: "El primer contacto con el balón: jugar, moverse bien y enamorarse del voleibol.",
-    points: ["Coordinación y control del balón", "Postura y desplazamientos básicos", "Compañerismo y disciplina desde el juego"],
-  },
-  "Infantil Sub-14": {
-    lead: "Llegan los fundamentos completos y los primeros sistemas de juego.",
-    points: ["Saque, recepción y armado con técnica correcta", "Batida y remate con trabajo de salto seguro", "Primeros partidos y festivales"],
-  },
-  "Menores Sub-16": {
-    lead: "Se compite en serio y cada posición empieza a especializarse.",
-    points: ["Sistemas 5-1 y 4-2", "Lectura de bloqueo y cobertura", "Partidos de liga y torneos interclubes"],
-  },
-  "Juvenil Sub-18": {
-    lead: "Alta competencia: decisiones rápidas, cabeza fría y liderazgo en la cancha.",
-    points: ["Preparación física por posición", "Manejo de la presión en puntos críticos", "Liga de Antioquia y festivales nacionales"],
-  },
-  "Mayores Élite": {
-    lead: "Para quienes quieren seguir compitiendo después del colegio, o volver a la cancha.",
-    points: ["Entrenamiento táctico de alto nivel", "Partidos oficiales en el Coliseo Yesid Santos", "Acompañamiento para becas deportivas"],
-  },
-};
-
-const tagOf = (v: string) => (v.match(/Sub-\d+/)?.[0] ?? "18+");
-const nameOf = (v: string) => v.replace(/\s*(Sub-\d+|Élite)$/, "");
-const ages = (min: number, max: number) => (max >= 100 ? "18 años o más" : min === 0 ? "7 a 11 años" : `${min} a ${max} años`);
+export const metadata: Metadata = pageMeta({
+  title: "Equipos y categorías de voleibol por edad",
+  path: "/equipos",
+  description: "Cinco categorías de voleibol en Medellín, de los 7 años a mayores: edades, horarios, sede y enfoque de entrenamiento de cada equipo.",
+});
 
 export const revalidate = 300;
 
@@ -49,8 +23,7 @@ export default async function TeamPage() {
       <PageHero art="net" kicker="Cinco categorías" title="Equipos" intro="Cada equipo tiene un objetivo claro para su edad. Así trabaja cada uno y cuándo entrena." />
       <section className="bg-[#071426] text-white pb-24 sm:pb-32">
         <div className="container mx-auto px-4 sm:px-6 space-y-5">
-          {CATEGORIES.map((c, i) => {
-            const f = FOCUS[c.value];
+          {CATEGORY_PAGES.map(({ info: c, slug, ...f }, i) => {
             const players = roster.filter((p) => p.category.toLowerCase() === c.value.toLowerCase());
             return (
               <article key={c.value} className="reveal group relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-[#0F2347] to-[#0B1E38] grid lg:grid-cols-12">
@@ -60,15 +33,17 @@ export default async function TeamPage() {
                     {tagOf(c.value)}
                   </p>
                   <div className="relative">
-                    <h2 className="font-heading font-black uppercase text-4xl leading-none mt-4">{nameOf(c.value)}</h2>
-                    <p className="text-[#F29A2E] font-semibold mt-1">{ages(c.minAge, c.maxAge)}</p>
+                    <h2 className="font-heading font-black uppercase text-4xl leading-none mt-4">
+                      <Link href={`/equipos/${slug}`} className="hover:text-[#F29A2E] transition-colors">{nameOf(c.value)}</Link>
+                    </h2>
+                    <p className="text-[#F29A2E] font-semibold mt-1">{agesOf(c)}</p>
                   </div>
                 </div>
                 <div className="lg:col-span-8 p-7 sm:p-10 grid md:grid-cols-2 gap-8">
                   <div>
-                    <p className="text-xl text-white leading-snug">{f?.lead}</p>
+                    <p className="text-xl text-white leading-snug">{f.lead}</p>
                     <ul className="mt-5 space-y-2.5">
-                      {f?.points.map((p) => (
+                      {f.points.map((p) => (
                         <li key={p} className="flex gap-3 text-[#C9D5E6]"><Check size={18} className="text-[#F29A2E] shrink-0 mt-1" />{p}</li>
                       ))}
                     </ul>
@@ -78,9 +53,14 @@ export default async function TeamPage() {
                       <p className="flex gap-3"><Clock size={18} className="text-[#8FA3BF] shrink-0 mt-0.5" /><span>{c.horario}</span></p>
                       <p className="flex gap-3"><MapPin size={18} className="text-[#8FA3BF] shrink-0 mt-0.5" /><span>{c.sede}</span></p>
                     </div>
-                    <Link href="/inscripciones" className="mt-5 lg:mt-auto self-start h-12 px-5 inline-flex items-center gap-2 rounded-md bg-[#F29A2E] hover:bg-[#FFB14A] text-[#071426] font-bold">
-                      Clase gratis en {nameOf(c.value)} <ArrowRight size={18} />
-                    </Link>
+                    <div className="mt-5 lg:mt-auto flex flex-wrap items-center gap-x-5 gap-y-3">
+                      <Link href="/inscripciones" className="h-12 px-5 inline-flex items-center gap-2 rounded-md bg-[#F29A2E] hover:bg-[#FFB14A] text-[#071426] font-bold">
+                        Clase gratis en {nameOf(c.value)} <ArrowRight size={18} />
+                      </Link>
+                      <Link href={`/equipos/${slug}`} className="font-semibold text-[#C9D5E6] underline underline-offset-4 decoration-white/30 hover:text-white">
+                        Todo sobre {nameOf(c.value)}
+                      </Link>
+                    </div>
                   </div>
                 </div>
                 {players.length > 0 && (

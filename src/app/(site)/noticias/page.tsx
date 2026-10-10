@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { pageMeta } from "@/lib/seo";
 import { ViewTransition } from "react";
 import Link from "next/link";
 import { ArrowRight, Camera } from "lucide-react";
@@ -7,11 +8,11 @@ import ArticleCover from "@/components/ArticleCover";
 import { getSettings } from "@/lib/content";
 import { getArticles, longDate } from "@/lib/news";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMeta({
   title: "Noticias",
-  alternates: { canonical: "/noticias" },
+  path: "/noticias",
   description: "Crónicas, convocatorias y novedades del Club Voley Zúñiga.",
-};
+});
 
 export const revalidate = 300;
 

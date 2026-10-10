@@ -1,16 +1,17 @@
 /* eslint-disable @next/next/no-img-element -- las fotos vienen de Drive u otra URL de la hoja */
 import type { Metadata } from "next";
+import { pageMeta } from "@/lib/seo";
 import { Camera } from "lucide-react";
 import PageHero from "@/components/PageHero";
 import { SITE } from "@/config/site";
 import { getGallery } from "@/lib/club";
 import { longDate } from "@/lib/news";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMeta({
   title: "Galería",
-  alternates: { canonical: "/galeria" },
+  path: "/galeria",
   description: "Fotos de entrenamientos, partidos y torneos del Club Voley Zúñiga.",
-};
+});
 
 export const revalidate = 300;
 
