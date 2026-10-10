@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { pageMeta } from "@/lib/seo";
 import Link from "next/link";
 import { ArrowRight, Camera } from "lucide-react";
 import PageHero from "@/components/PageHero";
@@ -8,11 +9,11 @@ import { getSettings } from "@/lib/content";
 import { CATEGORIES } from "@/data/registration";
 import { getStandings, type StandingRow } from "@/lib/matches";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMeta({
   title: "Posiciones",
-  alternates: { canonical: "/posiciones" },
+  path: "/posiciones",
   description: "Tabla de posiciones de los equipos del Club Voley Zúñiga por categoría.",
-};
+});
 
 export const revalidate = 300;
 

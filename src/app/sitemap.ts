@@ -1,11 +1,14 @@
 import type { MetadataRoute } from "next";
 import { siteUrl } from "@/lib/site-url";
 import { getArticles } from "@/lib/news";
+import { CATEGORY_PAGES } from "@/data/categories";
+import { VENUES } from "@/data/venues";
 
 export const revalidate = 3600;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const pages: [string, number, MetadataRoute.Sitemap[number]["changeFrequency"]][] = [
+  type Page = [string, number, MetadataRoute.Sitemap[number]["changeFrequency"]];
+  const pages: Page[] = [
     ["", 1, "weekly"],
     ["/inscripciones", 0.9, "monthly"],
     ["/partidos", 0.8, "daily"],
@@ -18,6 +21,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ["/tienda", 0.5, "monthly"],
     ["/galeria", 0.5, "weekly"],
     ["/privacidad", 0.2, "yearly"],
+    ...CATEGORY_PAGES.map((c): Page => [`/equipos/${c.slug}`, 0.8, "monthly"]),
+    ...VENUES.map((v): Page => [`/sedes/${v.id}`, 0.6, "monthly"]),
   ];
   const articles = await getArticles().catch(() => []);
   return [

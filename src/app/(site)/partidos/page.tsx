@@ -1,22 +1,34 @@
 import type { Metadata } from "next";
+import { CLUB_ID, pageMeta } from "@/lib/seo";
 import Link from "next/link";
 import { CalendarPlus, CalendarCheck, Clock, MapPin, Navigation, ArrowRight, Camera } from "lucide-react";
 import { siteUrl } from "@/lib/site-url";
 import PageHero from "@/components/PageHero";
 import JsonLd from "@/components/JsonLd";
+import { VENUES } from "@/data/venues";
 import CategoryFilter from "@/components/CategoryFilter";
 import TeamBadge from "@/components/TeamBadge";
 import { getSettings } from "@/lib/content";
 import { CATEGORIES } from "@/data/registration";
 import { bogotaToday, calendarUrl, countdownLabel, dateParts, getMatches, time12, type Match } from "@/lib/matches";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMeta({
   title: "Partidos",
-  alternates: { canonical: "/partidos" },
-  description: "Calendario de partidos y resultados del Club Voley Zúñiga.",
-};
+  path: "/partidos",
+  ownImage: true,
+  description: "Calendario de partidos y resultados del Club Voley Zúñiga en la Liga de Antioquia y torneos interclubes.",
+});
 
 export const revalidate = 300;
+
+// Lugar del partido para buscadores: si es una de las sedes del club, con su dirección y coordenadas.
+const venueLd = (name: string) => {
+  const v = VENUES.find((x) => name && (name.toLowerCase().includes(x.name.toLowerCase()) || x.name.toLowerCase().includes(name.toLowerCase())));
+  const address = { "@type": "PostalAddress", streetAddress: v?.address, addressLocality: "Medellín", addressRegion: "Antioquia", addressCountry: "CO" };
+  return v
+    ? { "@type": "Place", name: v.name, address, geo: { "@type": "GeoCoordinates", latitude: v.lat, longitude: v.lng } }
+    : { "@type": "Place", name: name || "Por confirmar", address };
+};
 
 const mapsUrl = (venue: string) => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${venue}, Medellín`)}`;
 
@@ -46,10 +58,14 @@ export default async function GamesPage({ searchParams }: { searchParams: Promis
     startDate: m.time ? `${m.date}T${m.time}:00-05:00` : m.date,
     eventStatus: "https://schema.org/EventScheduled",
     eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
-    location: { "@type": "Place", name: m.venue || "Por confirmar", address: { "@type": "PostalAddress", addressLocality: "Medellín", addressRegion: "Antioquia", addressCountry: "CO" } },
+    location: venueLd(m.venue),
+    image: [`${siteUrl}/partidos/opengraph-image`],
+    description: `Partido de voleibol de la categoría ${m.category}: ${m.home} contra ${m.away}. Entrada libre.`,
+    isAccessibleForFree: true,
     homeTeam: { "@type": "SportsTeam", name: m.home },
     awayTeam: { "@type": "SportsTeam", name: m.away },
-    organizer: { "@type": "SportsOrganization", name: "Club Voley Zúñiga", url: siteUrl },
+    competitor: [{ "@type": "SportsTeam", name: m.home }, { "@type": "SportsTeam", name: m.away }],
+    organizer: { "@type": "SportsClub", "@id": CLUB_ID, name: "Club Voley Zúñiga", url: siteUrl },
     url: `${siteUrl}/partidos`,
   }));
 

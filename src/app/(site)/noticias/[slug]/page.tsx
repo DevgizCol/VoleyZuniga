@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { ArrowLeft, MessageCircle } from "lucide-react";
 import ArticleCover from "@/components/ArticleCover";
 import JsonLd from "@/components/JsonLd";
+import { CLUB_ID, breadcrumbs } from "@/lib/seo";
 import { getArticle, longDate } from "@/lib/news";
 import { siteUrl } from "@/lib/site-url";
 
@@ -17,7 +18,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     title: a.title,
     description: a.summary,
     alternates: { canonical: `/noticias/${a.slug}` },
-    openGraph: { type: "article", title: a.title, description: a.summary, publishedTime: a.date },
+    openGraph: { type: "article", locale: "es_CO", siteName: "Voley Zúñiga", url: `/noticias/${a.slug}`, title: a.title, description: a.summary, publishedTime: a.date },
   };
 }
 
@@ -34,13 +35,15 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
     datePublished: `${a.date}T12:00:00-05:00`,
     image: a.image ? [a.image] : [`${siteUrl}/opengraph-image`],
     mainEntityOfPage: url,
-    author: { "@type": "SportsOrganization", name: "Club Voley Zúñiga", url: siteUrl },
-    publisher: { "@type": "SportsOrganization", name: "Club Voley Zúñiga", logo: { "@type": "ImageObject", url: `${siteUrl}/logo-trim.png` } },
+    inLanguage: "es-CO",
+    author: { "@type": "SportsClub", "@id": CLUB_ID, name: "Club Voley Zúñiga", url: siteUrl },
+    publisher: { "@type": "SportsClub", "@id": CLUB_ID, name: "Club Voley Zúñiga", logo: { "@type": "ImageObject", url: `${siteUrl}/logo-trim.png` } },
   };
+  const crumbs = breadcrumbs([["Inicio", "/"], ["Noticias", "/noticias"], [a.title, `/noticias/${a.slug}`]]);
 
   return (
     <article className="bg-[#071426] text-white">
-      <JsonLd data={jsonLd} />
+      <JsonLd data={[jsonLd, crumbs]} />
       <header className="relative isolate overflow-hidden pt-40 sm:pt-44 pb-12">
         <ViewTransition name={`news-${a.slug}`} share="morph" default="none">
           <div className="absolute inset-0 -z-10 opacity-40">

@@ -1,15 +1,18 @@
 import type { Metadata } from "next";
+import { CLUB_ID, pageMeta } from "@/lib/seo";
+import { siteUrl } from "@/lib/site-url";
+import JsonLd from "@/components/JsonLd";
 import PageHero from "@/components/PageHero";
 import StoreClient from "./StoreClient";
 import { getProducts } from "@/lib/content";
 
 export const revalidate = 300;
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMeta({
   title: "Tienda",
-  alternates: { canonical: "/tienda" },
-  description: "Camisetas personalizadas, balones y accesorios del Club Voley Zúñiga.",
-};
+  path: "/tienda",
+  description: "Camisetas personalizadas, balones y accesorios del Club Voley Zúñiga. Pedidos por WhatsApp.",
+});
 
 const STEPS = [
   { title: "Arma tu pedido", text: "Personaliza la camiseta y agrega lo que necesites al carrito." },
@@ -19,8 +22,33 @@ const STEPS = [
 
 export default async function StorePage() {
   const products = await getProducts();
+  // Productos con precio en pesos para que Google los muestre en los resultados.
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    itemListElement: products.map((p, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      item: {
+        "@type": "Product",
+        name: p.name,
+        description: p.description || undefined,
+        category: p.category,
+        image: p.image.startsWith("/") ? `${siteUrl}${p.image}` : p.image,
+        offers: {
+          "@type": "Offer",
+          price: p.price,
+          priceCurrency: "COP",
+          availability: "https://schema.org/InStock",
+          url: `${siteUrl}/tienda`,
+          seller: { "@id": CLUB_ID },
+        },
+      },
+    })),
+  };
   return (
     <>
+      <JsonLd data={jsonLd} />
       <PageHero tone="accent" kicker="Tienda del club" title="Viste los colores" intro="Pides aquí y confirmas por WhatsApp. Sin pasarelas ni registros: pagas por transferencia y recoges en la sede." />
       <StoreClient products={products} />
       <section className="bg-[#071426] text-white py-20 sm:py-24">

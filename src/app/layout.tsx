@@ -2,9 +2,6 @@ import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import { siteUrl } from "@/lib/site-url";
 import VercelAnalytics from "@/components/VercelAnalytics";
-import JsonLd from "@/components/JsonLd";
-import { SITE } from "@/config/site";
-import { VENUES, mapsLink } from "@/data/venues";
 import { CartProvider } from "@/context/CartContext";
 import "./globals.css";
 
@@ -37,7 +34,7 @@ const display = localFont({
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Club Voley Zúñiga | Formamos Campeones",
+    default: "Club de voleibol en Medellín | Voley Zúñiga",
     template: "%s | Voley Zúñiga"
   },
   manifest: "/manifest.webmanifest",
@@ -57,47 +54,25 @@ export const metadata: Metadata = {
     ],
   },
   description: "Club de voleibol en Medellín para niños, jóvenes y adultos desde los 7 años. Cinco categorías, dos sedes y clase de prueba sin costo.",
-  keywords: ["voleibol", "medellin", "club deportivo", "voley", "antioquia", "entrenamiento", "deporte"],
+  keywords: ["voleibol", "club de voleibol", "voleibol Medellín", "escuela de voleibol", "voleibol para niños", "voley", "Antioquia"],
   openGraph: {
     type: "website",
     locale: "es_CO",
     url: siteUrl,
-    title: "Club Voley Zúñiga | Formamos Campeones",
+    title: "Club de voleibol en Medellín | Voley Zúñiga",
     description: "Voleibol en Medellín desde los 7 años. Reserva tu clase de prueba sin costo.",
     siteName: "Voley Zúñiga",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Club Voley Zúñiga | Formamos Campeones",
+    title: "Club de voleibol en Medellín | Voley Zúñiga",
     description: "Voleibol en Medellín desde los 7 años. Reserva tu clase de prueba sin costo.",
   },
-};
-
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@type": "SportsClub",
-  "name": "Club Voley Zúñiga",
-  "image": `${siteUrl}/logo-trim.png`,
-  "logo": `${siteUrl}/logo-trim.png`,
-  "sameAs": [SITE.instagram.url],
-  "description": "Club de voleibol en Medellín para niños, jóvenes y adultos.",
-  "address": {
-    "@type": "PostalAddress",
-    "addressLocality": "Medellín",
-    "addressRegion": "Antioquia",
-    "addressCountry": "CO"
+  // Códigos de Google Search Console y Bing Webmaster Tools: se ponen como variables de entorno en Vercel.
+  verification: {
+    google: process.env.GOOGLE_SITE_VERIFICATION || undefined,
+    other: process.env.BING_SITE_VERIFICATION ? { "msvalidate.01": process.env.BING_SITE_VERIFICATION } : undefined,
   },
-  "telephone": `+${SITE.phoneDigits}`,
-  "email": SITE.email,
-  "sport": "Volleyball",
-  "url": siteUrl,
-  "location": VENUES.map((v) => ({
-    "@type": "SportsActivityLocation",
-    "name": v.name,
-    "address": { "@type": "PostalAddress", "streetAddress": v.address, "addressLocality": "Medellín", "addressRegion": "Antioquia", "addressCountry": "CO" },
-    "geo": { "@type": "GeoCoordinates", "latitude": v.lat, "longitude": v.lng },
-    "hasMap": mapsLink(v),
-  })),
 };
 
 export const viewport: Viewport = {
@@ -122,7 +97,6 @@ export default function RootLayout({
       className={`${figtree.variable} ${display.variable} scroll-smooth antialiased`}
     >
       <body className="min-h-screen flex flex-col font-sans text-white bg-[#071426] selection:bg-[#F29A2E] selection:text-white">
-        <JsonLd data={jsonLd} />
         <CartProvider>{children}</CartProvider>
         {/* Los scripts de analítica solo existen en Vercel; en Docker u otro hosting darían 404. */}
         {process.env.VERCEL ? <VercelAnalytics /> : null}
