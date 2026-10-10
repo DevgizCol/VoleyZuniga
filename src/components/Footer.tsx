@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Phone, Mail, MapPin, Camera } from "lucide-react";
+import { Phone, Mail, MapPin, Camera, ArrowRight } from "lucide-react";
 import { NAV_LINKS, SITE } from "@/config/site";
 import { telLink } from "@/config/contact";
 import { getSettings } from "@/lib/content";
@@ -10,7 +10,7 @@ import { SEDES } from "@/data/registration";
 export default async function Footer() {
   const { contact } = await getSettings();
   return (
-    <footer className="w-full bg-[#050E1C] text-white pt-14 pb-[calc(6rem+env(safe-area-inset-bottom,0px))] md:pb-10">
+    <footer className="relative w-full overflow-hidden bg-[#050E1C] text-white pt-14 pb-[calc(6rem+env(safe-area-inset-bottom,0px))] md:pb-10">
       <div className="court-rule mb-12" />
       <div className="container mx-auto px-4 sm:px-6">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-8 mb-14">
@@ -30,11 +30,17 @@ export default async function Footer() {
             >
               <Camera size={18} className="text-[#F29A2E]" /> Instagram {contact.instagramHandle}
             </a>
+            <Link
+              href="/inscripciones"
+              className="group mt-1 h-12 px-5 w-fit inline-flex items-center gap-2 rounded-md bg-[#F29A2E] hover:bg-[#FFB14A] text-[#071426] font-bold transition-colors"
+            >
+              Clase de prueba sin costo <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
+            </Link>
           </div>
 
           <nav aria-label="Pie de página" className="md:col-span-3">
             <h2 className="font-heading font-bold text-xl mb-4 text-white">Navegar</h2>
-            <ul className="flex flex-col gap-2.5 text-sm text-[#B7C4D8]">
+            <ul className="grid grid-cols-2 gap-x-6 gap-y-2.5 text-sm text-[#B7C4D8]">
               <li><Link href="/inscripciones" className="hover:text-[#F29A2E] transition-colors">Inscribirme</Link></li>
               {NAV_LINKS.map((l) => (
                 <li key={l.href}><Link href={l.href} className="hover:text-[#F29A2E] transition-colors">{l.name}</Link></li>
@@ -64,7 +70,12 @@ export default async function Footer() {
           </div>
         </div>
 
-        <div className="pt-6 border-t border-white/10 flex flex-col md:flex-row justify-between gap-3 text-xs text-[#8FA3BF]">
+        {/* Firma grande del club, en contorno */}
+        <p aria-hidden="true" className="select-none font-heading font-black uppercase leading-[0.8] text-[18vw] lg:text-[13rem] text-transparent [-webkit-text-stroke:1.5px_rgba(201,213,230,0.14)] -mb-[0.12em] whitespace-nowrap">
+          Voley Zúñiga
+        </p>
+
+        <div className="relative pt-6 border-t border-white/10 flex flex-col md:flex-row justify-between gap-3 text-xs text-[#8FA3BF]">
           <p>
             © 2026 {SITE.name}.{" "}
             <Link href="/privacidad" className="underline underline-offset-2 hover:text-[#F29A2E]">

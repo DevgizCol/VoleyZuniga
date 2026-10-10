@@ -19,7 +19,7 @@ export default async function GalleryPage() {
 
   return (
     <>
-      <PageHero kicker="El club en imágenes" title="Galería" intro="Entrenamientos, partidos y torneos: así se vive el voleibol en el club." />
+      <PageHero art="ball" photo={photos[0]?.image} kicker="El club en imágenes" title="Galería" intro="Entrenamientos, partidos y torneos: así se vive el voleibol en el club." />
       <section className="bg-[#071426] text-white pb-24 sm:pb-32">
         <div className="container mx-auto px-4 sm:px-6">
           {photos.length === 0 ? (
@@ -33,11 +33,14 @@ export default async function GalleryPage() {
               </a>
             </div>
           ) : (
-            <ul className="columns-1 sm:columns-2 lg:columns-3 gap-4 [&>li]:mb-4">
+            <ul className="columns-1 sm:columns-2 lg:columns-3 gap-4 [&>li]:mb-4 reveal-stagger">
               {photos.map((p, i) => (
                 <li key={`${p.image}-${i}`} className="break-inside-avoid">
-                  <figure className="rounded-xl overflow-hidden border border-white/10 bg-[#0B1E38]">
-                    <img src={p.image} alt={p.title || "Foto del Club Voley Zúñiga"} loading={i < 3 ? "eager" : "lazy"} className="w-full h-auto" />
+                  <figure className="group rounded-xl overflow-hidden border border-white/10 bg-[#0B1E38] transition-colors hover:border-[#F29A2E]/50">
+                    {/* Con el color del club; al pasar el mouse recupera su color real */}
+                    <div className="duotone duotone-hover relative">
+                      <img src={p.image} alt={p.title || "Foto del Club Voley Zúñiga"} loading={i < 3 ? "eager" : "lazy"} className="block w-full h-auto" />
+                    </div>
                     {p.title || p.date ? (
                       <figcaption className="px-4 py-3 text-sm">
                         {p.title ? <span className="font-semibold text-white">{p.title}</span> : null}

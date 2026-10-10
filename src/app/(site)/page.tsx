@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-img-element -- las fotos de la galería vienen de la hoja */
 import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
@@ -7,17 +6,24 @@ import HeroCourt from "@/components/HeroCourt";
 import JsonLd from "@/components/JsonLd";
 import NextSession from "@/components/NextSession";
 import Volleyball from "@/components/Volleyball";
+import BrandPhoto from "@/components/BrandPhoto";
 import { PictoGrowth, PictoScore, PictoTechnique } from "@/components/Pictograms";
 import { SITE } from "@/config/site";
 import { waLink } from "@/config/contact";
 import { categorySchedules, getSessions, getSettings, trainingDays } from "@/lib/content";
-import { CATEGORIES } from "@/data/registration";
+import { CATEGORIES, SEDES } from "@/data/registration";
 import { DAY_NAMES, formatTime } from "@/data/schedule";
 import { getGallery, getTestimonials } from "@/lib/club";
 
 export const metadata: Metadata = { alternates: { canonical: "/" } };
 
 const ageLabel = (min: number, max: number) => (max >= 100 ? "18 años o más" : min === 0 ? "7 a 11 años" : `${min} a ${max} años`);
+
+// "Martes y Jueves (4:00 PM – 5:30 PM)" -> { days: "Martes y Jueves", hours: "4:00 PM – 5:30 PM" }
+const splitSchedule = (value: string) => {
+  const m = value.match(/^(.*?)\s*\((.*)\)\s*$/);
+  return m ? { days: m[1], hours: m[2] } : { days: value, hours: "" };
+};
 
 // "Semillero Sub-12" -> { name: "Semillero", tag: "Sub-12" }
 const splitCategory = (value: string) => {
@@ -92,12 +98,41 @@ export default async function Home() {
   const perCategory = categorySchedules(SESSIONS);
   const { contact } = settings;
   const marqueeItems = CATEGORIES.map((c) => c.value);
+  const heroMedia = settings.heroVideo || settings.heroPhoto;
+  const STATS = [
+    { value: CATEGORIES.length, label: "categorías, de los 7 años a mayores" },
+    { value: SESSIONS.length, label: "entrenamientos cada semana" },
+    { value: SEDES.length, label: "sedes en Medellín" },
+    { value: 0, label: "pesos cuesta la clase de prueba" },
+  ];
 
   return (
     <>
       <JsonLd data={faqJsonLd} />
       {/* ================= PORTADA ================= */}
       <section className="relative isolate overflow-hidden floodlights grain text-white min-h-[100svh] flex flex-col">
+        {heroMedia ? (
+          <div className="absolute inset-0 -z-10" aria-hidden="true">
+            {settings.heroVideo ? (
+              <div className="duotone absolute inset-0">
+                <video
+                  src={settings.heroVideo}
+                  poster={settings.heroPhoto || undefined}
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  preload="metadata"
+                  className="absolute inset-0 w-full h-full object-cover"
+                />
+              </div>
+            ) : (
+              <BrandPhoto src={settings.heroPhoto} alt="" eager className="absolute inset-0" />
+            )}
+            <div className="absolute inset-0 bg-gradient-to-r from-[#071426] via-[#071426]/80 to-[#071426]/20" />
+            <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#071426] to-transparent" />
+          </div>
+        ) : null}
         <div className="container mx-auto px-4 sm:px-6 flex-1 grid lg:grid-cols-12 items-center gap-6 pt-40 sm:pt-44 lg:pt-32 pb-10">
           <div className="lg:col-span-6 relative z-10 hero-rise min-w-0">
             {settings.homeNotice ? (
@@ -135,9 +170,12 @@ export default async function Home() {
             </div>
           </div>
 
-          <div className="lg:col-span-6 order-first lg:order-none -mx-10 sm:mx-0 -mb-6 lg:mb-0 absolute lg:relative inset-x-0 top-24 sm:top-20 lg:top-auto opacity-40 lg:opacity-100 -z-10 lg:z-0">
-            <HeroCourt className="w-full lg:scale-110 lg:translate-x-6" />
-          </div>
+          {heroMedia ? null : (
+            // En el celular la cancha queda detrás y muy tenue para que el titular se lea limpio.
+            <div className="lg:col-span-6 order-first lg:order-none -mx-10 sm:mx-0 -mb-6 lg:mb-0 absolute lg:relative inset-x-0 top-[38%] sm:top-20 lg:top-auto opacity-[0.14] sm:opacity-30 lg:opacity-100 -z-10 lg:z-0">
+              <HeroCourt className="w-full lg:scale-110 lg:translate-x-6" />
+            </div>
+          )}
         </div>
 
         {/* Banda de categorías */}
@@ -154,10 +192,11 @@ export default async function Home() {
       </section>
 
       {/* ================= RUTA DEL DEPORTISTA ================= */}
-      <section id="ruta" className="relative bg-[#071426] text-white py-24 sm:py-32 overflow-hidden">
+      <section id="ruta" className="relative isolate bg-[#071426] text-white py-24 sm:py-32 overflow-hidden">
+        <div className="net-texture" aria-hidden="true" />
         <div className="container mx-auto px-4 sm:px-6">
           <div className="grid lg:grid-cols-12 gap-6 items-end mb-14">
-            <h2 className="lg:col-span-7 font-heading font-black uppercase leading-[0.9] text-5xl sm:text-7xl">
+            <h2 className="lg:col-span-7 font-heading font-black uppercase leading-[0.9] text-5xl sm:text-7xl reveal">
               La ruta del deportista
             </h2>
             <p className="lg:col-span-5 text-[#B7C4D8] text-lg leading-relaxed">
@@ -169,6 +208,7 @@ export default async function Home() {
             <div className="hidden lg:block absolute left-0 right-0 top-[22px] h-px bg-gradient-to-r from-[#F29A2E] via-[#F29A2E]/50 to-[#F29A2E]/10" aria-hidden="true" />
             {CATEGORIES.map((c, i) => {
               const { name, tag } = splitCategory(c.value);
+              const { days, hours } = splitSchedule(perCategory[c.value]?.horario ?? c.horario);
               return (
                 <li key={c.value} className="snap-start relative">
                   <div className="relative z-10 w-11 h-11 rounded-full bg-[#071426] border-2 border-[#F29A2E] flex items-center justify-center font-heading font-black text-lg text-[#F29A2E]">
@@ -181,7 +221,13 @@ export default async function Home() {
                     <h3 className="font-heading font-extrabold text-3xl mt-3">{name}</h3>
                     <p className="text-[#F29A2E] font-semibold mt-1">{ageLabel(c.minAge, c.maxAge)}</p>
                     <div className="mt-5 pt-5 border-t border-white/10 space-y-2 text-sm text-[#B7C4D8]">
-                      <p className="flex gap-2"><Clock size={16} className="shrink-0 mt-0.5 text-[#8FA3BF]" />{perCategory[c.value]?.horario ?? c.horario}</p>
+                      <p className="flex gap-2">
+                        <Clock size={16} className="shrink-0 mt-0.5 text-[#8FA3BF]" />
+                        <span>
+                          {days}
+                          {hours ? <span className="block whitespace-nowrap text-white font-semibold">{hours}</span> : null}
+                        </span>
+                      </p>
                       <p className="flex gap-2"><MapPin size={16} className="shrink-0 mt-0.5 text-[#8FA3BF]" />{perCategory[c.value]?.sede ?? c.sede}</p>
                     </div>
                   </div>
@@ -189,6 +235,20 @@ export default async function Home() {
               );
             })}
           </ol>
+
+          {/* El club en cifras: cuentan hacia arriba al entrar en pantalla */}
+          <dl className="mt-16 sm:mt-20 grid grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-10 border-t border-white/10 pt-12">
+            {STATS.map((s) => (
+              <div key={s.label} className="reveal">
+                <dt className="sr-only">{s.label}</dt>
+                <dd>
+                  <span className="sr-only">{s.value}</span>
+                  <span aria-hidden="true" className="count block font-heading font-black text-7xl sm:text-8xl leading-none text-[#F29A2E] tabular-nums" style={{ "--to": s.value } as React.CSSProperties} />
+                  <span aria-hidden="true" className="mt-2 block text-[#B7C4D8] max-w-[14rem]">{s.label}</span>
+                </dd>
+              </div>
+            ))}
+          </dl>
         </div>
       </section>
 
@@ -197,13 +257,13 @@ export default async function Home() {
         <Volleyball className="absolute -right-24 -top-24 w-[420px] opacity-[0.06]" id="wm-week" />
         <div className="container mx-auto px-4 sm:px-6 relative">
           <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-12">
-            <h2 className="font-heading font-black uppercase leading-[0.9] text-5xl sm:text-7xl">La semana en la cancha</h2>
+            <h2 className="font-heading font-black uppercase leading-[0.9] text-5xl sm:text-7xl reveal">La semana en la cancha</h2>
             <p className="text-[#44546F] text-lg max-w-md">
               Horarios de referencia. Antes de tu primera clase confirmamos todo por WhatsApp.
             </p>
           </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 items-start reveal-stagger">
             {TRAINING_DAYS.map((day) => (
               <div key={day} className="rounded-xl bg-white shadow-[0_1px_0_rgba(15,35,71,0.06),0_20px_40px_-24px_rgba(15,35,71,0.35)] overflow-hidden">
                 <div className="bg-[#0F2347] text-white px-5 py-3 flex items-baseline justify-between">
@@ -222,7 +282,7 @@ export default async function Home() {
                           {formatTime(s.start)}
                           <span className="text-[#8FA3BF] font-bold text-lg"> – {formatTime(s.end)}</span>
                         </p>
-                        <p className="font-semibold mt-1.5">{s.group}</p>
+                        <p className="font-semibold mt-1.5">{s.group.replace(/-/g, "\u2011")}</p>
                         <p className="text-sm text-[#44546F]">{s.sede}</p>
                       </div>
                     </li>
@@ -252,16 +312,17 @@ export default async function Home() {
       </section>
 
       {/* ================= MÉTODO ================= */}
-      <section className="relative bg-[#071426] text-white py-24 sm:py-32 overflow-hidden grain">
+      <section className="relative isolate bg-[#071426] text-white py-24 sm:py-32 overflow-hidden grain">
+        <div className="net-texture" aria-hidden="true" />
         <div className="container mx-auto px-4 sm:px-6 relative">
-          <h2 className="font-heading font-black uppercase leading-[0.9] text-5xl sm:text-7xl mb-14 max-w-3xl">
+          <h2 className="font-heading font-black uppercase leading-[0.9] text-5xl sm:text-7xl mb-14 max-w-3xl reveal">
             Así entrenamos
           </h2>
-          <div className="grid md:grid-cols-3 gap-4">
+          <div className="grid md:grid-cols-3 gap-4 reveal-stagger">
             {METHOD.map(({ Picto, title, text, href, cta }) => (
               <article
                 key={title}
-                className="group relative rounded-xl border border-white/10 bg-white/[0.03] p-7 sm:p-8 transition-colors hover:bg-white/[0.06] hover:border-white/20"
+                className="group relative rounded-xl border border-white/10 bg-white/[0.03] p-7 sm:p-8 transition-all hover:-translate-y-1 hover:bg-white/[0.06] hover:border-[#F29A2E]/50 hover:shadow-[0_24px_50px_-20px_rgba(242,154,46,0.35)]"
               >
                 <Picto className="w-28 h-20 text-[#F29A2E]" />
                 <h3 className="font-heading font-extrabold text-3xl mt-6 mb-3 leading-tight">{title}</h3>
@@ -284,7 +345,7 @@ export default async function Home() {
               Lo que se entrena fuera del marcador también cuenta.
             </p>
           </div>
-          <ul className="lg:col-span-8 flex flex-wrap gap-x-6 gap-y-1 font-heading font-black uppercase text-5xl sm:text-6xl leading-none">
+          <ul className="lg:col-span-8 flex flex-wrap gap-x-6 gap-y-1 font-heading font-black uppercase text-5xl sm:text-6xl leading-none reveal-stagger">
             {VALUES.map((v, i) => (
               <li key={v} className={i % 2 ? "text-transparent [-webkit-text-stroke:1.5px_#F29A2E]" : "text-white"}>
                 {v}
@@ -299,15 +360,22 @@ export default async function Home() {
         <section className="bg-[#071426] text-white py-24 sm:py-32">
           <div className="container mx-auto px-4 sm:px-6">
             <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6 mb-12">
-              <h2 className="font-heading font-black uppercase leading-[0.9] text-5xl sm:text-7xl">En la cancha</h2>
+              <h2 className="font-heading font-black uppercase leading-[0.9] text-5xl sm:text-7xl reveal">En la cancha</h2>
               <Link href="/galeria" className="inline-flex items-center gap-2 font-semibold text-[#F29A2E] hover:text-[#FFB14A]">
                 Ver la galería <ArrowRight size={16} />
               </Link>
             </div>
-            <ul className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-              {photos.slice(0, 6).map((p, i) => (
-                <li key={`${p.image}-${i}`} className="relative aspect-square rounded-xl overflow-hidden border border-white/10 bg-[#0B1E38]">
-                  <img src={p.image} alt={p.title || "Foto del Club Voley Zúñiga"} loading="lazy" className="absolute inset-0 w-full h-full object-cover" />
+            {/* La primera foto va grande; todas con el color del club y su color real al pasar el mouse */}
+            <ul className="grid grid-cols-2 lg:grid-cols-4 lg:grid-rows-2 gap-3 sm:gap-4 reveal-stagger">
+              {photos.slice(0, 5).map((p, i) => (
+                <li
+                  key={`${p.image}-${i}`}
+                  className={`relative rounded-xl overflow-hidden border border-white/10 ${i === 0 ? "col-span-2 row-span-2 aspect-square lg:aspect-auto" : "aspect-square"}`}
+                >
+                  <BrandPhoto src={p.image} alt={p.title || "Foto del Club Voley Zúñiga"} hover className="absolute inset-0" />
+                  {p.title ? (
+                    <p className="absolute inset-x-0 bottom-0 z-10 p-4 pt-10 bg-gradient-to-t from-[#071426]/90 to-transparent text-sm font-semibold">{p.title}</p>
+                  ) : null}
                 </li>
               ))}
             </ul>
@@ -319,8 +387,8 @@ export default async function Home() {
       {testimonials.length > 0 && (
         <section className="bg-[#EEF2F7] text-[#0F2347] py-24 sm:py-32">
           <div className="container mx-auto px-4 sm:px-6">
-            <h2 className="font-heading font-black uppercase leading-[0.9] text-5xl sm:text-7xl mb-12">Lo que dicen las familias</h2>
-            <ul className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <h2 className="font-heading font-black uppercase leading-[0.9] text-5xl sm:text-7xl mb-12 reveal">Lo que dicen las familias</h2>
+            <ul className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 reveal-stagger">
               {testimonials.slice(0, 6).map((t) => (
                 <li key={t.name + t.text.slice(0, 20)}>
                   <figure className="h-full rounded-xl bg-white p-7 shadow-[0_1px_0_rgba(15,35,71,0.06),0_20px_40px_-24px_rgba(15,35,71,0.35)] flex flex-col">
@@ -339,13 +407,14 @@ export default async function Home() {
       )}
 
       {/* ================= PREGUNTAS ================= */}
-      <section className="bg-[#071426] text-white py-24 sm:py-32">
+      <section className="relative isolate bg-white text-[#0F2347] py-24 sm:py-32 overflow-hidden">
+        <Volleyball className="absolute -z-10 -left-28 bottom-[-6rem] w-[380px] opacity-[0.07]" id="wm-faq" />
         <div className="container mx-auto px-4 sm:px-6 grid lg:grid-cols-12 gap-12">
           <div className="lg:col-span-4">
-            <h2 className="font-heading font-black uppercase leading-[0.9] text-5xl sm:text-6xl">Preguntas frecuentes</h2>
-            <div className="mt-8 rounded-xl border border-[#25D366]/30 bg-[#25D366]/[0.06] p-6">
+            <h2 className="font-heading font-black uppercase leading-[0.9] text-5xl sm:text-6xl reveal">Preguntas frecuentes</h2>
+            <div className="mt-8 rounded-xl border border-[#25D366]/40 bg-[#25D366]/[0.08] p-6">
               <p className="font-heading font-extrabold text-2xl">¿Te quedó alguna duda?</p>
-              <p className="text-[#B7C4D8] mt-1 mb-4">Escríbenos y te respondemos en horario de oficina.</p>
+              <p className="text-[#44546F] mt-1 mb-4">Escríbenos y te respondemos en horario de oficina.</p>
               <a
                 href={waLink(contact)}
                 target="_blank"
@@ -356,16 +425,16 @@ export default async function Home() {
               </a>
             </div>
           </div>
-          <div className="lg:col-span-8 border-t border-white/15">
+          <div className="lg:col-span-8 border-t border-[#0F2347]/15">
             {FAQS.map((f, i) => (
-              <details key={f.q} name="faq" open={i === 0} className="group border-b border-white/15">
+              <details key={f.q} name="faq" open={i === 0} className="group border-b border-[#0F2347]/15">
                 <summary className="flex items-center justify-between gap-4 py-6 cursor-pointer list-none [&::-webkit-details-marker]:hidden">
-                  <h3 className="font-heading font-extrabold text-2xl sm:text-3xl group-open:text-[#F29A2E] transition-colors">{f.q}</h3>
-                  <span className="shrink-0 w-10 h-10 rounded-full border border-white/20 flex items-center justify-center group-open:bg-[#F29A2E] group-open:border-[#F29A2E] group-open:text-[#071426] transition-colors">
+                  <h3 className="font-heading font-extrabold text-2xl sm:text-3xl group-open:text-[#C46F0A] transition-colors">{f.q}</h3>
+                  <span className="shrink-0 w-10 h-10 rounded-full border border-[#0F2347]/20 flex items-center justify-center group-open:bg-[#F29A2E] group-open:border-[#F29A2E] group-open:text-[#071426] transition-colors">
                     <ChevronDown size={20} className="transition-transform group-open:rotate-180" />
                   </span>
                 </summary>
-                <p className="pb-7 text-[#C9D5E6] text-lg leading-relaxed max-w-2xl">{f.a}</p>
+                <p className="pb-7 text-[#44546F] text-lg leading-relaxed max-w-2xl">{f.a}</p>
               </details>
             ))}
           </div>
@@ -385,7 +454,7 @@ export default async function Home() {
         </div>
         <div className="container mx-auto px-4 sm:px-6 py-20 sm:py-28 relative grid lg:grid-cols-12 items-center gap-10">
           <div className="lg:col-span-8">
-            <h2 className="font-heading font-black uppercase leading-[0.88] text-6xl sm:text-8xl">
+            <h2 className="font-heading font-black uppercase leading-[0.88] text-6xl sm:text-8xl reveal-left">
               Tu lugar en la cancha te espera.
             </h2>
             <div className="mt-8 flex flex-col sm:flex-row gap-3">

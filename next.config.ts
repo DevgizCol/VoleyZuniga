@@ -13,6 +13,8 @@ const csp = [
   `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}${live}`,
   `style-src 'self' 'unsafe-inline'${live}`,
   "img-src 'self' data: blob: https:",
+  // Video de la portada: archivo del propio sitio o enlace https que el club ponga en Ajustes.
+  "media-src 'self' https:",
   `font-src 'self'${isPreview ? " https://vercel.live https://assets.vercel.com" : ""}`,
   `connect-src 'self'${isPreview ? " https://vercel.live wss://ws-us3.pusher.com" : ""}`,
   `frame-src https://www.google.com${live}`,

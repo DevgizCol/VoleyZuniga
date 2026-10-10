@@ -31,7 +31,7 @@ var AFTER_STATE = {
   Inscripciones: ["Código"],
   Contacto: []
 };
-var READABLE = ["Fixture", "Tabla", "Noticias", "Cancha", "Horarios", "Productos", "Ajustes", "Galería", "Entrenadores", "Testimonios"];
+var READABLE = ["Fixture", "Tabla", "Noticias", "Cancha", "Horarios", "Productos", "Ajustes", "Galería", "Entrenadores", "Testimonios", "Plantel"];
 // Solo para el panel de administración (la web las pide desde el servidor con la clave secreta).
 var PRIVATE_READABLE = ["Inscripciones", "Contacto", "Historial"];
 var PRIVATE_MAX_ROWS = 300;

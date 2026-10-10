@@ -90,6 +90,13 @@ export const productSchema = z.object({
   Activo: active,
 });
 
+const mediaLink = (what: string) =>
+  z.union([
+    z.literal(""),
+    z.string().trim().max(500, `${what}: el enlace es demasiado largo.`).regex(/^\/[\w.-]/, "Usa una ruta del sitio (/portada.mp4) o un enlace https."),
+    z.string().trim().max(500, `${what}: el enlace es demasiado largo.`).startsWith("https://", `${what} debe ser un enlace que empiece por https://`),
+  ]);
+
 // Ajustes: solo se edita el valor; cada clave tiene su propia regla.
 export const SETTING_RULES: Record<string, { label: string; help: string; schema: z.ZodType<string>; type?: "text" | "textarea" | "yesno" }> = {
   telefono: {
@@ -110,6 +117,21 @@ export const SETTING_RULES: Record<string, { label: string; help: string; schema
     help: "Con NO, el formulario muestra que los cupos están cerrados y ofrece WhatsApp.",
     schema: z.enum(["SI", "NO"], { message: "Elige SI o NO." }),
     type: "yesno",
+  },
+  portada_foto: {
+    label: "Foto de la portada",
+    help: "Va detrás del titular del inicio, con el color del club. Enlace de Google Drive (compartido con cualquiera) o https. Vacío: se ve la ilustración de la cancha.",
+    schema: mediaLink("La foto"),
+  },
+  portada_video: {
+    label: "Video de la portada",
+    help: "Video corto en bucle, sin sonido (MP4 de 6 a 8 segundos, menos de 4 MB). Enlace https directo al archivo o ruta del sitio como /portada.mp4. Tiene prioridad sobre la foto.",
+    schema: mediaLink("El video"),
+  },
+  foto_club: {
+    label: "Foto de “El club”",
+    help: "Foto grupal para el encabezado de la página El club. Si queda vacía se usa la foto más reciente de la Galería.",
+    schema: mediaLink("La foto"),
   },
 };
 

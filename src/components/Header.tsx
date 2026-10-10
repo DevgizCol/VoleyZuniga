@@ -46,6 +46,7 @@ export default function Header({ notices = [] }: { notices?: CourtNotice[] }) {
       </a>
 
       <header
+        style={{ viewTransitionName: "site-header" }}
         className={clsx(
           "fixed top-0 inset-x-0 z-50 bg-[#071426]/85 backdrop-blur-md transition-shadow",
           isScrolled ? "shadow-[0_1px_0_rgba(143,163,191,0.2)]" : ""

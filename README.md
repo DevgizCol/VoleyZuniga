@@ -12,23 +12,27 @@ Todo se maneja desde la hoja de Google del club (pestaña **Leeme** con instrucc
 | --- | --- | --- |
 | Inscripciones | La web | Cada inscripción, con su código de pase. Cambia **Estado** a Contactado / Matriculado. |
 | Contacto | La web | Mensajes del formulario de contacto. |
-| Fixture | El club | Partidos en `/partidos`, el calendario suscribible y el panel. |
+| Fixture | El club | Partidos en `/partidos`, el calendario suscribible y el panel. Columna opcional **Escudo rival (URL)** para mostrar el escudo del rival. |
 | Tabla | El club | Posiciones en `/posiciones`. |
 | Noticias | El club | Noticias en `/noticias` (imagen: enlace de Drive o `https://`). |
 | Cancha | El club | Estado distinto de "Normal" muestra un aviso naranja en toda la web. |
 | Galería | El club | Fotos en `/galeria` y las 6 más recientes en el inicio. Columnas: Fecha, Título, Imagen (URL), Activo. |
 | Entrenadores | El club | Cuerpo técnico en `/el-club`. Columnas: Nombre, Cargo, Categorías, Foto (URL), Perfil, Activo. |
 | Testimonios | El club | "Lo que dicen las familias" en el inicio. Columnas: Nombre, Relación, Testimonio, Activo. |
+| Plantel | El club | Láminas de jugadores en `/equipos`, por categoría. Columnas: Nombre, Número, Posición, Categoría (igual que en la web, p. ej. "Juvenil Sub-18"), Foto (URL), Activo. |
 | Horarios | El club | Entrenamientos de la semana: portada, Contacto, formulario de inscripción. |
 | Productos | El club | Catálogo de la tienda. |
-| Ajustes | El club | Teléfono, correo, Instagram, mensaje de WhatsApp, aviso de portada, inscripciones abiertas. |
+| Ajustes | El club | Teléfono, correo, Instagram, mensaje de WhatsApp, aviso de portada, inscripciones abiertas, foto o video de la portada (`portada_foto`, `portada_video`) y foto de "El club" (`foto_club`). |
 | Historial | El panel | Registro de cada cambio hecho desde `/admin` y por quién. |
 
 Las filas con **Activo = NO** no se muestran. Los cambios se ven en la web en 2 a 5 minutos.
 Si una pestaña no existe o está vacía, su sección simplemente no aparece. Las imágenes pueden ser
 enlaces de Google Drive compartidos como "Cualquier persona con el enlace".
 
-> Las pestañas Galería, Entrenadores y Testimonios son nuevas: después de pegar la versión actual de
+> Las fotos se muestran con el color del club (azul y naranja) y recuperan su color al pasar el mouse, así que
+> sirven fotos tomadas con celular. El video de portada debe ser un MP4 corto (6 a 8 s, menos de 4 MB, sin sonido).
+
+> Las pestañas Galería, Entrenadores, Testimonios y Plantel son nuevas: después de pegar la versión actual de
 > `Code.gs`, publica una **Nueva versión** de la implementación (paso 4 abajo) para que la web pueda leerlas.
 
 ### Panel `/admin`

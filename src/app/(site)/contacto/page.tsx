@@ -21,6 +21,7 @@ export default async function ContactPage() {
   return (
     <>
       <PageHero
+        art="pin"
         kicker="Sedes, horarios y contacto"
         title="Ven a la cancha"
         intro="La forma más rápida de hablar con nosotros es WhatsApp. Si prefieres, deja un mensaje y te respondemos."

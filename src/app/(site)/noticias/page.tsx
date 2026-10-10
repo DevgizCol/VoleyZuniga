@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { ViewTransition } from "react";
 import Link from "next/link";
 import { ArrowRight, Camera } from "lucide-react";
 import PageHero from "@/components/PageHero";
@@ -20,7 +21,7 @@ export default async function NewsPage() {
 
   return (
     <>
-      <PageHero kicker="Novedades del club" title="Noticias" intro="Crónicas de partidos, convocatorias y lo que pasa en el club." />
+      <PageHero art="ball" photo={featured?.image || undefined} kicker="Novedades del club" title="Noticias" intro="Crónicas de partidos, convocatorias y lo que pasa en el club." />
       <section className="bg-[#071426] text-white pb-24 sm:pb-32">
         <div className="container mx-auto px-4 sm:px-6">
           {!featured ? (
@@ -36,9 +37,12 @@ export default async function NewsPage() {
           ) : (
             <>
               <Link href={`/noticias/${featured.slug}`} className="group grid lg:grid-cols-2 rounded-2xl overflow-hidden border border-white/10 bg-[#0B1E38] hover:border-[#F29A2E]/50 transition-colors">
-                <div className="relative aspect-[16/10] lg:aspect-auto lg:min-h-[380px]">
-                  <ArticleCover image={featured.image} title={featured.title} category={featured.category} large id="featured" />
-                </div>
+                {/* La portada "vuela" a su lugar al abrir la noticia */}
+                <ViewTransition name={`news-${featured.slug}`} share="morph" default="none">
+                  <div className="relative aspect-[16/10] lg:aspect-auto lg:min-h-[380px]">
+                    <ArticleCover image={featured.image} title={featured.title} category={featured.category} large id="featured" />
+                  </div>
+                </ViewTransition>
                 <div className="p-7 sm:p-10 flex flex-col">
                   <p className="text-sm font-semibold text-[#F29A2E]">{featured.category} · {longDate(featured.date)}</p>
                   <h2 className="font-heading font-black uppercase text-4xl sm:text-5xl leading-[0.95] mt-3 group-hover:text-[#FFB14A] transition-colors">{featured.title}</h2>
@@ -48,13 +52,15 @@ export default async function NewsPage() {
               </Link>
 
               {rest.length > 0 && (
-                <ul className="mt-6 grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                <ul className="mt-6 grid sm:grid-cols-2 lg:grid-cols-3 gap-5 reveal-stagger">
                   {rest.map((a) => (
                     <li key={a.slug}>
                       <Link href={`/noticias/${a.slug}`} className="group h-full flex flex-col rounded-2xl overflow-hidden border border-white/10 bg-[#0B1E38] hover:border-[#F29A2E]/50 transition-colors">
-                        <div className="relative aspect-[16/10]">
-                          <ArticleCover image={a.image} title={a.title} category={a.category} id={a.slug} />
-                        </div>
+                        <ViewTransition name={`news-${a.slug}`} share="morph" default="none">
+                          <div className="relative aspect-[16/10]">
+                            <ArticleCover image={a.image} title={a.title} category={a.category} id={a.slug} />
+                          </div>
+                        </ViewTransition>
                         <div className="p-6 flex flex-col flex-1">
                           <p className="text-sm font-semibold text-[#F29A2E]">{a.category} · {longDate(a.date)}</p>
                           <h3 className="font-heading font-extrabold text-2xl leading-tight mt-2 group-hover:text-[#FFB14A] transition-colors">{a.title}</h3>

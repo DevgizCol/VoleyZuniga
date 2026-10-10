@@ -37,6 +37,7 @@ export default async function StandingsPage({ searchParams }: { searchParams: Pr
   return (
     <>
       <PageHero
+        art="podium"
         kicker="Temporada 2026"
         title="Posiciones"
         intro="Cómo van nuestros equipos en cada categoría. La tabla se actualiza después de cada fecha."

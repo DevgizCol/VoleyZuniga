@@ -21,6 +21,7 @@ export default async function RegistrationsPage() {
   return (
     <>
       <PageHero
+        art="ball"
         kicker="Clase de prueba sin costo"
         title="Inscripción"
         intro="Tres pasos y menos de un minuto. Después te escribimos por WhatsApp para acordar el día de la primera clase."

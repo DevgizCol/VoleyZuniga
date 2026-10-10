@@ -3,7 +3,9 @@ import Link from "next/link";
 import { ArrowRight, Clock, MapPin, Check } from "lucide-react";
 import PageHero from "@/components/PageHero";
 import Volleyball from "@/components/Volleyball";
+import PlayerCard from "@/components/PlayerCard";
 import { CATEGORIES } from "@/data/registration";
+import { getRoster } from "@/lib/club";
 
 export const metadata: Metadata = {
   title: "Equipos",
@@ -38,16 +40,20 @@ const tagOf = (v: string) => (v.match(/Sub-\d+/)?.[0] ?? "18+");
 const nameOf = (v: string) => v.replace(/\s*(Sub-\d+|Élite)$/, "");
 const ages = (min: number, max: number) => (max >= 100 ? "18 años o más" : min === 0 ? "7 a 11 años" : `${min} a ${max} años`);
 
-export default function TeamPage() {
+export const revalidate = 300;
+
+export default async function TeamPage() {
+  const roster = await getRoster();
   return (
     <>
-      <PageHero kicker="Cinco categorías" title="Equipos" intro="Cada equipo tiene un objetivo claro para su edad. Así trabaja cada uno y cuándo entrena." />
+      <PageHero art="net" kicker="Cinco categorías" title="Equipos" intro="Cada equipo tiene un objetivo claro para su edad. Así trabaja cada uno y cuándo entrena." />
       <section className="bg-[#071426] text-white pb-24 sm:pb-32">
         <div className="container mx-auto px-4 sm:px-6 space-y-5">
           {CATEGORIES.map((c, i) => {
             const f = FOCUS[c.value];
+            const players = roster.filter((p) => p.category.toLowerCase() === c.value.toLowerCase());
             return (
-              <article key={c.value} className="group relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-[#0F2347] to-[#0B1E38] grid lg:grid-cols-12">
+              <article key={c.value} className="reveal group relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-[#0F2347] to-[#0B1E38] grid lg:grid-cols-12">
                 <div className="lg:col-span-4 relative p-7 sm:p-10 flex flex-col justify-between min-h-[220px] border-b lg:border-b-0 lg:border-r border-white/10 overflow-hidden">
                   <Volleyball className="absolute -right-16 -bottom-16 w-64 opacity-[0.08] transition-transform duration-700 group-hover:rotate-45" id={`team-${i}`} />
                   <p className="font-heading font-black uppercase whitespace-nowrap text-[5rem] sm:text-[6.5rem] leading-[0.8] text-outline-accent group-hover:text-[#F29A2E] transition-colors">
@@ -77,6 +83,18 @@ export default function TeamPage() {
                     </Link>
                   </div>
                 </div>
+                {players.length > 0 && (
+                  <div className="lg:col-span-12 border-t border-white/10 p-7 sm:p-10">
+                    <h3 className="font-heading font-black uppercase text-2xl mb-5">Plantel {nameOf(c.value)}</h3>
+                    <ul className="grid grid-flow-col auto-cols-[62%] sm:auto-cols-[38%] lg:grid-flow-row lg:grid-cols-5 gap-4 overflow-x-auto lg:overflow-visible snap-x snap-mandatory pb-2 [scrollbar-width:none]">
+                      {players.map((p) => (
+                        <li key={p.name + p.number} className="snap-start">
+                          <PlayerCard player={p} />
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </article>
             );
           })}

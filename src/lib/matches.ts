@@ -1,7 +1,7 @@
 import "server-only";
 import { readSheet } from "./sheets";
 import { SITE } from "@/config/site";
-import { normDate, normTime } from "./sheet-values";
+import { imageUrl, normDate, normTime } from "./sheet-values";
 
 // Partidos y tabla de posiciones leídos de la hoja (pestañas "Fixture" y "Tabla").
 
@@ -19,6 +19,8 @@ export type Match = {
   clubIsHome: boolean;
   clubPlays: boolean;
   outcome: "win" | "loss" | null;
+  /** Escudo del rival (columna opcional "Escudo rival (URL)" de Fixture). */
+  rivalLogo: string;
 };
 
 export type StandingRow = {
@@ -72,6 +74,7 @@ export async function getMatches(): Promise<Match[] | null> {
         clubIsHome,
         clubPlays,
         outcome,
+        rivalLogo: imageUrl(r["Escudo rival (URL)"] || "", 300),
       };
     })
     .filter((m): m is Match => m !== null)
