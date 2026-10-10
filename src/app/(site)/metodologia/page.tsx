@@ -64,7 +64,7 @@ export default function MethodologyPage() {
         </div>
         <div className="container mx-auto px-4 sm:px-6 mt-12">
           <Link href="/inscripciones" className="h-14 px-7 inline-flex items-center gap-2 rounded-md bg-[#F29A2E] hover:bg-[#FFB14A] text-[#071426] font-bold text-lg">
-            Reservar clase de prueba <ArrowRight size={20} />
+            Reservar clase gratis <ArrowRight size={20} />
           </Link>
         </div>
       </section>

@@ -16,7 +16,7 @@ export const revalidate = 300;
 
 export default async function RegistrationsPage() {
   const [sessions, settings] = await Promise.all([getSessions(), getSettings()]);
-  const horarios = scheduleOptions(sessions).map(({ value, label }) => ({ value, label }));
+  const horarios = scheduleOptions(sessions).map(({ value, label, days, start, end, sede }) => ({ value, label, days, start, end, sede }));
 
   return (
     <>

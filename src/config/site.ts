@@ -25,3 +25,19 @@ export const NAV_LINKS = [
   { name: "Tienda", href: "/tienda" },
   { name: "Contacto", href: "/contacto" },
 ] as const;
+
+// Menú principal de escritorio: lo que busca quien llega por primera vez, y lo de competencia agrupado.
+export const NAV_MENU = [
+  { name: "El club", href: "/el-club" },
+  { name: "Equipos", href: "/equipos" },
+  {
+    name: "Competencia",
+    children: [
+      { name: "Partidos", href: "/partidos" },
+      { name: "Posiciones", href: "/posiciones" },
+      { name: "Noticias", href: "/noticias" },
+    ],
+  },
+  { name: "Tienda", href: "/tienda" },
+  { name: "Contacto", href: "/contacto" },
+] as const;
