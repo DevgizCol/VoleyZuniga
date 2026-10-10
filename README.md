@@ -49,18 +49,35 @@ de pestañas y columnas en el Apps Script.
 ## Variables de entorno (Vercel → Settings → Environment Variables)
 
 Ver `.env.example`. Obligatorias: `ADMIN_PASSWORD`, `SESSION_SECRET`, `SHEETS_WEBAPP_URL`, `SHEETS_SECRET`.
+Recomendada: `SHEETS_READ_SECRET` (clave solo de lectura, igual a `READ_SECRET` del Apps Script).
 Opcionales: `ADMIN_USERS` (más usuarios, `Nombre:clave; Nombre2:clave2`), `SHEET_URL` (botón "Abrir la hoja"
-del panel) y `NEXT_PUBLIC_SITE_URL` (dominio propio).
+del panel), `NEXT_PUBLIC_SITE_URL` (dominio propio) y `NEXT_PUBLIC_UMAMI_WEBSITE_ID` (eventos de conversión).
+
+## Analítica
+
+- **Vercel Web Analytics y Speed Insights**: ya están en el código; se activan en el proyecto de Vercel
+  (pestañas Analytics y Speed Insights). Visitas, páginas y velocidad real, sin cookies.
+- **Origen de cada inscripción**: la web recuerda de dónde llegó la familia (parámetros `utm_` del enlace o el
+  sitio que la trajo) y lo guarda en la columna **Origen** de Inscripciones y Contacto. El resumen de los
+  lunes cuenta las inscripciones por canal. Etiqueta los enlaces que publiques, por ejemplo:
+  `?utm_source=instagram&utm_medium=bio`, `?utm_source=afiche&utm_medium=qr&utm_campaign=colegio-x`,
+  `?utm_source=whatsapp&utm_medium=estado`.
+- **Eventos (opcional, Umami)**: con `NEXT_PUBLIC_UMAMI_WEBSITE_ID` se cuentan `clic_whatsapp`,
+  `clic_inscribirme`, `calendario`, `clic_llamar`, `inscripcion_paso`, `inscripcion_enviada` y
+  `mensaje_enviado`.
 
 ## Apps Script (backend de la hoja)
 
 El código está en `docs/google-sheets/Code.gs`.
 
 1. En la hoja: Extensiones → Apps Script → pega el archivo y guarda.
-2. Propiedades del script: `SHARED_SECRET` (igual a `SHEETS_SECRET` en Vercel) y `NOTIFY_EMAIL`.
+2. Propiedades del script: `SHARED_SECRET` (igual a `SHEETS_SECRET` en Vercel), `READ_SECRET` (igual a
+   `SHEETS_READ_SECRET`, recomendada) y `NOTIFY_EMAIL`.
 3. Primera vez: Implementar → Nueva implementación → Aplicación web (Ejecutar como: Yo; Acceso: Cualquier usuario).
 4. Al cambiar el código: Implementar → Administrar implementaciones → lápiz → **Nueva versión**. La URL no cambia.
-5. Resumen semanal por correo (opcional): ejecuta una vez `instalarResumenSemanal`.
+5. Automatizaciones (opcional): ejecuta una vez `instalarAutomatizaciones` y acepta los permisos. Programa el
+   resumen de los lunes, el aviso diario de inscripciones sin responder (más de 24 h) y una copia de
+   seguridad semanal de la hoja en Drive (se conservan las últimas 8).
 
 ## Desarrollo
 

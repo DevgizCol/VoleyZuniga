@@ -5,10 +5,16 @@ import { notFound } from "next/navigation";
 import { ArrowLeft, MessageCircle } from "lucide-react";
 import ArticleCover from "@/components/ArticleCover";
 import JsonLd from "@/components/JsonLd";
-import { getArticle, longDate } from "@/lib/news";
+import { getArticle, getArticles, longDate } from "@/lib/news";
 import { siteUrl } from "@/lib/site-url";
 
 export const revalidate = 300;
+
+// Las noticias se prearman al publicar: el enlace compartido por WhatsApp abre al instante.
+// Las que se publiquen después se arman en la primera visita y quedan guardadas.
+export async function generateStaticParams() {
+  return (await getArticles()).map((a) => ({ slug: a.slug }));
+}
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const a = await getArticle((await params).slug);

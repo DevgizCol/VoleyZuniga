@@ -5,6 +5,8 @@ import clsx from "clsx";
 import { Check, Loader2, Send } from "lucide-react";
 import { CONTACT_TOPICS } from "@/data/contact";
 import { ChoiceCard, Field, Honeypot, inputCls } from "@/components/forms/fields";
+import { storedOrigin } from "@/lib/origin";
+import { track } from "@/lib/track";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const PHONE_RE = /^[+\d][\d\s().-]{6,19}$/;
@@ -37,10 +39,13 @@ export default function ContactForm() {
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, website: honeypot }),
+        body: JSON.stringify({ ...form, origin: storedOrigin(), website: honeypot }),
       });
       const data = await res.json().catch(() => ({}));
-      if (res.ok && data.ok) return setStatus("sent");
+      if (res.ok && data.ok) {
+        track("mensaje_enviado", { motivo: form.topic });
+        return setStatus("sent");
+      }
       setServerError(data.error || "No pudimos enviar el mensaje. Escríbenos por WhatsApp.");
     } catch {
       setServerError("Sin conexión. Revisa tu internet o escríbenos por WhatsApp.");

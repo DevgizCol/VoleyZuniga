@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { appendToSheet, sheetsConfigured } from "@/lib/sheets";
 import { clientIp, isRateLimited } from "@/lib/rate-limit";
+import { sanitizeOrigin } from "@/lib/origin";
 import { CONTACT_TOPICS, isOneOf } from "@/data/contact";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
@@ -50,6 +51,7 @@ export async function POST(request: Request) {
     Contacto: `${phone} · ${email}`,
     Asunto: topic,
     Mensaje: message,
+    Origen: sanitizeOrigin(body.origin),
   });
 
   if (!saved) {

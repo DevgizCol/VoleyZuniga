@@ -39,6 +39,11 @@ describe("POST /api/registrations", () => {
     expect(appendToSheet).toHaveBeenCalledWith("Inscripciones", expect.objectContaining({ Nombre: "Sara Gómez", Código: "VZ14-4FGR" }));
   });
 
+  it("guarda el origen de la visita sin saltos de línea", async () => {
+    await send({ ...valid, origin: "instagram / bio\n · entrada: /" });
+    expect(appendToSheet).toHaveBeenCalledWith("Inscripciones", expect.objectContaining({ Origen: "instagram / bio · entrada: /" }));
+  });
+
   it.each([
     ["sin consentimiento", { consent: false }],
     ["edad fuera de rango", { age: 3 }],
