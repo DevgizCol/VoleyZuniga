@@ -23,6 +23,7 @@ Objetivo: lista de ideas clasificada como **ya lo tenemos / aplica / no aplica (
    python3 scripts/investigacion/transcribir.py /ruta/scratch/reels/*.mp3
    ```
 2. Clasificar con Gemini (no gasta cuota de Anthropic) por área, quitando duplicados y relleno.
+   - Gemini (`agy`) rechaza entradas grandes (`Argument list too long`): partir el corpus en trozos de ~55 000 caracteres, extraer ideas en formato `área | idea | fuente` por trozo (nivel `rapido`) y clasificar después la lista unida.
 3. Contrastar cada idea con el código (rutas `archivo:línea`) y con los informes de auditoría.
 4. Verificar la clasificación con otra familia (`gemini_verificar`).
 5. Guardar en `docs/investigacion/` (solo ideas y fuentes; no subir audios ni transcripciones completas de terceros).
