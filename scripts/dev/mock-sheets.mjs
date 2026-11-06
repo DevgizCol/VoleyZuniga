@@ -6,6 +6,8 @@
 import { createServer } from "node:http";
 
 const SECRET = process.env.SHEETS_SECRET || "desarrollo-local-0000000000";
+// MOCK_DELAY_MS=3000 imita el arranque en frío de Apps Script (para ver los estados de carga).
+const DELAY = Number(process.env.MOCK_DELAY_MS) || 0;
 const t = (headers, rows) => ({ headers, rows: rows.map((r) => Object.fromEntries(headers.map((h, i) => [h, r[i] ?? ""]))) });
 const sheets = {
   Tabla: t(["Categoría", "Equipo", "PJ", "PG", "PP", "Puntos", "Activo"], [
@@ -30,6 +32,7 @@ const json = (res, body) => { res.writeHead(200, { "Content-Type": "application/
 const sheet = (name) => (sheets[name] ??= { headers: [], rows: [] });
 
 createServer(async (req, res) => {
+  if (DELAY) await new Promise((r) => setTimeout(r, DELAY));
   const url = new URL(req.url, "http://localhost");
   if (req.method === "GET") {
     const p = Object.fromEntries(url.searchParams);
