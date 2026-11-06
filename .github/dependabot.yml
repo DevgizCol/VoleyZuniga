@@ -8,6 +8,10 @@ updates:
       day: monday
       timezone: America/Bogota
     open-pull-requests-limit: 5
+    ignore:
+      # Los tipos de Node deben coincidir con la versión que usa la web (Node 22 en CI y Vercel).
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
     groups:
       menores:
         update-types: [minor, patch]
