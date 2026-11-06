@@ -7,6 +7,7 @@ import JsonLd from "@/components/JsonLd";
 import NextSession from "@/components/NextSession";
 import Volleyball from "@/components/Volleyball";
 import BrandPhoto, { CARD_SIZES } from "@/components/BrandPhoto";
+import HeroVideoToggle from "@/components/HeroVideoToggle";
 import { PictoGrowth, PictoScore, PictoTechnique } from "@/components/Pictograms";
 import { SITE } from "@/config/site";
 import { waLink } from "@/config/contact";
@@ -132,14 +133,15 @@ export default async function Home() {
           <div className="absolute inset-0 -z-10" aria-hidden="true">
             {settings.heroVideo ? (
               <div className="duotone absolute inset-0">
+                {/* Sin autoPlay: HeroVideoToggle decide (reducir movimiento, ahorro de datos) y permite pausar. */}
                 <video
+                  id="hero-video"
                   src={settings.heroVideo}
                   poster={settings.heroPhoto || undefined}
-                  autoPlay
                   muted
                   loop
                   playsInline
-                  preload="metadata"
+                  preload="none"
                   className="absolute inset-0 w-full h-full object-cover"
                 />
               </div>
@@ -226,6 +228,7 @@ export default async function Home() {
             ))}
           </div>
         </div>
+        {settings.heroVideo ? <HeroVideoToggle /> : null}
       </section>
 
       {/* ================= RUTA DEL DEPORTISTA ================= */}
