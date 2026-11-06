@@ -13,7 +13,7 @@ export async function GET() {
   // Evita que Excel interprete celdas como fórmulas y escapa comillas.
   const cell = (v: string) => {
     const s = (v ?? "").replace(/^'/, "");
-    const safe = /^[=+\-@]/.test(s) ? `'${s}` : s;
+    const safe = /^[=+\-@\t\r]/.test(s) ? `'${s}` : s;
     return `"${safe.replace(/"/g, '""')}"`;
   };
   const lines = [headers.map(cell).join(";"), ...data.rows.map((r) => headers.map((h) => cell(r[h] ?? "")).join(";"))];

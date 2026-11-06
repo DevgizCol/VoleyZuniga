@@ -191,7 +191,7 @@ export const getProducts = cache(async (): Promise<Product[]> => {
  * Solo sale del servidor el número; devuelve 0 si la hoja no responde.
  */
 export const getRecentRegistrations = cache(async (): Promise<number> => {
-  const rows = await readSheet("Inscripciones", 1800);
+  const rows = await readSheet("Inscripciones", 1800, ["Fecha"]);
   if (!rows) return 0;
   const since = new Intl.DateTimeFormat("en-CA", { timeZone: "America/Bogota" }).format(new Date(Date.now() - 30 * 86400000));
   return rows.filter((r) => String(r["Fecha"] || "").slice(0, 10) >= since).length;

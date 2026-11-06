@@ -9,7 +9,9 @@ const buckets = new Map<string, Bucket>();
 const MAX_KEYS = 5000;
 
 export function clientIp(request: Request): string {
-  return request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+  // En Vercel x-vercel-forwarded-for lo fija la plataforma (no falsificable); x-forwarded-for sí lo controla el cliente.
+  const h = request.headers;
+  return h.get("x-vercel-forwarded-for")?.split(",")[0]?.trim() || h.get("x-real-ip") || h.get("x-forwarded-for")?.split(",").pop()?.trim() || "unknown";
 }
 
 // Borra las ventanas vencidas para que el mapa no crezca sin límite.
