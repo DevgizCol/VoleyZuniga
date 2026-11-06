@@ -48,6 +48,14 @@ type Props = {
   perCategory: Record<string, { horario: string; sede: string }>;
 };
 
+// Canal de llegada (para saber qué trae inscripciones): ?utm_source=… o el sitio de referencia.
+// shortcut: utm_source solo se lee en /inscripciones; si las campañas enlazan a otra página, guardarlo en sessionStorage.
+function trafficOrigin(): string {
+  const utm = new URLSearchParams(location.search).get("utm_source");
+  const ref = document.referrer ? new URL(document.referrer).hostname.replace(/^www\./, "") : "";
+  return utm || (ref && ref !== location.hostname ? ref : "directo");
+}
+
 export default function RegistrationForm({ horarios, perCategory }: Props) {
   const { contact, wa } = useContact();
   // Horario y sede sugeridos para una categoría (vienen de la pestaña Horarios de la hoja).
@@ -143,7 +151,7 @@ export default function RegistrationForm({ horarios, perCategory }: Props) {
       const res = await fetch("/api/registrations", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, age, category, level, sede, horario, phone, consent, code: passCode, website: honeypot }),
+        body: JSON.stringify({ name, age, category, level, sede, horario, phone, consent, code: passCode, origin: trafficOrigin(), website: honeypot }),
       });
       if (res.ok) {
         setStatus("saved");

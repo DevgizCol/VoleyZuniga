@@ -37,6 +37,8 @@ export async function POST(request: Request) {
   const phone = text(body.phone, 20);
   const age = Number(body.age);
   const code = text(body.code, 12).toUpperCase();
+  // Canal de llegada (utm_source o sitio de referencia): solo letras, números y . _ -
+  const origin = text(body.origin, 60).toLowerCase().replace(/[^a-z0-9._-]/g, "").slice(0, 40) || "directo";
 
   if (name.length < 2) return bad("Escribe el nombre del deportista.");
   if (!Number.isInteger(age) || age < 5 || age > 60) return bad("Revisa la edad del deportista.");
@@ -68,6 +70,7 @@ export async function POST(request: Request) {
     WhatsApp: phone,
     Consentimiento: `Sí (${bogotaDate()})`,
     Código: CODE_RE.test(code) ? code : "",
+    Origen: origin,
   });
 
   if (!saved) return NextResponse.json({ ok: false, error: "No se pudo guardar." }, { status: 502 });
