@@ -41,7 +41,12 @@ Reglas del ciclo: `.claude/skills/voleyzuniga-ciclo-cambio/SKILL.md`. Investigac
 | 13 | Rate limit compartido (Upstash/Vercel WAF) | Seguridad | Pendiente (decidir costo) | — |
 | 14 | Lighthouse real en móvil | QA | Pendiente | — |
 | 15 | Clasificar transcripciones de videos y cruzar con esta cola | Investigación | En curso | — |
-| 16 | **Mejorar el panel `/admin`** (pedido del usuario): auditoría de UX para el cuerpo técnico en celular (flujos de inscripciones, resultados, noticias), accesibilidad con teclado, rendimiento y diseño; luego mejoras por ciclo | Panel | Pendiente — auditar primero | — |
+| 16 | **Mejorar el panel `/admin`** (pedido del usuario). Auditoría en celular hecha (ver abajo); mejoras por ciclo | Panel | Auditado, pendiente de ejecutar | — |
+| 16a | Posiciones desborda a lo ancho en celular (565 px en 390): un contenedor sin `min-w-0` anula el `overflow-x-auto` de la tabla | Panel | Pendiente | — |
+| 16b | Lentitud: cada sección 2,7–4,5 s y Ajustes 13 s; sin `loading.tsx` en `/admin` (pantalla congelada al navegar) | Panel | Pendiente (medir qué pesa en Ajustes) | — |
+| 16c | Navegación móvil: 12 secciones en una fila que se corta sin indicar que hay más; proponer barra inferior con 4 principales + "Más" | Panel | Pendiente | — |
+| 16d | Filtros que abren vacíos: Inscripciones abre en "Nuevo" (vacío) y Partidos en "Próximos" (vacío) aunque hay 1 resultado por cargar; abrir en la pestaña con trabajo pendiente | Panel | Pendiente | — |
+| 16e | Pendientes de revisar con datos: flujo de cargar resultado, editar inscripción, publicar noticia (requiere guardar: pedir permiso) | Panel | Pendiente | — |
 
 ## Run
 
