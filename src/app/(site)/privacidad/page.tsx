@@ -42,7 +42,7 @@ const sections: { title: string; body: React.ReactNode }[] = [
     title: "4. Menores de edad",
     body: (
       <p>
-        Los datos de niñas, niños y adolescentes solo se tratan con la autorización de su padre, madre o acudiente, y se usan únicamente para la actividad deportiva del club. Quien diligencia el formulario declara tener esa calidad o ser mayor de edad.
+        Los datos de niñas, niños y adolescentes solo se tratan con la autorización de su padre, madre o representante legal, respetando su interés superior y sus derechos, y se usan únicamente para la actividad deportiva del club. Responder preguntas sobre sus datos es opcional. Quien diligencia el formulario declara tener esa calidad o ser mayor de edad.
       </p>
     ),
   },
@@ -58,7 +58,7 @@ const sections: { title: string; body: React.ReactNode }[] = [
     title: "6. Dónde se guardan",
     body: (
       <p>
-        Las solicitudes se almacenan en una hoja de cálculo de Google (Google Workspace) a la que solo accede el personal autorizado del club, y el sitio se aloja en Vercel. Ambos proveedores tratan los datos por encargo nuestro.
+        Las solicitudes se almacenan en una hoja de cálculo de Google (Google Workspace) a la que solo accede el personal autorizado del club, y cada solicitud se avisa por correo al club. El sitio se aloja en Vercel, que además mide visitas de forma agregada (Web Analytics y Speed Insights, sin datos del formulario). Ambos proveedores tratan los datos por encargo nuestro y pueden hacerlo en servidores fuera de Colombia.
       </p>
     ),
   },

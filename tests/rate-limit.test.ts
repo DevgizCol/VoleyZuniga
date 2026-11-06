@@ -27,8 +27,12 @@ describe("intentos de inicio de sesión", () => {
 });
 
 describe("clientIp", () => {
-  it("toma la primera IP de x-forwarded-for", () => {
+  it("prefiere la cabecera de Vercel, que el cliente no controla", () => {
+    const req = new Request("https://x.test", { headers: { "x-vercel-forwarded-for": "5.6.7.8", "x-forwarded-for": "1.2.3.4" } });
+    expect(clientIp(req)).toBe("5.6.7.8");
+  });
+  it("sin cabecera de plataforma usa el último salto de x-forwarded-for (el que añade el proxy)", () => {
     const req = new Request("https://x.test", { headers: { "x-forwarded-for": "1.2.3.4, 10.0.0.1" } });
-    expect(clientIp(req)).toBe("1.2.3.4");
+    expect(clientIp(req)).toBe("10.0.0.1");
   });
 });

@@ -55,7 +55,7 @@ export async function appendToSheet(sheet: WritableSheet, data: Row): Promise<bo
  * Se cachea en Next (revalidate) para que los visitantes no esperen a Google.
  * Devuelve null si no está configurado o falla, para que la página use un respaldo.
  */
-export async function readSheet(sheet: ReadableSheet | PrivateSheet, revalidateSeconds = 300): Promise<Row[] | null> {
+export async function readSheet(sheet: ReadableSheet | PrivateSheet, revalidateSeconds = 300, cols?: string[]): Promise<Row[] | null> {
   const url = process.env.SHEETS_WEBAPP_URL;
   const secret = process.env.SHEETS_SECRET;
   if (!url || !secret) return null;
@@ -63,7 +63,7 @@ export async function readSheet(sheet: ReadableSheet | PrivateSheet, revalidateS
   try {
     // Apps Script no permite leer cabeceras personalizadas, por eso el secreto va en la consulta
     // (servidor a servidor, sobre HTTPS; nunca llega al navegador).
-    const target = `${url}?sheet=${encodeURIComponent(sheet)}&secret=${encodeURIComponent(secret)}`;
+    const target = `${url}?sheet=${encodeURIComponent(sheet)}&secret=${encodeURIComponent(secret)}${cols ? `&cols=${encodeURIComponent(cols.join(","))}` : ""}`;
     const res = await fetch(target, {
       redirect: "follow",
       ...(revalidateSeconds > 0

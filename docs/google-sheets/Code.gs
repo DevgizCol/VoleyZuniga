@@ -353,6 +353,13 @@ function doGet(e) {
 
     var values = sh.getDataRange().getDisplayValues();
     var headers = values.shift();
+    // Proyección: la web solo pide las columnas que necesita (p. ej. Fecha de Inscripciones) y no recibe datos personales.
+    if (p.cols) {
+      var keep = String(p.cols).split(",");
+      var idxs = headers.map(function (h, i) { return keep.indexOf(h) !== -1 ? i : -1; }).filter(function (i) { return i !== -1; });
+      values = values.map(function (r) { return idxs.map(function (i) { return r[i]; }); });
+      headers = idxs.map(function (i) { return headers[i]; });
+    }
     var activoIdx = headers.indexOf("Activo");
     var rows = values
       .map(function (r, i) {

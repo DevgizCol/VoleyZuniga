@@ -3,17 +3,20 @@ import {
   ADMIN_COOKIE,
   checkAdminPassword,
   createSessionToken,
+  sameOrigin,
   sessionCookieOptions,
 } from "@/lib/auth";
-import { clientIp, isBlocked, recordFailure, resetLimit } from "@/lib/rate-limit";
+import { clientIp, isRateLimited, resetLimit } from "@/lib/rate-limit";
 
 // Límite de intentos fallidos por IP (best-effort; por instancia). Frena fuerza bruta básica.
 const MAX_ATTEMPTS = 5;
 const WINDOW_MS = 15 * 60 * 1000;
 
 export async function POST(request: Request) {
+  if (!sameOrigin(request)) return NextResponse.json({ ok: false, error: "Solicitud inválida" }, { status: 403 });
   const key = `login:${clientIp(request)}`;
-  if (isBlocked(key, MAX_ATTEMPTS)) {
+  // Se cuenta el intento antes de cualquier await: ráfagas paralelas no pueden saltarse el tope.
+  if (isRateLimited(key, MAX_ATTEMPTS, WINDOW_MS)) {
     return NextResponse.json(
       { ok: false, error: "Demasiados intentos. Intenta de nuevo en unos minutos." },
       { status: 429 }
@@ -30,14 +33,13 @@ export async function POST(request: Request) {
 
   if (!process.env.SESSION_SECRET || process.env.SESSION_SECRET.length < 32 || !process.env.ADMIN_PASSWORD) {
     return NextResponse.json(
-      { ok: false, error: "El servidor no está configurado (SESSION_SECRET / ADMIN_PASSWORD)." },
+      { ok: false, error: "Servicio no disponible." },
       { status: 503 }
     );
   }
 
   const user = checkAdminPassword(password);
   if (!user) {
-    recordFailure(key, WINDOW_MS);
     return NextResponse.json({ ok: false, error: "Contraseña incorrecta" }, { status: 401 });
   }
 

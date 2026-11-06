@@ -32,7 +32,7 @@ function safeEqual(a: string, b: string): boolean {
 function users(): { name: string; password: string }[] {
   const list: { name: string; password: string }[] = [];
   const main = process.env.ADMIN_PASSWORD;
-  if (main) list.push({ name: "Administrador", password: main });
+  if (main && main.length >= 12) list.push({ name: "Administrador", password: main });
   for (const entry of (process.env.ADMIN_USERS || "").split(/[;\n]/)) {
     const i = entry.indexOf(":");
     if (i <= 0) continue;
@@ -57,12 +57,19 @@ export function checkAdminPassword(input: string): AdminUser | null {
   return found;
 }
 
+// La firma depende también de la clave del usuario: cambiarla en Vercel invalida sus sesiones.
+function keyFor(name: string, secret: string): string | null {
+  const u = users().find((x) => x.name === name);
+  return u ? `${secret}\0${u.password}` : null;
+}
+
 export function createSessionToken(user: AdminUser): string | null {
   const secret = getSecret();
-  if (!secret) return null;
+  const key = secret && keyFor(user.name, secret);
+  if (!key) return null;
   const exp = Math.floor(Date.now() / 1000) + SESSION_TTL_SECONDS;
   const payload = `admin.${Buffer.from(user.name).toString("base64url")}.${exp}`;
-  return `${payload}.${sign(payload, secret)}`;
+  return `${payload}.${sign(payload, key)}`;
 }
 
 export function verifySessionToken(token: string | undefined): AdminUser | null {
@@ -73,10 +80,11 @@ export function verifySessionToken(token: string | undefined): AdminUser | null 
   const [role, nameB64, expStr, sig] = parts;
   const exp = Number(expStr);
   if (!Number.isFinite(exp) || exp < Math.floor(Date.now() / 1000)) return null;
-  if (!safeEqual(sig, sign(`${role}.${nameB64}.${expStr}`, secret))) return null;
   const name = Buffer.from(nameB64, "base64url").toString("utf8");
-  // Si el usuario fue retirado de ADMIN_USERS, su sesión deja de valer.
-  return users().some((u) => u.name === name) ? { name } : null;
+  // Si el usuario fue retirado o cambió su clave, no hay llave y la sesión deja de valer.
+  const key = keyFor(name, secret);
+  if (!key || !safeEqual(sig, sign(`${role}.${nameB64}.${expStr}`, key))) return null;
+  return { name };
 }
 
 export async function getAdmin(): Promise<AdminUser | null> {
@@ -95,3 +103,15 @@ export const sessionCookieOptions = {
   path: "/",
   maxAge: SESSION_TTL_SECONDS,
 };
+
+/** Rechaza peticiones POST de otro origen (los route handlers no tienen la comprobación de Origin de las Server Actions). */
+export function sameOrigin(request: Request): boolean {
+  const origin = request.headers.get("origin");
+  if (!origin) return true; // shortcut: clientes sin Origin (curl) pasan; el navegador siempre lo envía en POST
+  const host = request.headers.get("x-forwarded-host") ?? request.headers.get("host");
+  try {
+    return new URL(origin).host === host;
+  } catch {
+    return false;
+  }
+}

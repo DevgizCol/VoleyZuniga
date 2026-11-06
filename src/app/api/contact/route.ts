@@ -9,7 +9,8 @@ const PHONE_RE = /^[+\d][\d\s().-]{6,19}$/;
 const text = (v: unknown, max: number) => (typeof v === "string" ? v.trim().slice(0, max) : "");
 
 export async function POST(request: Request) {
-  if (isRateLimited(`contact:${clientIp(request)}`, 5, 60 * 60 * 1000)) {
+  // Tope global: frena el envío masivo de correos aunque el atacante rote de IP.
+  if (isRateLimited(`contact:${clientIp(request)}`, 5, 60 * 60 * 1000) || isRateLimited("contact:global", 40, 60 * 60 * 1000)) {
     return NextResponse.json(
       { ok: false, error: "Has enviado varios mensajes seguidos. Intenta de nuevo en un rato." },
       { status: 429 }

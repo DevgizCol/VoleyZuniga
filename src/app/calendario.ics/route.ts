@@ -5,7 +5,7 @@ import { siteUrl } from "@/lib/site-url";
 // cada partido nuevo de la pestaña "Fixture" les aparece solo en el celular.
 export const revalidate = 1800;
 
-const esc = (s: string) => s.replace(/\\/g, "\\\\").replace(/;/g, "\;").replace(/,/g, "\\,").replace(/\r?\n/g, "\\n");
+const esc = (s: string) => s.replace(/\\/g, "\\\\").replace(/;/g, "\\;").replace(/,/g, "\\,").replace(/\r\n|\r|\n/g, "\\n");
 
 // Las líneas de más de 75 octetos se parten según el estándar (RFC 5545).
 function fold(line: string) {
