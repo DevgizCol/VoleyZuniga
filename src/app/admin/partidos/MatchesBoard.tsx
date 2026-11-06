@@ -14,7 +14,6 @@ import QuickResult from "./QuickResult";
 type View = "proximos" | "pendientes" | "jugados" | "ocultos";
 
 export default function MatchesBoard({ rows, initialView }: { rows: RowData[]; initialView: View }) {
-  const [view, setView] = useState<View>(initialView);
   const [category, setCategory] = useState("");
   const today = bogotaToday();
 
@@ -29,6 +28,9 @@ export default function MatchesBoard({ rows, initialView }: { rows: RowData[]; i
       ocultos: rows.filter(hidden).sort((a, b) => key(b).localeCompare(key(a))),
     };
   }, [rows, today]);
+  const [view, setView] = useState<View>(() =>
+    groups[initialView].length ? initialView : ((["pendientes", "proximos", "jugados"] as View[]).find((v) => groups[v].length) ?? initialView)
+  );
 
   const categories = Array.from(new Set(rows.map((r) => r["Categoría"]).filter(Boolean)));
   const list = groups[view].filter((r) => !category || r["Categoría"] === category);

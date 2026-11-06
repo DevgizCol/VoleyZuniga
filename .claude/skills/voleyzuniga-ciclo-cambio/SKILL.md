@@ -18,6 +18,7 @@ Objetivo: entregar cambios pequeños, verificados y vistos por el usuario. No cu
    ```
 5. **Gate de otra familia**: `gemini_verificar` (nivel `experto`) con el diff y criterios explícitos. Rechazo → corregir y repetir.
 6. **Mostrar en local**: `npm run dev -- -p 3000` en segundo plano; dar al usuario las URLs exactas y qué mirar. Esperar su visto bueno.
+   - Panel `/admin`: arrancar antes `node scripts/dev/mock-sheets.mjs` (hoja simulada) con `.env.local` de desarrollo (ver cabecera del script). Nunca iniciar sesión en producción desde el navegador de prueba: la herramienta imprime el código ejecutado y expone la cookie.
 7. **Cerrar** el servidor (y el navegador de prueba) tras el visto bueno; comprobar que no quedan procesos `next`.
 8. **Commit + PR** con `~/.local/bin/gh pr create`; cuerpo: qué corrige, verificación, pendientes, pasos manuales (p. ej. "publicar nueva versión del Apps Script", variables de entorno en Vercel).
 9. **Tablero**: actualizar `docs/agentes/tablero.md` (Gate y Handoff).

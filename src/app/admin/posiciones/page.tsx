@@ -44,7 +44,7 @@ export default async function StandingsAdmin() {
                   <h2 className="font-heading font-black uppercase text-2xl">{cat}</h2>
                   <EditorButton sheet="Tabla" fields={STANDING_FIELDS} title={`Agregar equipo · ${cat}`} mode="create" label="Equipo" defaults={{ Categoría: cat, PJ: "0", PG: "0", PP: "0", Puntos: "0" }} variant="ghost" />
                 </div>
-                <div className="overflow-x-auto">
+                <div className="relative overflow-x-auto">
                   <table className="w-full min-w-[560px] text-left">
                     <thead className="text-xs text-[#8FA3BF]">
                       <tr>

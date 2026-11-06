@@ -11,7 +11,8 @@ import { shortDate, waLink } from "../_components/format";
 import type { RowData } from "../_components/types";
 
 export default function RegistrationsTable({ rows }: { rows: RowData[] }) {
-  const [status, setStatus] = useState<string>("Nuevo");
+  // Abre donde hay trabajo: "Nuevo" si hay pendientes; si no, todas (evita una primera pantalla vacía).
+  const [status, setStatus] = useState<string>(() => (rows.some((r) => (r.Estado || "Nuevo") === "Nuevo") ? "Nuevo" : "Todas"));
   const [category, setCategory] = useState("");
   const [query, setQuery] = useState("");
   const q = useDeferredValue(query.trim().toLowerCase());
