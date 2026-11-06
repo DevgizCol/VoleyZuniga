@@ -4,6 +4,7 @@ import Image from "next/image";
 import { ExternalLink, Home } from "lucide-react";
 import { Toaster } from "sonner";
 import { getAdmin } from "@/lib/auth";
+import DevGizFooter from "./_components/DevGizFooter";
 import AdminLogin from "./AdminLogin";
 import AdminNav from "./_components/AdminNav";
 import { LogoutButton } from "./AdminTools";
@@ -46,7 +47,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         </div>
       </aside>
 
-      <div className="min-w-0">
+      <div className="min-w-0 flex flex-col min-h-dvh">
         <header className="lg:hidden sticky top-0 z-30 bg-[#050E1C]/95 backdrop-blur border-b border-white/10" style={{ paddingTop: "env(safe-area-inset-top, 0px)" }}>
           <div className="flex items-center justify-between gap-3 px-4 h-14">
             <Link href="/admin" className="flex items-center gap-2">
@@ -63,9 +64,10 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           </div>
           <AdminNav variant="top" />
         </header>
-        <main id="contenido" className="px-4 sm:px-6 lg:px-10 py-6 lg:py-10 max-w-6xl">
+        <main id="contenido" className="w-full max-w-[1600px] px-4 sm:px-6 lg:px-10 py-6 lg:py-10">
           {children}
         </main>
+        <DevGizFooter />
       </div>
       <Toaster theme="dark" position="top-center" richColors closeButton />
     </div>
