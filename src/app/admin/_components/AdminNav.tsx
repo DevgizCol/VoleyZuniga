@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import clsx from "clsx";
@@ -11,16 +12,23 @@ const ICONS = { home: Home, users: Users, calendar: CalendarDays, trophy: Trophy
 export default function AdminNav({ variant }: { variant: "side" | "top" }) {
   const pathname = usePathname();
   const isActive = (href: string) => (href === "/admin" ? pathname === "/admin" : pathname.startsWith(href));
+  const activeRef = useRef<HTMLAnchorElement>(null);
+  // En celular la fila de secciones se desliza: muestra siempre la sección actual.
+  // Con llaves: scrollIntoView devuelve una promesa en Chrome reciente y React la tomaría como limpieza.
+  useEffect(() => {
+    activeRef.current?.scrollIntoView({ inline: "center", block: "nearest" });
+  }, [pathname]);
 
   if (variant === "top") {
     return (
-      <nav aria-label="Secciones del panel" className="lg:hidden flex gap-1 overflow-x-auto px-3 py-2 [scrollbar-width:none]">
+      <nav aria-label="Secciones del panel" className="lg:hidden flex gap-1 overflow-x-auto px-3 pr-12 py-2 [scrollbar-width:none] [mask-image:linear-gradient(to_right,black_calc(100%-48px),transparent)]">
         {ADMIN_NAV.map((item) => {
           const Icon = ICONS[item.icon];
           return (
             <Link
               key={item.href}
               href={item.href}
+              ref={isActive(item.href) ? activeRef : undefined}
               aria-current={isActive(item.href) ? "page" : undefined}
               className={clsx(
                 "shrink-0 h-10 px-3 inline-flex items-center gap-2 rounded-full text-sm font-semibold transition-colors",

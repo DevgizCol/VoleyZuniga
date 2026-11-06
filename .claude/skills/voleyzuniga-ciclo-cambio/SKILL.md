@@ -28,6 +28,7 @@ Objetivo: entregar cambios pequeños, verificados y vistos por el usuario. No cu
 - Cambios a `docs/google-sheets/Code.gs` requieren que el club publique una **Nueva versión** de la implementación; decirlo en el PR.
 - Datos de menores (Inscripciones): nunca leerlos completos si basta una columna; nunca en logs.
 - Nunca subir a Vercel ni fusionar sin orden explícita.
+- `useEffect` siempre con llaves `{ ... }`: una flecha que devuelve una llamada (p. ej. `scrollIntoView()`, que en Chrome reciente devuelve una promesa) rompe la página con `destroy is not a function` y el lint no lo detecta.
 - Detener servidores con `TaskStop` o `kill <PID>` (ver `pgrep -af`), nunca `pkill -f <patrón>`: el patrón coincide con el propio comando, lo mata y deja huérfanos.
 - Datos en caché de 5 min en local: para ver cambios de la hoja simulada pedir con `Cache-Control: no-cache` (o recarga forzada).
 - Worktrees de prueba: crearlos dentro del mismo disco que el repo (Turbopack no resuelve `node_modules` enlazado desde `/tmp`).
