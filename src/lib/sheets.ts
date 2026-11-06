@@ -1,4 +1,5 @@
 import "server-only";
+import { getAdmin } from "./auth";
 
 // Cliente del backend gratuito: una aplicación web de Google Apps Script
 // (docs/google-sheets/Code.gs) que lee y escribe en una Hoja de cálculo de Google.
@@ -87,6 +88,8 @@ export type AdminTable = { headers: string[]; rows: AdminRow[] };
 
 /** Lee todas las filas (también las inactivas) con su número de fila. Nunca se cachea. */
 export async function adminRead(sheet: AdminSheet): Promise<AdminTable | null> {
+  // Defensa propia: el layout de /admin no protege las páginas ante peticiones RSC directas.
+  if (!(await getAdmin())) return null;
   const url = process.env.SHEETS_WEBAPP_URL;
   const secret = process.env.SHEETS_SECRET;
   if (!url || !secret) return null;
@@ -113,6 +116,7 @@ export async function adminMutate(payload: {
   expected?: Row;
   data?: Row;
 }): Promise<MutationResult> {
+  if (!(await getAdmin())) return { ok: false, error: "unauthorized" };
   const url = process.env.SHEETS_WEBAPP_URL;
   const secret = process.env.SHEETS_SECRET;
   if (!url || !secret) return { ok: false, error: "not_configured" };
