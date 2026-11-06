@@ -107,6 +107,11 @@ function doPost(e) {
       if (!sh) return json_({ ok: false, error: "sheet_missing" });
       sh.appendRow(row);
       rowNumber = sh.getLastRow();
+      // "Origen" (canal de llegada) se escribe por nombre y solo si el club creó esa columna: no desplaza las demás.
+      if (name === "Inscripciones" && data.Origen) {
+        var originCol = sh.getRange(1, 1, 1, sh.getLastColumn()).getValues()[0].indexOf("Origen");
+        if (originCol !== -1) sh.getRange(rowNumber, originCol + 1).setNumberFormat("@").setValue(clean_(String(data.Origen).slice(0, 40)));
+      }
       sheetUrl = ss.getUrl() + "#gid=" + sh.getSheetId() + "&range=A" + rowNumber;
     } finally {
       lock.releaseLock();

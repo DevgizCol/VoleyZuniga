@@ -90,6 +90,7 @@ export default function RegistrationsTable({ rows }: { rows: RowData[] }) {
                     </p>
                     <p className="text-xs text-[#8FA3BF] mt-0.5">
                       {shortDate(r.Fecha)} · {r.Sede} · {r.Horario}
+                      {r.Origen ? ` · vía ${r.Origen}` : null}
                     </p>
                   </div>
                   <div className="flex flex-wrap items-center gap-2">
