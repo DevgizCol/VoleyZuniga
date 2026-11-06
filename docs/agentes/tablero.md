@@ -32,8 +32,8 @@ Reglas del ciclo: `.claude/skills/voleyzuniga-ciclo-cambio/SKILL.md`. Investigac
 | 4 | SEO local: titles/descriptions con "escuela de voleibol en Medellín", OG por página, JSON-LD completo, `NEXT_PUBLIC_SITE_URL` | SEO | Pendiente | — |
 | 5 | Formularios accesibles (`aria-describedby`, foco al primer error, foco visible, bordes 3:1) | Accesibilidad | Pendiente | — |
 | 6 | Video de portada: pausa, `prefers-reduced-motion`, sin video en móvil con datos | Accesibilidad/Rendimiento | Pendiente | — |
-| 7 | Fotos de Drive por tamaño de uso (`=w640`/`=w1200`) y `<Image>`/`aspect-ratio` | Rendimiento | Pendiente | — |
-| 8 | Fuentes: de 8 a 4 grosores | Rendimiento | Pendiente | — |
+| 7 | Fotos de Drive por tamaño de uso: `srcSet` 480–1600 + `sizes` por lugar | Rendimiento | En PR | `perf/fotos-y-fuentes` |
+| 8 | Fuentes: quitado Big Shoulders 600 (1 uso); Figtree 500 se conserva (menú) | Rendimiento | En PR | `perf/fotos-y-fuentes` |
 | 9 | Fotos en color en móvil (`hover: none`) y confirmación de inscripción con una acción principal | Diseño | Pendiente | — |
 | 10 | Menú móvil: foco, Escape, devolver foco | Accesibilidad | Pendiente | — |
 | 11 | Timeout de lectura 4–5 s, `loading.tsx`, no cachear respaldo vacío si la hoja falla | Rendimiento | Pendiente (verificar bug) | — |

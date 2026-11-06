@@ -1,4 +1,4 @@
-import BrandPhoto from "./BrandPhoto";
+import BrandPhoto, { CARD_SIZES } from "./BrandPhoto";
 import type { Player } from "@/lib/club";
 
 // Lámina de jugador, como las de un álbum: foto con el color del club, número grande y un brillo
@@ -8,7 +8,7 @@ export default function PlayerCard({ player }: { player: Player }) {
     <figure className="player-card group relative aspect-[3/4] rounded-2xl p-[3px] bg-[linear-gradient(140deg,#FFB14A,#F29A2E_35%,#0F2347_60%,#F29A2E)]">
       <div className="relative h-full w-full rounded-[14px] overflow-hidden bg-[#0B1E38]">
         {player.photo ? (
-          <BrandPhoto src={player.photo} alt={`Foto de ${player.name}`} hover className="absolute inset-0" />
+          <BrandPhoto src={player.photo} alt={`Foto de ${player.name}`} hover sizes={CARD_SIZES} className="absolute inset-0" />
         ) : (
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_35%,#1B3A6B,#0B1E38_70%)]" aria-hidden="true">
             <svg viewBox="0 0 400 400" className="absolute inset-x-[12%] top-[8%] w-[76%] opacity-80">

@@ -25,7 +25,6 @@ const display = localFont({
   variable: "--font-display",
   display: "swap",
   src: [
-    { path: "../assets/fonts/big-shoulders-display-latin-600-normal.woff2", weight: "600", style: "normal" },
     { path: "../assets/fonts/big-shoulders-display-latin-700-normal.woff2", weight: "700", style: "normal" },
     { path: "../assets/fonts/big-shoulders-display-latin-800-normal.woff2", weight: "800", style: "normal" },
     { path: "../assets/fonts/big-shoulders-display-latin-900-normal.woff2", weight: "900", style: "normal" },

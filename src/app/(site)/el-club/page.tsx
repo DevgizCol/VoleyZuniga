@@ -3,7 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight } from "lucide-react";
 import PageHero from "@/components/PageHero";
-import BrandPhoto from "@/components/BrandPhoto";
+import BrandPhoto, { CARD_SIZES } from "@/components/BrandPhoto";
 import { getCoaches, getGallery } from "@/lib/club";
 import { getSettings } from "@/lib/content";
 
@@ -66,7 +66,7 @@ export default async function HistoryPage() {
                 <li key={c.name} className="group rounded-xl border border-white/10 bg-[#071426] overflow-hidden flex flex-col transition-colors hover:border-[#F29A2E]/50">
                   <div className="relative aspect-[4/3] bg-gradient-to-br from-[#0F2347] to-[#071426]">
                     {c.photo ? (
-                      <BrandPhoto src={c.photo} alt={`Foto de ${c.name}`} hover className="absolute inset-0" />
+                      <BrandPhoto src={c.photo} alt={`Foto de ${c.name}`} hover sizes={CARD_SIZES} className="absolute inset-0" />
                     ) : (
                       <span className="absolute inset-0 flex items-center justify-center font-heading font-black text-7xl text-[#F29A2E]/40" aria-hidden="true">
                         {c.name.split(/\s+/).slice(0, 2).map((w) => w[0]).join("")}

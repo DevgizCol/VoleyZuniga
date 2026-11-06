@@ -75,7 +75,12 @@ createServer(async (req, res) => {
   const s = sheet(body.sheet);
   const action = String(body.action || "").replace("admin.", "");
   const idx = Number(body.row) - 2;
-  if (action === "create" || !body.action) { s.rows.push({ ...(body.data ?? body.row ?? {}) }); return json(res, { ok: true, row: s.rows.length + 1 }); }
+  if (action === "create" || !body.action) {
+    const data = { ...(body.data ?? body.row ?? {}) };
+    for (const k of Object.keys(data)) if (!s.headers.includes(k)) s.headers.push(k); // pestaña nueva: columnas según los datos
+    s.rows.push(data);
+    return json(res, { ok: true, row: s.rows.length + 1 });
+  }
   if (!s.rows[idx]) return json(res, { ok: false, error: "row_missing" });
   if (action === "update") Object.assign(s.rows[idx], body.data);
   if (action === "remove") s.rows.splice(idx, 1);

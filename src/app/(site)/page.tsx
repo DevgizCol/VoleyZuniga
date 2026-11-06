@@ -6,7 +6,7 @@ import HeroCourt from "@/components/HeroCourt";
 import JsonLd from "@/components/JsonLd";
 import NextSession from "@/components/NextSession";
 import Volleyball from "@/components/Volleyball";
-import BrandPhoto from "@/components/BrandPhoto";
+import BrandPhoto, { CARD_SIZES } from "@/components/BrandPhoto";
 import { PictoGrowth, PictoScore, PictoTechnique } from "@/components/Pictograms";
 import { SITE } from "@/config/site";
 import { waLink } from "@/config/contact";
@@ -400,7 +400,7 @@ export default async function Home() {
                 <li key={c.name} className="flex flex-col">
                   <div className="relative aspect-square rounded-xl overflow-hidden border border-white/10 bg-gradient-to-br from-[#0F2347] to-[#071426]">
                     {c.photo ? (
-                      <BrandPhoto src={c.photo} alt={`Foto de ${c.name}`} hover className="absolute inset-0" />
+                      <BrandPhoto src={c.photo} alt={`Foto de ${c.name}`} hover sizes={CARD_SIZES} className="absolute inset-0" />
                     ) : (
                       <span className="absolute inset-0 flex items-center justify-center font-heading font-black text-6xl text-[#F29A2E]/40" aria-hidden="true">
                         {c.name.split(/\s+/).slice(0, 2).map((w) => w[0]).join("")}
@@ -486,7 +486,7 @@ export default async function Home() {
                   key={`${p.image}-${i}`}
                   className={`relative rounded-xl overflow-hidden border border-white/10 ${i === 0 ? "col-span-2 row-span-2 aspect-square lg:aspect-auto" : "aspect-square"}`}
                 >
-                  <BrandPhoto src={p.image} alt={p.title || "Foto del Club Voley Zúñiga"} hover className="absolute inset-0" />
+                  <BrandPhoto src={p.image} alt={p.title || "Foto del Club Voley Zúñiga"} hover sizes={i === 0 ? "(min-width: 1024px) 50vw, 100vw" : "(min-width: 1024px) 25vw, 50vw"} className="absolute inset-0" />
                   {p.title ? (
                     <p className="absolute inset-x-0 bottom-0 z-10 p-4 pt-10 bg-gradient-to-t from-[#071426]/90 to-transparent text-sm font-semibold">{p.title}</p>
                   ) : null}
