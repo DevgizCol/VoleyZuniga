@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { imageUrl, normDate, normTime, slugify } from "@/lib/sheet-values";
+import { driveSrcSet, imageUrl, normDate, normTime, slugify } from "@/lib/sheet-values";
 
 describe("normDate", () => {
   it("acepta AAAA-MM-DD tal cual", () => expect(normDate("2026-03-07")).toBe("2026-03-07"));
@@ -37,4 +37,16 @@ describe("imageUrl", () => {
 describe("slugify", () => {
   it("quita tildes, eñes y signos", () => expect(slugify("¡Campeones Sub-16 en Zúñiga!")).toBe("campeones-sub-16-en-zuniga"));
   it("limita la longitud", () => expect(slugify("a".repeat(100))).toHaveLength(70));
+});
+
+describe("driveSrcSet", () => {
+  it("ofrece varias anchuras para fotos de Drive", () => {
+    const set = driveSrcSet(imageUrl("https://drive.google.com/file/d/1AbCdEfGhIjKlMnOpQrStUvWxYz012345/view"));
+    expect(set).toContain("=w480 480w");
+    expect(set).toContain("=w1600 1600w");
+  });
+  it("no toca otras URL", () => {
+    expect(driveSrcSet("https://example.com/foto.jpg")).toBeUndefined();
+    expect(driveSrcSet("/placeholder-club.svg")).toBeUndefined();
+  });
 });

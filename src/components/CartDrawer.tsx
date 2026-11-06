@@ -132,7 +132,7 @@ export default function CartDrawer() {
                   </div>
                   <div className="flex-1 flex flex-col justify-between py-1">
                     <div>
-                      <h3 className="font-semibold text-white text-base leading-snug pr-6 line-clamp-2">{item.name}</h3>
+                      <h3 className="font-bold text-white text-base leading-snug pr-6 line-clamp-2">{item.name}</h3>
                       <p className="text-[#F29A2E] font-medium mt-1">{cop(item.price)}</p>
                     </div>
 

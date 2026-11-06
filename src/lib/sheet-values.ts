@@ -27,6 +27,12 @@ export function imageUrl(raw: string, width = 1600): string {
   return /^https:\/\//.test(url) ? url : "";
 }
 
+/** Para fotos de Drive (lh3 …=wN): varias anchuras para que el navegador baje la adecuada a la pantalla. */
+export function driveSrcSet(src: string): string | undefined {
+  const base = src.match(/^(https:\/\/lh3\.googleusercontent\.com\/d\/[\w-]+)=w\d+$/)?.[1];
+  return base ? [480, 800, 1200, 1600].map((w) => `${base}=w${w} ${w}w`).join(", ") : undefined;
+}
+
 /** Texto apto para una URL: sin tildes, minúsculas y guiones. */
 export function slugify(s: string): string {
   return s

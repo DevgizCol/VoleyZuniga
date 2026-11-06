@@ -1,4 +1,6 @@
 /* eslint-disable @next/next/no-img-element -- las fotos vienen de Drive u otra URL de la hoja */
+import { driveSrcSet } from "@/lib/sheet-values";
+import { CARD_SIZES } from "@/components/BrandPhoto";
 import type { Metadata } from "next";
 import { Camera } from "lucide-react";
 import PageHero from "@/components/PageHero";
@@ -39,7 +41,7 @@ export default async function GalleryPage() {
                   <figure className="group rounded-xl overflow-hidden border border-white/10 bg-[#0B1E38] transition-colors hover:border-[#F29A2E]/50">
                     {/* Con el color del club; al pasar el mouse recupera su color real */}
                     <div className="duotone duotone-hover relative">
-                      <img src={p.image} alt={p.title || "Foto del Club Voley Zúñiga"} loading={i < 3 ? "eager" : "lazy"} className="block w-full h-auto" />
+                      <img src={p.image} srcSet={driveSrcSet(p.image)} sizes={CARD_SIZES} alt={p.title || "Foto del Club Voley Zúñiga"} loading={i < 3 ? "eager" : "lazy"} className="block w-full h-auto" />
                     </div>
                     {p.title || p.date ? (
                       <figcaption className="px-4 py-3 text-sm">
