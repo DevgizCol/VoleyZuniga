@@ -6,7 +6,7 @@ import { Calculator, Loader2 } from "lucide-react";
 import { applyResult } from "../actions";
 import { btn } from "../_components/ui";
 
-const input = "w-full h-11 rounded-lg bg-white/[0.05] border border-white/15 px-3.5 focus:outline-none focus:border-[#F29A2E]";
+const input = "w-full h-11 rounded-lg bg-white/[0.05] border border-[#6B7F9C] px-3.5 focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F29A2E] focus:border-[#F29A2E]";
 
 export default function ApplyResult({ categories, teams }: { categories: string[]; teams: string[] }) {
   const ref = useRef<HTMLDialogElement>(null);

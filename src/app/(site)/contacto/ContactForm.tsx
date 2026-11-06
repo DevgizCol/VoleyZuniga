@@ -4,7 +4,7 @@ import { useState } from "react";
 import clsx from "clsx";
 import { Check, Loader2, Send } from "lucide-react";
 import { CONTACT_TOPICS } from "@/data/contact";
-import { ChoiceCard, Field, Honeypot, inputCls } from "@/components/forms/fields";
+import { ChoiceCard, Field, Honeypot, focusFirstInvalid, inputCls } from "@/components/forms/fields";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const PHONE_RE = /^[+\d][\d\s().-]{6,19}$/;
@@ -30,7 +30,7 @@ export default function ContactForm() {
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setTouched(true);
-    if (!valid) return;
+    if (!valid) return focusFirstInvalid(e.currentTarget as HTMLFormElement);
     setStatus("sending");
     setServerError(null);
     try {
@@ -54,7 +54,7 @@ export default function ContactForm() {
         <span className="w-14 h-14 rounded-full bg-[#25D366]/15 border border-[#25D366]/40 flex items-center justify-center text-[#25D366]">
           <Check size={28} />
         </span>
-        <h3 className="mt-6 font-heading font-black uppercase text-4xl leading-none">Mensaje enviado</h3>
+        <h3 ref={(el) => el?.focus()} tabIndex={-1} className="mt-6 outline-none font-heading font-black uppercase text-4xl leading-none">Mensaje enviado</h3>
         <p className="mt-3 text-[#C9D5E6] text-lg">Gracias, {form.name.trim().split(" ")[0]}. Te respondemos al correo o al WhatsApp que nos dejaste.</p>
         <button type="button" onClick={() => { setForm((f) => ({ ...f, message: "" })); setTouched(false); setStatus("idle"); }} className="mt-6 underline underline-offset-2 text-[#B7C4D8] hover:text-white">
           Enviar otro mensaje

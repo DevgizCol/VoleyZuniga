@@ -32,7 +32,7 @@ export default function SettingField({ settingKey, label, help, type = "text", r
       } else toast.error(res.message);
     });
 
-  const input = "w-full min-h-11 rounded-lg bg-white/[0.05] border border-white/15 px-3.5 focus:outline-none focus:border-[#F29A2E]";
+  const input = "w-full min-h-11 rounded-lg bg-white/[0.05] border border-[#6B7F9C] px-3.5 focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F29A2E] focus:border-[#F29A2E]";
 
   return (
     <div className="rounded-2xl border border-white/10 bg-[#0B1E38] p-5">
