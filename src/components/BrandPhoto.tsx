@@ -18,7 +18,7 @@ export default function BrandPhoto({
 }) {
   return (
     <div className={clsx("duotone", hover && "duotone-hover", className)}>
-      <img src={src} alt={alt} loading={eager ? "eager" : "lazy"} decoding="async" className="absolute inset-0 w-full h-full object-cover" />
+      <img src={src} alt={alt} loading={eager ? "eager" : "lazy"} fetchPriority={eager ? "high" : undefined} decoding="async" className="absolute inset-0 w-full h-full object-cover" />
     </div>
   );
 }
