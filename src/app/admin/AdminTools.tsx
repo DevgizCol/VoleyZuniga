@@ -56,7 +56,7 @@ export function GroupMessage({ gamesUrl }: { gamesUrl: string }) {
         rows={4}
         maxLength={1000}
         aria-label="Mensaje para el grupo"
-        className="w-full rounded-lg bg-white/[0.05] border border-white/15 p-4 focus:outline-none focus:border-[#F29A2E]"
+        className="w-full rounded-lg bg-white/[0.05] border border-[#6B7F9C] p-4 focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F29A2E] focus:border-[#F29A2E]"
       />
       <div className="mt-3 flex flex-wrap gap-3">
         <a

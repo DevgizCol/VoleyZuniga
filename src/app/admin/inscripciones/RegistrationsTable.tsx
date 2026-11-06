@@ -60,7 +60,7 @@ export default function RegistrationsTable({ rows }: { rows: RowData[] }) {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Buscar por nombre, WhatsApp o código"
-            className="w-full h-11 rounded-lg bg-white/[0.05] border border-white/15 pl-10 pr-3 focus:outline-none focus:border-[#F29A2E]"
+            className="w-full h-11 rounded-lg bg-white/[0.05] border border-[#6B7F9C] pl-10 pr-3 focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F29A2E] focus:border-[#F29A2E]"
           />
         </label>
         <select value={category} onChange={(e) => setCategory(e.target.value)} aria-label="Categoría" className="h-11 rounded-lg bg-[#0F2347] border border-white/15 px-3 [color-scheme:dark]">

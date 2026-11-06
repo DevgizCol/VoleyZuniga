@@ -74,7 +74,7 @@ export default function CourtControl({ sede, row }: { sede: string; row: RowData
       {estado !== "Normal" && (
         <label className="block mt-4">
           <span className="block text-sm font-semibold mb-1.5">Mensaje para las familias</span>
-          <input value={mensaje} onChange={(e) => setMensaje(e.target.value.slice(0, 200))} className="w-full h-11 rounded-lg bg-white/[0.05] border border-white/15 px-3.5 focus:outline-none focus:border-[#F29A2E]" />
+          <input value={mensaje} onChange={(e) => setMensaje(e.target.value.slice(0, 200))} className="w-full h-11 rounded-lg bg-white/[0.05] border border-[#6B7F9C] px-3.5 focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F29A2E] focus:border-[#F29A2E]" />
         </label>
       )}
 

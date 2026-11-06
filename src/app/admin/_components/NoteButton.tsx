@@ -40,7 +40,7 @@ export default function NoteButton({ sheet, row }: { sheet: StatusSheet; row: Ro
           rows={5}
           maxLength={1000}
           aria-label="Nota"
-          className="mt-4 w-full rounded-lg bg-white/[0.05] border border-white/15 p-3 focus:outline-none focus:border-[#F29A2E]"
+          className="mt-4 w-full rounded-lg bg-white/[0.05] border border-[#6B7F9C] p-3 focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F29A2E] focus:border-[#F29A2E]"
         />
         <div className="mt-4 flex justify-end gap-2">
           <button type="button" onClick={() => ref.current?.close()} className={btn.secondary}>

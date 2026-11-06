@@ -51,7 +51,7 @@ export default function AdminLogin() {
             autoComplete="current-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full h-12 rounded-lg bg-white/[0.05] border border-white/15 px-4 focus:outline-none focus:border-[#F29A2E]"
+            className="w-full h-12 rounded-lg bg-white/[0.05] border border-[#6B7F9C] px-4 focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F29A2E] focus:border-[#F29A2E]"
             aria-invalid={Boolean(error)}
             aria-describedby={error ? "pw-error" : undefined}
           />

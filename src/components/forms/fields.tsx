@@ -1,9 +1,10 @@
+import { cloneElement, isValidElement } from "react";
 import clsx from "clsx";
 
 // Piezas de formulario compartidas (inscripción y contacto).
 
 export const inputCls =
-  "w-full h-13 min-h-[52px] rounded-lg bg-white/[0.05] border border-white/15 px-4 text-white text-base placeholder:text-[#8FA3BF]/70 focus:outline-none focus:border-[#F29A2E] focus:bg-white/[0.08] transition-colors aria-[invalid=true]:border-[#FF7A6B]";
+  "w-full h-13 min-h-[52px] rounded-lg bg-white/[0.05] border border-[#6B7F9C] px-4 text-white text-base placeholder:text-[#8FA3BF] focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F29A2E] focus:border-[#F29A2E] focus:bg-white/[0.08] transition-colors aria-[invalid=true]:border-[#FF7A6B]";
 
 export function Field({
   label,
@@ -18,14 +19,16 @@ export function Field({
   error?: string | null;
   children: React.ReactNode;
 }) {
+  // Conecta el error o la ayuda con el campo para que el lector de pantalla los lea al enfocarlo.
+  const describedBy = error ? `${htmlFor}-error` : hint ? `${htmlFor}-hint` : undefined;
   return (
     <div>
       <label htmlFor={htmlFor} className="block font-semibold mb-2">
         {label}
       </label>
-      {children}
+      {isValidElement<{ "aria-describedby"?: string }>(children) ? cloneElement(children, { "aria-describedby": describedBy }) : children}
       {error ? (
-        <p id={`${htmlFor}-error`} className="mt-2 text-sm text-[#FF9C90]">
+        <p id={`${htmlFor}-error`} role="alert" className="mt-2 text-sm text-[#FF9C90]">
           {error}
         </p>
       ) : hint ? (
@@ -68,13 +71,18 @@ export function ChoiceCard({
         aria-hidden="true"
         className={clsx(
           "ml-3 mt-0.5 h-5 w-5 shrink-0 rounded-full border-2 flex items-center justify-center",
-          checked ? "border-[#F29A2E]" : "border-white/30"
+          checked ? "border-[#F29A2E]" : "border-[#8FA3BF]"
         )}
       >
         {checked ? <span className="h-2.5 w-2.5 rounded-full bg-[#F29A2E]" /> : null}
       </span>
     </label>
   );
+}
+
+/** Tras un envío con errores, lleva el foco al primer campo inválido (después de que React marque aria-invalid). */
+export function focusFirstInvalid(form: HTMLElement | null) {
+  requestAnimationFrame(() => form?.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus());
 }
 
 // Campo trampa para bots: invisible para las personas.

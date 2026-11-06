@@ -9,7 +9,7 @@ import { btn } from "./ui";
 import type { FieldDef, RowData } from "./types";
 
 const input =
-  "w-full min-h-11 rounded-lg bg-white/[0.05] border border-white/15 px-3.5 text-white placeholder:text-[#8FA3BF]/70 focus:outline-none focus:border-[#F29A2E] aria-[invalid=true]:border-[#E5484D] transition-colors";
+  "w-full min-h-11 rounded-lg bg-white/[0.05] border border-[#6B7F9C] px-3.5 text-white placeholder:text-[#8FA3BF] focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F29A2E] focus:border-[#F29A2E] aria-[invalid=true]:border-[#E5484D] transition-colors";
 
 // Formulario genérico para crear o editar una fila de la hoja.
 export default function RowForm({

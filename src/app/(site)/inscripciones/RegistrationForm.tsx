@@ -7,7 +7,7 @@ import { ArrowLeft, ArrowRight, Check, Minus, Plus, MessageCircle, Loader2, Cloc
 import { downloadPass, makeCode, passQrText, qrMatrix, sharePass, type PassData } from "@/lib/pass";
 import { CATEGORIES, NIVELES, SEDES, categoryForAge } from "@/data/registration";
 import { useContact } from "@/components/ContactProvider";
-import { ChoiceCard, Field, Honeypot, inputCls } from "@/components/forms/fields";
+import { ChoiceCard, Field, Honeypot, focusFirstInvalid, inputCls } from "@/components/forms/fields";
 
 const PHONE_RE = /^[+\d][\d\s().-]{6,19}$/;
 const STEPS = ["Deportista", "Categoría", "Contacto"] as const;
@@ -119,7 +119,7 @@ export default function RegistrationForm({ horarios, perCategory }: Props) {
 
   const next = () => {
     setTouched(true);
-    if (!stepValid) return;
+    if (!stepValid) return focusFirstInvalid(formRef.current);
     setTouched(false);
     goTo(Math.min(step + 1, STEPS.length - 1));
   };
@@ -128,7 +128,7 @@ export default function RegistrationForm({ horarios, perCategory }: Props) {
     e.preventDefault();
     if (step < STEPS.length - 1) return next();
     setTouched(true);
-    if (!stepValid) return;
+    if (!stepValid) return focusFirstInvalid(formRef.current);
     setServerError(null);
     setStatus("sending");
     const passCode = code || makeCode(category);
@@ -183,7 +183,7 @@ export default function RegistrationForm({ horarios, perCategory }: Props) {
           <span className="w-14 h-14 rounded-full bg-[#25D366]/15 border border-[#25D366]/40 flex items-center justify-center text-[#25D366]">
             <Check size={28} />
           </span>
-          <h2 className="mt-6 font-heading font-black uppercase text-5xl leading-none">
+          <h2 ref={(el) => el?.focus()} tabIndex={-1} className="mt-6 outline-none font-heading font-black uppercase text-5xl leading-none">
             {status === "saved" ? "¡Inscripción recibida!" : "Falta un paso"}
           </h2>
           <p className="mt-4 text-lg text-[#C9D5E6] max-w-xl">
@@ -395,6 +395,7 @@ export default function RegistrationForm({ horarios, perCategory }: Props) {
                   onChange={(e) => setConsent(e.target.checked)}
                   className="mt-1 h-5 w-5 accent-[#F29A2E] shrink-0"
                   aria-invalid={touched && Boolean(errors.consent)}
+                  aria-describedby={touched && errors.consent ? "consent-error" : undefined}
                 />
                 <span className="text-[#C9D5E6]">
                   Autorizo al Club Voley Zúñiga a tratar estos datos para gestionar la inscripción, según la{" "}
@@ -404,7 +405,7 @@ export default function RegistrationForm({ horarios, perCategory }: Props) {
                   (Ley 1581 de 2012). Si el deportista es menor de edad, la autorización la da su acudiente.
                 </span>
               </label>
-              {touched && errors.consent ? <p className="mt-2 text-sm text-[#FF9C90]">{errors.consent}</p> : null}
+              {touched && errors.consent ? <p id="consent-error" role="alert" className="mt-2 text-sm text-[#FF9C90]">{errors.consent}</p> : null}
             </div>
             {serverError ? (
               <p role="alert" className="rounded-lg border border-[#FF7A6B]/40 bg-[#FF7A6B]/10 p-4 text-[#FFC2BA]">
