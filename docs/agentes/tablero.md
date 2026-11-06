@@ -40,13 +40,23 @@ Reglas del ciclo: `.claude/skills/voleyzuniga-ciclo-cambio/SKILL.md`. Investigac
 | 12 | `/partidos` y `/posiciones` dinámicas por `searchParams` | Rendimiento | Pendiente | — |
 | 13 | Rate limit compartido (Upstash/Vercel WAF) | Seguridad | Pendiente (decidir costo) | — |
 | 14 | Lighthouse real en móvil | QA | Pendiente | — |
-| 15 | Clasificar transcripciones de videos y cruzar con esta cola | Investigación | En curso | — |
+| 15 | Clasificar transcripciones de videos y cruzar con esta cola | Investigación | Hecho (`docs/investigacion/ideas-videos.md`) | PR #28 |
 | 16 | **Mejorar el panel `/admin`** (pedido del usuario). Auditoría en celular hecha (ver abajo); mejoras por ciclo | Panel | Auditado, pendiente de ejecutar | — |
 | 16a | Posiciones desborda a lo ancho en celular (565 px en 390): el `sr-only` absoluto de la última columna escapaba del `overflow-x-auto` | Panel | Hecho | `fix/panel-movil` |
 | 16b | Lentitud: cada sección 2,7–4,5 s y Ajustes 13 s; sin `loading.tsx` en `/admin` (pantalla congelada al navegar) | Panel | Pendiente (medir qué pesa en Ajustes) | — |
 | 16c | Navegación móvil: 12 secciones en una fila que se corta sin indicar que hay más; proponer barra inferior con 4 principales + "Más" | Panel | Pendiente | — |
 | 16d | Filtros que abren vacíos: Inscripciones abre en "Nuevo" (vacío) y Partidos en "Próximos" (vacío) aunque hay 1 resultado por cargar; abrir en la pestaña con trabajo pendiente | Panel | Hecho | `fix/panel-movil` |
 | 16e | Pendientes de revisar con datos: flujo de cargar resultado, editar inscripción, publicar noticia (requiere guardar: pedir permiso) | Panel | Pendiente | — |
+| 17 | Dependabot + `npm audit --omit=dev` en CI | Seguridad | En PR | `feat/estabilidad-basica` |
+| 18 | `error.tsx` / `global-error.tsx` con reintento | Buenas prácticas | En PR | `feat/estabilidad-basica` |
+| 19 | Prioridad a la imagen principal de la portada (LCP) | Rendimiento | En PR | `feat/estabilidad-basica` |
+| 20 | Google Business + QR de reseñas en el pase | SEO/Mercadeo | Pendiente (club) | — |
+| 21 | Prueba de accesibilidad automática (axe) en CI | Accesibilidad | Pendiente | — |
+| 22 | Lighthouse en CI para móvil | Rendimiento | Pendiente | — |
+| 23 | Tokens de color en el tema de Tailwind (`#F29A2E` ×261) | Diseño | Pendiente | — |
+| 24 | Plan de respuesta a incidentes | Seguridad | Pendiente | — |
+| 25 | Microinteracciones (Emil Kowalski, con `reduced-motion`) | Diseño | Pendiente | — |
+| 26 | Precio o rango visible en la web | Mercadeo | Pendiente (decisión del club) | — |
 
 ## Run
 
