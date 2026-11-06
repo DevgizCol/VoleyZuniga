@@ -41,6 +41,7 @@ Reglas del ciclo: `.claude/skills/voleyzuniga-ciclo-cambio/SKILL.md`. Investigac
 | 13 | Rate limit compartido (Upstash/Vercel WAF) | Seguridad | Pendiente (decidir costo) | — |
 | 14 | Lighthouse real en móvil | QA | Pendiente | — |
 | 15 | Clasificar transcripciones de videos y cruzar con esta cola | Investigación | En curso | — |
+| 16 | **Mejorar el panel `/admin`** (pedido del usuario): auditoría de UX para el cuerpo técnico en celular (flujos de inscripciones, resultados, noticias), accesibilidad con teclado, rendimiento y diseño; luego mejoras por ciclo | Panel | Pendiente — auditar primero | — |
 
 ## Run
 
