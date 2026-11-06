@@ -33,7 +33,7 @@ export default async function SchedulesAdmin() {
             <Card key={day} className="overflow-hidden">
               <div className="px-5 py-3 bg-[#0F2347] border-b border-white/10 flex items-baseline justify-between">
                 <h2 className="font-heading font-black uppercase text-2xl">{day}</h2>
-                <span className="text-xs text-[#8FA3BF]">{rows.filter((r) => r["Día"] === day).length} sesiones</span>
+                <span className="text-xs text-[#8FA3BF]">{(() => { const n = rows.filter((r) => r["Día"] === day).length; return `${n} ${n === 1 ? "sesión" : "sesiones"}`; })()}</span>
               </div>
               <ul className="divide-y divide-white/10">
                 {rows

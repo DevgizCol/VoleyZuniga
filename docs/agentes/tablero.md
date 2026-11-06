@@ -47,6 +47,7 @@ Reglas del ciclo: `.claude/skills/voleyzuniga-ciclo-cambio/SKILL.md`. Investigac
 | 16c | Navegación móvil: 12 secciones en una fila que se corta sin indicar que hay más; barra inferior descartada (Ponytail): se desplaza a la sección activa + desvanecido que indica más | Panel | En PR | `feat/panel-menu-movil` |
 | 16d | Filtros que abren vacíos: Inscripciones abre en "Nuevo" (vacío) y Partidos en "Próximos" (vacío) aunque hay 1 resultado por cargar; abrir en la pestaña con trabajo pendiente | Panel | Hecho | `fix/panel-movil` |
 | 16e | Pendientes de revisar con datos: flujo de cargar resultado, editar inscripción, publicar noticia (requiere guardar: pedir permiso) | Panel | Pendiente | — |
+| 16f | Módulos en escritorio: barra Guardar tapaba el último campo, Noticias en 3 columnas, etiquetas vacías, "Personalizable" con cualquier texto, "1 sesiones" | Panel | En PR | `feat/panel-modulos` |
 | 17 | Dependabot + `npm audit --omit=dev` en CI | Seguridad | En PR | `feat/estabilidad-basica` |
 | 18 | `error.tsx` / `global-error.tsx` con reintento | Buenas prácticas | En PR | `feat/estabilidad-basica` |
 | 19 | Prioridad a la imagen principal de la portada (LCP) | Rendimiento | En PR | `feat/estabilidad-basica` |
