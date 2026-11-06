@@ -33,7 +33,7 @@ export default async function NewsAdmin() {
       ) : rows.length === 0 ? (
         <Empty title="Aún no hay noticias">Publica la primera: un resultado, una convocatoria o una novedad del club.</Empty>
       ) : (
-        <ul className="grid md:grid-cols-2 gap-4">
+        <ul className="grid md:grid-cols-2 xl:grid-cols-3 gap-4">
           {rows.map((r) => {
             const img = preview(r["Imagen (URL)"] || "");
             const draft = (r.Activo || "").toUpperCase() === "NO";
@@ -45,7 +45,7 @@ export default async function NewsAdmin() {
                     {img ? <img src={img} alt="" className="absolute inset-0 w-full h-full object-cover" loading="lazy" /> : null}
                     <div className="absolute left-3 top-3 flex gap-2">
                       <Badge tone={draft ? "muted" : "success"}>{draft ? "Borrador" : "Publicada"}</Badge>
-                      <Badge>{r["Categoría"]}</Badge>
+                      {r["Categoría"] ? <Badge>{r["Categoría"]}</Badge> : null}
                     </div>
                   </div>
                   <div className="p-5 flex-1 flex flex-col">

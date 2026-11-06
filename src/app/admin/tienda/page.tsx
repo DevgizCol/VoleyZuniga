@@ -39,8 +39,8 @@ export default async function StoreAdmin() {
                   <div className="relative aspect-[4/3] bg-[#071426]">
                     <img src={img} alt="" className="absolute inset-0 w-full h-full object-contain" loading="lazy" />
                     <div className="absolute left-3 top-3 flex gap-2">
-                      <Badge>{p["Categoría"]}</Badge>
-                      {p.Personalizable ? <Badge tone="accent">Personalizable</Badge> : null}
+                      {p["Categoría"] ? <Badge>{p["Categoría"]}</Badge> : null}
+                      {/^(titular|home|l[ií]bero)$/i.test((p.Personalizable || "").trim()) ? <Badge tone="accent">Personalizable · {p.Personalizable}</Badge> : null}
                       {hidden ? <Badge tone="muted">Oculto</Badge> : null}
                     </div>
                   </div>

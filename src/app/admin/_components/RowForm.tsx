@@ -140,7 +140,7 @@ export default function RowForm({
         </p>
       ) : null}
 
-      <div className="sticky bottom-0 -mx-5 sm:-mx-6 px-5 sm:px-6 py-4 bg-[#0B1E38]/95 backdrop-blur border-t border-white/10 flex justify-end">
+      <div className="sticky -bottom-6 -mx-5 sm:-mx-6 px-5 sm:px-6 py-4 bg-[#0B1E38]/95 backdrop-blur border-t border-white/10 flex justify-end">
         <button type="submit" disabled={pending} className={btn.primary}>
           {pending ? <Loader2 size={18} className="animate-spin" /> : <Save size={18} />} {pending ? "Guardando…" : submitLabel ?? (row ? "Guardar cambios" : "Crear")}
         </button>
