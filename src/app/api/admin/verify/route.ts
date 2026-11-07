@@ -32,7 +32,8 @@ export async function POST(request: Request) {
   const user = verifyOtp(store.get(OTP_COOKIE)?.value, code);
   if (!user) return NextResponse.json({ ok: false, error: "Código incorrecto o vencido." }, { status: 401 });
 
-  await resetShared(key);
+  // Entró bien: se liberan también los intentos de contraseña de esta red (varios usuarios comparten el WiFi de la cancha).
+  await Promise.all([resetShared(key), resetShared(`login:${clientIp(request)}`)]);
   const session = createSessionToken(user);
   const device = createDeviceToken(user);
   if (!session || !device) return NextResponse.json({ ok: false, error: "No se pudo crear la sesión." }, { status: 500 });
