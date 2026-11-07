@@ -28,6 +28,8 @@ export type Settings = {
   affiliations: string[];
   /** Compromisos de cuidado de los deportistas, uno por línea. */
   care: string[];
+  /** Enlace para dejar una reseña en Google (ficha de Google Business). Vacío: no se pide. */
+  reviewUrl: string;
 };
 
 const lines = (raw: string) =>
@@ -90,6 +92,7 @@ export const getSettings = cache(async (): Promise<Settings> => {
     stats: parseStats(map.get("cifras") || ""),
     // Sin la fila en Ajustes se muestra el precio vigente; con la fila vacía se oculta.
     priceFrom: (map.get("precio_desde") ?? "$60.000").slice(0, 40),
+    reviewUrl: /^https:\/\/\S{8,300}$/.test(map.get("resenas_url") || "") ? (map.get("resenas_url") as string) : "",
     spots: parseSpots(map.get("cupos") || ""),
     affiliations: (map.get("afiliaciones") || "")
       .split(/[,\n]/)

@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { CheckCircle2, CircleAlert, ArrowLeft } from "lucide-react";
+import { CheckCircle2, CircleAlert, ArrowLeft, Star } from "lucide-react";
 import { adminRead } from "@/lib/sheets";
+import { getSettings } from "@/lib/content";
 import { FREE_CLASS_COL, findByCode } from "@/lib/admin/free-class";
 import { PageHeader, Card, Empty, NotConnected, btn } from "../../_components/ui";
 import { shortDate, waLink } from "../../_components/format";
@@ -16,7 +17,7 @@ export const dynamic = "force-dynamic";
 export default async function PassCard({ params }: { params: Promise<{ codigo: string }> }) {
   const { codigo } = await params;
   const code = decodeURIComponent(codigo).trim().toUpperCase();
-  const table = await adminRead("Inscripciones");
+  const [table, { reviewUrl }] = await Promise.all([adminRead("Inscripciones"), getSettings()]);
   if (!table) return <NotConnected />;
   // Un encabezado mal escrito ("Codigo ", sin tilde) haría que ningún pase aparezca: decirlo claro.
   if (!table.headers.includes("Código")) {
@@ -41,6 +42,8 @@ export default async function PassCard({ params }: { params: Promise<{ codigo: s
 
   const used = r[FREE_CLASS_COL];
   const wa = waLink(r.WhatsApp || "", `Hola, te escribimos del Club Voley Zúñiga sobre la clase de ${r.Nombre}.`);
+  // Tras la clase gratis (no antes): pedir la reseña cuando ya hubo una experiencia real.
+  const reviewWa = reviewUrl ? waLink(r.WhatsApp || "", `¡Gracias por venir a la clase de prueba de ${r.Nombre}! Si te gustó, ¿nos ayudas con una reseña en Google? Nos toma 1 minuto y ayuda a otras familias a encontrarnos: ${reviewUrl}`) : "";
   const missingColumn = !table.headers.includes(FREE_CLASS_COL);
   const facts: [string, string][] = [
     ["Edad", r.Edad ? `${r.Edad} años` : "—"],
@@ -110,6 +113,11 @@ export default async function PassCard({ params }: { params: Promise<{ codigo: s
               className={`${btn.secondary} w-full`}
             >
               <WhatsAppIcon size={18} /> Escribir a la familia <span className="sr-only">(abre WhatsApp)</span>
+            </a>
+          ) : null}
+          {used && reviewWa ? (
+            <a href={reviewWa} target="_blank" rel="noopener noreferrer" className={`${btn.secondary} w-full`}>
+              <Star size={18} aria-hidden /> Pedir reseña en Google <span className="sr-only">(abre WhatsApp)</span>
             </a>
           ) : null}
         </Card>

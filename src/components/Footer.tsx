@@ -2,7 +2,7 @@ import React from "react";
 import DevGizCredit from "./DevGizCredit";
 import Link from "next/link";
 import Image from "next/image";
-import { Phone, Mail, MapPin, ArrowRight } from "lucide-react";
+import { Phone, Mail, MapPin, ArrowRight, Star } from "lucide-react";
 import { NAV_LINKS, SITE } from "@/config/site";
 import { telLink } from "@/config/contact";
 import { getSettings } from "@/lib/content";
@@ -10,7 +10,7 @@ import { SEDES } from "@/data/registration";
 import { InstagramIcon } from "@/components/BrandIcons";
 
 export default async function Footer() {
-  const { contact } = await getSettings();
+  const { contact, reviewUrl } = await getSettings();
   return (
     <footer className="relative w-full overflow-hidden bg-[#050E1C] text-white pt-14 pb-[calc(6rem+env(safe-area-inset-bottom,0px))] md:pb-10">
       <div className="court-rule mb-12" />
@@ -32,6 +32,11 @@ export default async function Footer() {
             >
               <InstagramIcon size={18} className="text-[#F29A2E]" /> Instagram {contact.instagramHandle}
             </a>
+            {reviewUrl ? (
+              <a href={reviewUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 w-fit text-sm font-semibold text-white hover:text-[#F29A2E] transition-colors">
+                <Star size={18} className="text-[#F29A2E]" aria-hidden="true" /> Califícanos en Google
+              </a>
+            ) : null}
             <Link
               href="/inscripciones"
               className="group mt-1 h-12 px-5 w-fit inline-flex items-center gap-2 rounded-md bg-[#F29A2E] hover:bg-[#FFB14A] text-[#071426] font-bold transition-colors"
