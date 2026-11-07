@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { pageMeta } from "@/lib/seo";
 import Link from "next/link";
-import { CalendarPlus, CalendarCheck, Clock, MapPin, Navigation, ArrowRight, Camera } from "lucide-react";
+import { CalendarPlus, CalendarCheck, Clock, MapPin, Navigation, ArrowRight } from "lucide-react";
 import { siteUrl } from "@/lib/site-url";
 import PageHero from "@/components/PageHero";
 import JsonLd from "@/components/JsonLd";
@@ -10,6 +10,7 @@ import TeamBadge from "@/components/TeamBadge";
 import { getSettings } from "@/lib/content";
 import { CATEGORIES } from "@/data/registration";
 import { bogotaToday, calendarUrl, countdownLabel, dateParts, getMatches, time12, type Match } from "@/lib/matches";
+import { InstagramIcon } from "@/components/BrandIcons";
 
 export const metadata: Metadata = pageMeta("/partidos", "Partidos", "Calendario de partidos y resultados del Club Voley Zúñiga.", true);
 
@@ -290,7 +291,7 @@ function EmptyUpcoming({ filtered, instagram: contact }: { filtered: boolean; in
         rel="noopener noreferrer"
         className="h-12 px-6 inline-flex items-center gap-2 bg-[#F29A2E] hover:bg-[#FFB14A] text-[#071426] font-bold rounded-md transition-colors"
       >
-        <Camera size={18} /> Seguir {contact.instagramHandle}
+        <InstagramIcon size={18} /> Seguir {contact.instagramHandle}
       </a>
     </div>
   );

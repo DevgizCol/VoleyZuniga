@@ -2,11 +2,12 @@ import React from "react";
 import DevGizCredit from "./DevGizCredit";
 import Link from "next/link";
 import Image from "next/image";
-import { Phone, Mail, MapPin, Camera, ArrowRight } from "lucide-react";
+import { Phone, Mail, MapPin, ArrowRight } from "lucide-react";
 import { NAV_LINKS, SITE } from "@/config/site";
 import { telLink } from "@/config/contact";
 import { getSettings } from "@/lib/content";
 import { SEDES } from "@/data/registration";
+import { InstagramIcon } from "@/components/BrandIcons";
 
 export default async function Footer() {
   const { contact } = await getSettings();
@@ -29,7 +30,7 @@ export default async function Footer() {
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 w-fit text-sm font-semibold text-white hover:text-[#F29A2E] transition-colors"
             >
-              <Camera size={18} className="text-[#F29A2E]" /> Instagram {contact.instagramHandle}
+              <InstagramIcon size={18} className="text-[#F29A2E]" /> Instagram {contact.instagramHandle}
             </a>
             <Link
               href="/inscripciones"

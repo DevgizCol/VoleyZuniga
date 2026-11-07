@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
-import { Mail, MessageCircle } from "lucide-react";
+import { Mail } from "lucide-react";
 import { adminRead } from "@/lib/sheets";
 import { PageHeader, NotConnected, Card, Empty, Badge, btn } from "../_components/ui";
 import StatusSelect from "../_components/StatusSelect";
 import NoteButton from "../_components/NoteButton";
 import { shortDate, waLink } from "../_components/format";
+import { WhatsAppIcon } from "@/components/BrandIcons";
 
 export const metadata: Metadata = { title: "Mensajes" };
 export const dynamic = "force-dynamic";
@@ -53,7 +54,7 @@ export default async function MessagesAdmin({ searchParams }: { searchParams: Pr
                   <div className="mt-4 flex flex-wrap gap-2">
                     {wa ? (
                       <a href={wa} target="_blank" rel="noopener noreferrer" className={btn.whatsapp}>
-                        <MessageCircle size={16} /> WhatsApp
+                        <WhatsAppIcon size={16} /> WhatsApp
                       </a>
                     ) : null}
                     {email ? (

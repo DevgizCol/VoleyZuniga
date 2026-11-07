@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { LogOut, MessageCircle, Copy, Check } from "lucide-react";
+import { LogOut, Copy, Check } from "lucide-react";
+import { WhatsAppIcon } from "@/components/BrandIcons";
 
 export function LogoutButton({ compact = false }: { compact?: boolean }) {
   const router = useRouter();
@@ -65,7 +66,7 @@ export function GroupMessage({ gamesUrl }: { gamesUrl: string }) {
           rel="noopener noreferrer"
           className="h-11 px-5 inline-flex items-center gap-2 rounded-md bg-[#25D366] text-[#071426] font-bold"
         >
-          <MessageCircle size={18} /> Enviar por WhatsApp
+          <WhatsAppIcon size={18} /> Enviar por WhatsApp
         </a>
         <button
           type="button"

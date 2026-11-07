@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { pageMeta } from "@/lib/seo";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, ChevronDown, Camera, MessageCircle, MapPin, Clock, Quote, Check, ShieldCheck, Users } from "lucide-react";
+import { ArrowRight, ChevronDown, MapPin, Clock, Quote, Check, ShieldCheck, Users } from "lucide-react";
 import HeroCourt from "@/components/HeroCourt";
 import JsonLd from "@/components/JsonLd";
 import NextSession from "@/components/NextSession";
@@ -16,6 +16,7 @@ import { categorySchedules, getRecentRegistrations, getSessions, getSettings, sp
 import { CATEGORIES, SEDES } from "@/data/registration";
 import { DAY_NAMES, formatTime } from "@/data/schedule";
 import { getCoaches, getGallery, getTestimonials } from "@/lib/club";
+import { InstagramIcon, WhatsAppIcon } from "@/components/BrandIcons";
 
 export const metadata: Metadata = {
   ...pageMeta("/", "Club de Voleibol Zúñiga | Voleibol en Medellín para niños y jóvenes", "Clases de voleibol en Medellín para niños, jóvenes y adultos desde los 7 años. Cinco categorías, dos sedes y la primera clase sin costo."),
@@ -361,7 +362,7 @@ export default async function Home() {
               rel="noopener noreferrer"
               className="h-14 px-7 inline-flex items-center justify-center gap-2 border border-[#0F2347]/25 hover:border-[#0F2347] font-semibold text-lg rounded-md transition-colors"
             >
-              <MessageCircle size={20} className="text-[#1DA851]" /> Preguntar por WhatsApp
+              <WhatsAppIcon size={20} className="text-[#1DA851]" /> Preguntar por WhatsApp
             </a>
           </div>
         </div>
@@ -542,7 +543,7 @@ export default async function Home() {
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 h-12 px-5 rounded-md bg-[#25D366] text-[#071426] font-bold hover:brightness-110"
               >
-                <MessageCircle size={18} /> Escribir por WhatsApp
+                <WhatsAppIcon size={18} /> Escribir por WhatsApp
               </a>
             </div>
           </div>
@@ -591,7 +592,7 @@ export default async function Home() {
                 rel="noopener noreferrer"
                 className="h-14 px-7 inline-flex items-center justify-center gap-2 border-2 border-[#071426] font-bold text-lg rounded-md hover:bg-[#071426] hover:text-white transition-colors"
               >
-                <Camera size={20} /> {contact.instagramHandle}
+                <InstagramIcon size={20} /> {contact.instagramHandle}
               </a>
             </div>
           </div>

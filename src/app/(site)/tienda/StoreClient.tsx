@@ -3,13 +3,14 @@
 import { useState } from "react";
 import Image from "next/image";
 import clsx from "clsx";
-import { Check, Plus, ShoppingCart, MessageCircle, RotateCcw } from "lucide-react";
+import { Check, Plus, ShoppingCart, RotateCcw } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import ProductViewer from "@/components/store/ProductViewer";
 import { PRODUCTS, SIZES, cop, type Product } from "@/data/products";
 
 const FALLBACK_JERSEY = PRODUCTS[0];
 import { useContact } from "@/components/ContactProvider";
+import { WhatsAppIcon } from "@/components/BrandIcons";
 
 export default function StoreClient({ products }: { products: Product[] }) {
   const { wa } = useContact();
@@ -129,7 +130,7 @@ export default function StoreClient({ products }: { products: Product[] }) {
                     {added === "jersey" ? <><Check size={18} /> Agregada</> : <><ShoppingCart size={18} /> Agregar al carrito</>}
                   </button>
                   <a href={wa(directMessage)} target="_blank" rel="noopener noreferrer" className="h-12 px-5 inline-flex items-center gap-2 rounded-md border border-white/25 hover:border-white font-semibold">
-                    <MessageCircle size={18} className="text-[#25D366]" /> Pedir ya
+                    <WhatsAppIcon size={18} className="text-[#25D366]" /> Pedir ya
                   </a>
                 </div>
               </div>

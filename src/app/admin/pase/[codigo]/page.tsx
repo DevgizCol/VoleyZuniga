@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { CheckCircle2, CircleAlert, MessageCircle, ArrowLeft } from "lucide-react";
+import { CheckCircle2, CircleAlert, ArrowLeft } from "lucide-react";
 import { adminRead } from "@/lib/sheets";
 import { FREE_CLASS_COL, findByCode } from "@/lib/admin/free-class";
 import { PageHeader, Card, Empty, NotConnected, btn } from "../../_components/ui";
 import { shortDate, waLink } from "../../_components/format";
 import StatusSelect from "../../_components/StatusSelect";
 import FreeClassActions from "./FreeClassActions";
+import { WhatsAppIcon } from "@/components/BrandIcons";
 
 export const metadata: Metadata = { title: "Ficha del pase" };
 export const dynamic = "force-dynamic";
@@ -99,7 +100,7 @@ export default async function PassCard({ params }: { params: Promise<{ codigo: s
               rel="noopener noreferrer"
               className={`${btn.secondary} w-full`}
             >
-              <MessageCircle size={18} /> Escribir a la familia <span className="sr-only">(abre WhatsApp)</span>
+              <WhatsAppIcon size={18} /> Escribir a la familia <span className="sr-only">(abre WhatsApp)</span>
             </a>
           ) : null}
         </Card>

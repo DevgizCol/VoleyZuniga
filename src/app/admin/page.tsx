@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Inbox, Users, Mail, CalendarDays, ArrowRight, MessageCircle, CheckCircle2, CloudRain } from "lucide-react";
+import { Inbox, Users, Mail, CalendarDays, ArrowRight, CheckCircle2, CloudRain } from "lucide-react";
 import { getAdmin } from "@/lib/auth";
 import { adminRead } from "@/lib/sheets";
 import { funnel } from "@/lib/admin/free-class";
@@ -10,6 +10,7 @@ import EditorButton from "./_components/EditorButton";
 import { Card, PageHeader, Badge, NotConnected, btn } from "./_components/ui";
 import { FIXTURE_FIELDS, NEWS_FIELDS } from "./_components/fields";
 import { bogotaToday, daysAgo, isoDate, shortDate, hhmm, waLink } from "./_components/format";
+import { WhatsAppIcon } from "@/components/BrandIcons";
 
 export const dynamic = "force-dynamic";
 
@@ -148,7 +149,7 @@ export default async function AdminHome() {
                       </div>
                       {wa ? (
                         <a href={wa} target="_blank" rel="noopener noreferrer" className={btn.whatsapp}>
-                          <MessageCircle size={16} /> Escribir
+                          <WhatsAppIcon size={16} /> Escribir
                         </a>
                       ) : null}
                       <StatusSelect sheet="Inscripciones" row={r} />

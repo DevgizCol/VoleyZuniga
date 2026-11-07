@@ -3,11 +3,12 @@ import { driveSrcSet } from "@/lib/sheet-values";
 import { CARD_SIZES } from "@/components/BrandPhoto";
 import type { Metadata } from "next";
 import { pageMeta } from "@/lib/seo";
-import { Camera } from "lucide-react";
+
 import PageHero from "@/components/PageHero";
 import { SITE } from "@/config/site";
 import { getGallery } from "@/lib/club";
 import { longDate } from "@/lib/news";
+import { InstagramIcon } from "@/components/BrandIcons";
 
 export const metadata: Metadata = pageMeta("/galeria", "Galería", "Fotos de entrenamientos, partidos y torneos del Club Voley Zúñiga.");
 
@@ -28,7 +29,7 @@ export default async function GalleryPage() {
                 <p className="mt-4 text-[#C9D5E6] text-lg max-w-xl">Mientras armamos la galería, el día a día del club se publica en Instagram.</p>
               </div>
               <a href={SITE.instagram.url} target="_blank" rel="noopener noreferrer" className="h-12 px-6 inline-flex items-center gap-2 bg-[#F29A2E] hover:bg-[#FFB14A] text-[#071426] font-bold rounded-md">
-                <Camera size={18} /> Seguir {SITE.instagram.handle}
+                <InstagramIcon size={18} /> Seguir {SITE.instagram.handle}
               </a>
             </div>
           ) : (

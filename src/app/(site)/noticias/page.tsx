@@ -2,11 +2,12 @@ import type { Metadata } from "next";
 import { pageMeta } from "@/lib/seo";
 import { ViewTransition } from "react";
 import Link from "next/link";
-import { ArrowRight, Camera } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import PageHero from "@/components/PageHero";
 import ArticleCover from "@/components/ArticleCover";
 import { getSettings } from "@/lib/content";
 import { getArticles, longDate } from "@/lib/news";
+import { InstagramIcon } from "@/components/BrandIcons";
 
 export const metadata: Metadata = pageMeta("/noticias", "Noticias", "Crónicas, convocatorias y novedades del Club Voley Zúñiga.");
 
@@ -28,7 +29,7 @@ export default async function NewsPage() {
                 <p className="mt-4 text-[#C9D5E6] text-lg max-w-xl">Mientras preparamos las crónicas, el día a día del club se publica en Instagram.</p>
               </div>
               <a href={contact.instagramUrl} target="_blank" rel="noopener noreferrer" className="h-12 px-6 inline-flex items-center gap-2 bg-[#F29A2E] hover:bg-[#FFB14A] text-[#071426] font-bold rounded-md">
-                <Camera size={18} /> Seguir {contact.instagramHandle}
+                <InstagramIcon size={18} /> Seguir {contact.instagramHandle}
               </a>
             </div>
           ) : (

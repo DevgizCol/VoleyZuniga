@@ -3,11 +3,12 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import clsx from "clsx";
-import { ArrowLeft, ArrowRight, Check, Minus, Plus, MessageCircle, Loader2, Clock, MapPin, Download, Share2, CalendarPlus, UserPlus } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, Minus, Plus, Loader2, Clock, MapPin, Download, Share2, CalendarPlus, UserPlus } from "lucide-react";
 import { downloadPass, makeCode, passQrText, qrMatrix, sharePass, type PassData } from "@/lib/pass";
 import { CATEGORIES, NIVELES, SEDES, categoryForAge } from "@/data/registration";
 import { useContact } from "@/components/ContactProvider";
 import { ChoiceCard, Field, Honeypot, focusFirstInvalid, inputCls } from "@/components/forms/fields";
+import { WhatsAppIcon } from "@/components/BrandIcons";
 
 const PHONE_RE = /^[+\d][\d\s().-]{6,19}$/;
 const STEPS = ["Deportista", "Categoría", "Contacto"] as const;
@@ -205,7 +206,7 @@ export default function RegistrationForm({ horarios, perCategory }: Props) {
             rel="noopener noreferrer"
             className="mt-8 h-14 px-7 inline-flex items-center gap-2 rounded-md bg-[#25D366] text-[#071426] font-bold text-lg hover:brightness-110"
           >
-            <MessageCircle size={20} /> Agendar por WhatsApp
+            <WhatsAppIcon size={20} /> Agendar por WhatsApp
           </a>
           <div className="mt-8 pt-8 border-t border-white/10">
             <p className="font-heading font-extrabold text-2xl">Tu pase de clase de prueba</p>

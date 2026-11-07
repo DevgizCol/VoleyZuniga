@@ -4,13 +4,14 @@ import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { Menu, X, ShoppingCart, MessageCircle, Phone, ChevronDown } from "lucide-react";
+import { Menu, X, ShoppingCart, Phone, ChevronDown } from "lucide-react";
 import clsx from "clsx";
 import { useCart } from "@/context/CartContext";
 import CourtStatusBanner from "./CourtStatusBanner";
 import { NAV_LINKS, NAV_MENU, SITE } from "@/config/site";
 import { useContact } from "./ContactProvider";
 import type { CourtNotice } from "@/lib/court";
+import { WhatsAppIcon } from "@/components/BrandIcons";
 
 export default function Header({ notices = [] }: { notices?: CourtNotice[] }) {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -235,7 +236,7 @@ export default function Header({ notices = [] }: { notices?: CourtNotice[] }) {
               rel="noopener noreferrer"
               className="h-12 flex items-center justify-center gap-2 border border-[#25D366]/50 text-[#25D366] font-semibold rounded-md"
             >
-              <MessageCircle size={18} /> WhatsApp
+              <WhatsAppIcon size={18} /> WhatsApp
             </a>
             <a href={tel} className="h-12 flex items-center justify-center gap-2 border border-white/20 text-white font-semibold rounded-md">
               <Phone size={18} className="text-[#F29A2E]" /> Llamar

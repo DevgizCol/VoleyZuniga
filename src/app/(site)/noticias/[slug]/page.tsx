@@ -2,11 +2,12 @@ import type { Metadata } from "next";
 import { ViewTransition } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, MessageCircle } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import ArticleCover from "@/components/ArticleCover";
 import JsonLd from "@/components/JsonLd";
 import { getArticle, longDate } from "@/lib/news";
 import { siteUrl } from "@/lib/site-url";
+import { WhatsAppIcon } from "@/components/BrandIcons";
 
 export const revalidate = 300;
 
@@ -61,7 +62,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
           {a.body.split(/\n{1,}/).filter(Boolean).map((p, i) => <p key={i}>{p}</p>)}
         </div>
         <a href={share} target="_blank" rel="noopener noreferrer" className="mt-12 h-12 px-5 inline-flex items-center gap-2 rounded-md border border-[#25D366]/50 text-[#25D366] font-semibold hover:bg-[#25D366]/10">
-          <MessageCircle size={18} /> Compartir por WhatsApp
+          <WhatsAppIcon size={18} /> Compartir por WhatsApp
         </a>
       </div>
     </article>

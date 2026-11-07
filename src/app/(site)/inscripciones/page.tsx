@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import { pageMeta } from "@/lib/seo";
 import Link from "next/link";
-import { MessageCircle } from "lucide-react";
+
 import PageHero from "@/components/PageHero";
 import RegistrationForm from "./RegistrationForm";
 import { categorySchedules, getSessions, getSettings, scheduleOptions } from "@/lib/content";
 import { waLink } from "@/config/contact";
+import { WhatsAppIcon } from "@/components/BrandIcons";
 
 export const metadata: Metadata = pageMeta("/inscripciones", "Inscripción y clase de prueba gratis", "Inscribe a tu hijo o inscríbete en voleibol en Medellín y agenda una clase de prueba sin costo en el Club Voley Zúñiga.");
 
@@ -35,7 +36,7 @@ export default async function RegistrationsPage() {
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
                 <a href={waLink(settings.contact, "Hola, quiero que me avisen cuando abran cupos en el Club Voley Zúñiga")} target="_blank" rel="noopener noreferrer" className="h-12 px-5 inline-flex items-center gap-2 rounded-md bg-[#25D366] text-[#071426] font-bold">
-                  <MessageCircle size={18} /> Avísenme por WhatsApp
+                  <WhatsAppIcon size={18} /> Avísenme por WhatsApp
                 </a>
                 <Link href="/contacto" className="h-12 px-5 inline-flex items-center rounded-md border border-white/25 hover:border-white font-semibold">
                   Ver horarios y sedes

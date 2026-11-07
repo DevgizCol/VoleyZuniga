@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import { pageMeta } from "@/lib/seo";
-import { MapPin, Phone, Mail, Clock, Navigation, MessageCircle, Camera } from "lucide-react";
+import { MapPin, Phone, Mail, Clock, Navigation } from "lucide-react";
 import PageHero from "@/components/PageHero";
 import ContactForm from "./ContactForm";
 import { telLink, waLink } from "@/config/contact";
 import { getSessions, getSettings, trainingDays } from "@/lib/content";
 import { VENUES, mapEmbed, mapsLink, wazeLink } from "@/data/venues";
 import { DAY_NAMES, formatTime } from "@/data/schedule";
+import { InstagramIcon, WhatsAppIcon } from "@/components/BrandIcons";
 
 export const metadata: Metadata = pageMeta("/contacto", "Sedes, horarios y contacto", "Sedes, horarios de entrenamiento y canales de contacto del Club Voley Zúñiga en Medellín.");
 
@@ -25,7 +26,7 @@ export default async function ContactPage() {
       >
         <div className="flex flex-col sm:flex-row gap-3">
           <a href={waLink(contact)} target="_blank" rel="noopener noreferrer" className="h-14 px-7 inline-flex items-center justify-center gap-2 rounded-md bg-[#25D366] text-[#071426] font-bold text-lg hover:brightness-110">
-            <MessageCircle size={20} /> Escribir por WhatsApp
+            <WhatsAppIcon size={20} /> Escribir por WhatsApp
           </a>
           <a href={telLink(contact)} className="h-14 px-7 inline-flex items-center justify-center gap-2 rounded-md border border-white/25 hover:border-white font-semibold text-lg">
             <Phone size={20} className="text-[#F29A2E]" /> {contact.phoneDisplay}
@@ -115,7 +116,7 @@ export default async function ContactPage() {
               </li>
               <li>
                 <a href={contact.instagramUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 hover:text-[#F29A2E]">
-                  <span className="w-11 h-11 rounded-full bg-white/[0.06] flex items-center justify-center"><Camera size={20} className="text-[#F29A2E]" /></span>
+                  <span className="w-11 h-11 rounded-full bg-white/[0.06] flex items-center justify-center"><InstagramIcon size={20} className="text-[#F29A2E]" /></span>
                   {contact.instagramHandle}
                 </a>
               </li>

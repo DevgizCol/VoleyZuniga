@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
 import { pageMeta } from "@/lib/seo";
 import Link from "next/link";
-import { ArrowRight, Camera } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import PageHero from "@/components/PageHero";
 import CategoryFilter from "@/components/CategoryFilter";
 import TeamBadge from "@/components/TeamBadge";
 import { getSettings } from "@/lib/content";
 import { CATEGORIES } from "@/data/registration";
 import { getStandings, type StandingRow } from "@/lib/matches";
+import { InstagramIcon } from "@/components/BrandIcons";
 
 export const metadata: Metadata = pageMeta("/posiciones", "Posiciones", "Tabla de posiciones de los equipos del Club Voley Zúñiga por categoría.");
 
@@ -63,7 +64,7 @@ export default async function StandingsPage({ searchParams }: { searchParams: Pr
                 rel="noopener noreferrer"
                 className="h-12 px-6 inline-flex items-center gap-2 bg-[#F29A2E] hover:bg-[#FFB14A] text-[#071426] font-bold rounded-md transition-colors"
               >
-                <Camera size={18} /> Seguir {contact.instagramHandle}
+                <InstagramIcon size={18} /> Seguir {contact.instagramHandle}
               </a>
             </div>
           ) : (

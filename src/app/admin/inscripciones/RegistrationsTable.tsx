@@ -2,13 +2,14 @@
 
 import { useDeferredValue, useMemo, useState } from "react";
 import clsx from "clsx";
-import { MessageCircle, Search } from "lucide-react";
+import { Search } from "lucide-react";
 import { REGISTRATION_STATES } from "@/lib/admin/options";
 import StatusSelect from "../_components/StatusSelect";
 import NoteButton from "../_components/NoteButton";
 import { Card, Empty, btn } from "../_components/ui";
 import { shortDate, waLink } from "../_components/format";
 import type { RowData } from "../_components/types";
+import { WhatsAppIcon } from "@/components/BrandIcons";
 
 export default function RegistrationsTable({ rows }: { rows: RowData[] }) {
   // Abre donde hay trabajo: "Nuevo" si hay pendientes; si no, todas (evita una primera pantalla vacía).
@@ -96,7 +97,7 @@ export default function RegistrationsTable({ rows }: { rows: RowData[] }) {
                   <div className="flex flex-wrap items-center gap-2">
                     {wa ? (
                       <a href={wa} target="_blank" rel="noopener noreferrer" className={btn.whatsapp}>
-                        <MessageCircle size={16} /> {r.WhatsApp}
+                        <WhatsAppIcon size={16} /> {r.WhatsApp}
                       </a>
                     ) : (
                       <span className="text-sm text-[#8FA3BF]">{r.WhatsApp}</span>

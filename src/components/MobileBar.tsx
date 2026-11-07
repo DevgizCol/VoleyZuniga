@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { CalendarDays, MessageCircle, UserPlus } from "lucide-react";
+import { CalendarDays, UserPlus } from "lucide-react";
 import { useContact } from "./ContactProvider";
+import { WhatsAppIcon } from "@/components/BrandIcons";
 
 // Acciones principales siempre a mano en el celular.
 export default function MobileBar() {
@@ -29,7 +30,7 @@ export default function MobileBar() {
         <span>Horarios</span>
       </Link>
       <a href={wa()} target="_blank" rel="noopener noreferrer" className={`${base} text-white`}>
-        <MessageCircle size={18} className="text-[#25D366]" />
+        <WhatsAppIcon size={18} className="text-[#25D366]" />
         <span>WhatsApp</span>
       </a>
     </nav>
