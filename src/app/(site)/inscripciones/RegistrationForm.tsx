@@ -525,7 +525,7 @@ function Pass({
               <p className="text-xs text-[#5B6B85]">Código</p>
               <p className="font-heading font-black text-3xl tracking-wide">{code}</p>
             </div>
-            <svg viewBox={`0 0 ${matrix.length + 2} ${matrix.length + 2}`} className="w-28 h-28 bg-white rounded-md shrink-0" role="img" aria-label="Código QR para escribir al club por WhatsApp" shapeRendering="crispEdges">
+            <svg viewBox={`0 0 ${matrix.length + 2} ${matrix.length + 2}`} className="w-28 h-28 bg-white rounded-md shrink-0" role="img" aria-label="Código QR del pase: el entrenador lo escanea en tu clase gratis" shapeRendering="crispEdges">
               {matrix.flatMap((row, y) => row.map((on, x) => (on ? <rect key={`${x}-${y}`} x={x + 1} y={y + 1} width="1" height="1" fill="#0F2347" /> : null)))}
             </svg>
           </div>

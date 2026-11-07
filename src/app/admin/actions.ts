@@ -4,6 +4,7 @@ import { revalidatePath, updateTag } from "next/cache";
 import { getAdmin } from "@/lib/auth";
 import { adminMutate, adminRead, sheetTag, type Row } from "@/lib/sheets";
 import { SCHEMAS, SETTING_RULES, STATUS_OPTIONS, type EditableSheet, type StatusSheet } from "@/lib/admin/schemas";
+import { FREE_CLASS_COL, findByCode } from "@/lib/admin/free-class";
 
 export type ActionState = {
   ok: boolean;
@@ -226,4 +227,28 @@ export async function saveNote(sheet: StatusSheet, row: number, expected: Row, n
   if (!result.ok) return fail(errorText(result.error));
   refresh(sheet);
   return done("Nota guardada.");
+}
+
+/** Canjea la clase gratis del pase: una sola vez, con fecha, hora y entrenador. */
+export async function redeemFreeClass(code: string): Promise<ActionState> {
+  const user = await getAdmin();
+  if (!user) return fail("Tu sesión expiró. Vuelve a entrar.");
+  const table = await adminRead("Inscripciones");
+  if (!table) return fail("No se pudo leer la hoja. Intenta de nuevo.");
+  // Sin la columna, Apps Script ignora el cambio en silencio: avisar en vez de fingir que se guardó.
+  if (!table.headers.includes(FREE_CLASS_COL)) return fail(`Falta la columna "${FREE_CLASS_COL}" en la pestaña Inscripciones.`);
+  const reg = findByCode(table.rows, code);
+  if (!reg) return fail("No hay ninguna inscripción con ese código.");
+  if (reg[FREE_CLASS_COL]) return fail(`Esta clase gratis ya se usó: ${reg[FREE_CLASS_COL]}.`);
+  const result = await adminMutate({
+    action: "update",
+    sheet: "Inscripciones",
+    actor: user.name,
+    row: Number(reg._row),
+    expected: { Código: reg["Código"], [FREE_CLASS_COL]: "" }, // si otro profe la canjeó primero, hay conflicto
+    data: { [FREE_CLASS_COL]: `${bogotaNow()} · ${user.name}` },
+  });
+  if (!result.ok) return fail(result.error === "conflict" ? "Otro entrenador acaba de registrarla." : errorText(result.error));
+  refresh("Inscripciones");
+  return done("Clase gratis registrada.");
 }

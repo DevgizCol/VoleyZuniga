@@ -10,7 +10,7 @@ Todo se maneja desde la hoja de Google del club (pestaña **Leeme** con instrucc
 
 | Pestaña | Quién la llena | Qué hace en la web |
 | --- | --- | --- |
-| Inscripciones | La web | Cada inscripción, con su código de pase. Cambia **Estado** a Contactado / Matriculado. Opcional: crea una columna **Origen** (en cualquier posición) y la web anotará de dónde llegó cada familia (`instagram`, `google.com`, `directo`…). Para campañas, enlaza a `/inscripciones?utm_source=instagram`. |
+| Inscripciones | La web | Cada inscripción, con su código de pase. Cambia **Estado** a Contactado / Matriculado. Opcional: crea una columna **Origen** (en cualquier posición) y la web anotará de dónde llegó cada familia (`instagram`, `google.com`, `directo`…). Para campañas, enlaza a `/inscripciones?utm_source=instagram`. Crea también la columna **Clase gratis**: el entrenador escanea el QR del pase y el panel anota ahí fecha, hora y quién la registró (una sola vez). |
 | Contacto | La web | Mensajes del formulario de contacto. |
 | Fixture | El club | Partidos en `/partidos`, el calendario suscribible y el panel. Columna opcional **Escudo rival (URL)** para mostrar el escudo del rival. |
 | Tabla | El club | Posiciones en `/posiciones`. |

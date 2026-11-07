@@ -2,7 +2,8 @@
 
 import QRCode from "qrcode";
 import { SITE } from "@/config/site";
-import { waLink, type Contact } from "@/config/contact";
+import type { Contact } from "@/config/contact";
+import { siteUrl } from "@/lib/site-url";
 
 // Pase de clase de prueba: código de inscripción, QR y la imagen descargable (formato historia 1080 x 1920).
 
@@ -27,9 +28,10 @@ export function makeCode(category: string) {
   return `VZ${short}-${rand}`;
 }
 
-// Lo que abre el QR: un chat de WhatsApp con el club que identifica al deportista.
+// Lo que abre el QR: la ficha del deportista en el panel (solo la ve un entrenador con sesión) para canjear la clase gratis.
 export function passQrText(d: PassData) {
-  return waLink(d.contact, `Hola, soy ${d.name.trim()} (código ${d.code}). Vengo a mi clase de prueba de ${d.category}.`);
+  const origin = typeof location === "undefined" ? siteUrl : location.origin; // también fuera del navegador
+  return `${origin}/admin/pase/${encodeURIComponent(d.code)}`;
 }
 
 export function qrMatrix(text: string) {
