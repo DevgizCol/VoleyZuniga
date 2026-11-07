@@ -25,30 +25,30 @@ export default async function ContactPage() {
         intro="La forma más rápida de hablar con nosotros es WhatsApp. Si prefieres, deja un mensaje y te respondemos."
       >
         <div className="flex flex-col sm:flex-row gap-3">
-          <a href={waLink(contact)} target="_blank" rel="noopener noreferrer" className="h-14 px-7 inline-flex items-center justify-center gap-2 rounded-md bg-[#25D366] text-[#071426] font-bold text-lg hover:brightness-110">
+          <a href={waLink(contact)} target="_blank" rel="noopener noreferrer" className="h-14 px-7 inline-flex items-center justify-center gap-2 rounded-md bg-[#25D366] text-primary-dark font-bold text-lg hover:brightness-110">
             <WhatsAppIcon size={20} /> Escribir por WhatsApp
           </a>
           <a href={telLink(contact)} className="h-14 px-7 inline-flex items-center justify-center gap-2 rounded-md border border-white/25 hover:border-white font-semibold text-lg">
-            <Phone size={20} className="text-[#F29A2E]" /> {contact.phoneDisplay}
+            <Phone size={20} className="text-accent" /> {contact.phoneDisplay}
           </a>
         </div>
       </PageHero>
 
       {/* Sedes */}
-      <section className="bg-[#071426] text-white pb-20 sm:pb-28">
+      <section className="bg-primary-dark text-white pb-20 sm:pb-28">
         <div className="container mx-auto px-4 sm:px-6 space-y-6">
           {VENUES.map((v, i) => (
-            <article key={v.id} className="grid lg:grid-cols-2 rounded-2xl overflow-hidden border border-white/10 bg-[#0B1E38]">
+            <article key={v.id} className="grid lg:grid-cols-2 rounded-2xl overflow-hidden border border-white/10 bg-night">
               <div className={`p-7 sm:p-10 flex flex-col ${i % 2 ? "lg:order-2" : ""}`}>
-                <p className="text-sm font-semibold text-[#F29A2E]">{v.role}</p>
+                <p className="text-sm font-semibold text-accent">{v.role}</p>
                 <h2 className="font-heading font-black uppercase text-4xl sm:text-5xl leading-none mt-2">{v.name}</h2>
                 <p className="mt-4 text-[#C9D5E6]">{v.description}</p>
                 <ul className="mt-6 space-y-3 text-[#C9D5E6]">
-                  <li className="flex gap-3"><MapPin size={20} className="text-[#F29A2E] shrink-0 mt-0.5" />{v.address}</li>
-                  <li className="flex gap-3"><Clock size={20} className="text-[#F29A2E] shrink-0 mt-0.5" />{v.schedule}</li>
+                  <li className="flex gap-3"><MapPin size={20} className="text-accent shrink-0 mt-0.5" />{v.address}</li>
+                  <li className="flex gap-3"><Clock size={20} className="text-accent shrink-0 mt-0.5" />{v.schedule}</li>
                 </ul>
                 <div className="mt-auto pt-8 flex flex-wrap gap-3">
-                  <a href={mapsLink(v)} target="_blank" rel="noopener noreferrer" className="h-12 px-5 inline-flex items-center gap-2 rounded-md bg-[#F29A2E] hover:bg-[#FFB14A] text-[#071426] font-bold">
+                  <a href={mapsLink(v)} target="_blank" rel="noopener noreferrer" className="h-12 px-5 inline-flex items-center gap-2 rounded-md bg-accent hover:bg-accent-light text-primary-dark font-bold">
                     <Navigation size={18} /> Google Maps
                   </a>
                   <a href={wazeLink(v)} target="_blank" rel="noopener noreferrer" className="h-12 px-5 inline-flex items-center gap-2 rounded-md border border-white/25 hover:border-white font-semibold">
@@ -56,7 +56,7 @@ export default async function ContactPage() {
                   </a>
                 </div>
               </div>
-              <div className="relative min-h-[280px] lg:min-h-[380px] bg-[#0F2347]">
+              <div className="relative min-h-[280px] lg:min-h-[380px] bg-primary">
                 <iframe
                   title={`Mapa de ${v.name}`}
                   src={mapEmbed(v)}
@@ -71,12 +71,12 @@ export default async function ContactPage() {
       </section>
 
       {/* Horario compacto */}
-      <section className="bg-[#EEF2F7] text-[#0F2347] py-20 sm:py-24">
+      <section className="bg-mist text-primary py-20 sm:py-24">
         <div className="container mx-auto px-4 sm:px-6">
           <h2 className="font-heading font-black uppercase text-5xl sm:text-6xl leading-none mb-10">Horarios</h2>
           <div tabIndex={0} role="region" aria-label="Horarios (desliza para ver la tabla completa)" className="overflow-x-auto rounded-xl bg-white shadow-[0_20px_40px_-24px_rgba(15,35,71,0.35)]">
             <table className="w-full min-w-[560px] text-left">
-              <thead className="bg-[#0F2347] text-white">
+              <thead className="bg-primary text-white">
                 <tr>
                   <th scope="col" className="py-3 px-5 font-heading font-black uppercase text-lg">Día</th>
                   <th scope="col" className="py-3 px-5 font-heading font-black uppercase text-lg">Hora</th>
@@ -87,7 +87,7 @@ export default async function ContactPage() {
               <tbody>
                 {TRAINING_DAYS.flatMap((day) =>
                   SESSIONS.filter((s) => s.day === day).map((s, i) => (
-                    <tr key={`${day}-${s.start}`} className={`border-t border-[#0F2347]/10 ${i === 0 ? "border-t-[#0F2347]/25" : ""}`}>
+                    <tr key={`${day}-${s.start}`} className={`border-t border-primary/10 ${i === 0 ? "border-t-primary/25" : ""}`}>
                       <td className="py-3.5 px-5 font-semibold">{i === 0 ? DAY_NAMES[day] : ""}</td>
                       <td className="py-3.5 px-5 tabular-nums whitespace-nowrap">{formatTime(s.start)} – {formatTime(s.end)}</td>
                       <td className="py-3.5 px-5">{s.group}</td>
@@ -102,21 +102,21 @@ export default async function ContactPage() {
       </section>
 
       {/* Formulario + canales */}
-      <section className="bg-[#071426] text-white py-20 sm:py-28">
+      <section className="bg-primary-dark text-white py-20 sm:py-28">
         <div className="container mx-auto px-4 sm:px-6 grid lg:grid-cols-12 gap-10">
           <div className="lg:col-span-4">
             <h2 className="font-heading font-black uppercase text-5xl sm:text-6xl leading-none">Escríbenos</h2>
             <p className="mt-4 text-[#C9D5E6] text-lg">Para torneos, patrocinios, PQRS o cualquier duda. Respondemos en horario de oficina.</p>
             <ul className="mt-8 space-y-4">
               <li>
-                <a href={`mailto:${contact.email}`} className="flex items-center gap-3 hover:text-[#F29A2E]">
-                  <span className="w-11 h-11 rounded-full bg-white/[0.06] flex items-center justify-center"><Mail size={20} className="text-[#F29A2E]" /></span>
+                <a href={`mailto:${contact.email}`} className="flex items-center gap-3 hover:text-accent">
+                  <span className="w-11 h-11 rounded-full bg-white/[0.06] flex items-center justify-center"><Mail size={20} className="text-accent" /></span>
                   <span className="break-all">{contact.email}</span>
                 </a>
               </li>
               <li>
-                <a href={contact.instagramUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 hover:text-[#F29A2E]">
-                  <span className="w-11 h-11 rounded-full bg-white/[0.06] flex items-center justify-center"><InstagramIcon size={20} className="text-[#F29A2E]" /></span>
+                <a href={contact.instagramUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 hover:text-accent">
+                  <span className="w-11 h-11 rounded-full bg-white/[0.06] flex items-center justify-center"><InstagramIcon size={20} className="text-accent" /></span>
                   {contact.instagramHandle}
                 </a>
               </li>

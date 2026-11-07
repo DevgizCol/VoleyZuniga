@@ -21,7 +21,7 @@ export default function Error({ error, retry }: { error: unknown; retry: () => v
           <button
             type="button"
             onClick={() => retry()}
-            className="h-14 px-7 inline-flex items-center justify-center gap-2 rounded-md bg-[#F29A2E] hover:bg-[#FFB14A] text-[#071426] font-bold text-lg"
+            className="h-14 px-7 inline-flex items-center justify-center gap-2 rounded-md bg-accent hover:bg-accent-light text-primary-dark font-bold text-lg"
           >
             <RotateCw size={20} aria-hidden /> Reintentar
           </button>

@@ -22,7 +22,7 @@ export default function Drawer({ open, onClose, title, children }: { open: boole
         if (e.target === ref.current) onClose();
       }}
       aria-label={title}
-      className="m-0 ml-auto h-dvh max-h-dvh w-full max-w-xl bg-[#0B1E38] text-white p-0 border-l border-white/10 backdrop:bg-black/60 backdrop:backdrop-blur-sm open:animate-fade-in"
+      className="m-0 ml-auto h-dvh max-h-dvh w-full max-w-xl bg-night text-white p-0 border-l border-white/10 backdrop:bg-black/60 backdrop:backdrop-blur-sm open:animate-fade-in"
     >
       <div className="flex flex-col h-full">
         <header className="flex items-center justify-between gap-3 px-5 sm:px-6 h-16 border-b border-white/10 shrink-0">

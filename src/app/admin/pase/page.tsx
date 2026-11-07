@@ -28,7 +28,7 @@ export default async function FreeClassLookup({ searchParams }: { searchParams: 
             autoComplete="off"
             autoCapitalize="characters"
             placeholder="Ej. VZ14-4FGR"
-            className="flex-1 h-12 rounded-lg bg-white/[0.05] border border-[#6B7F9C] px-4 uppercase tracking-wide focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F29A2E] focus:border-[#F29A2E]"
+            className="flex-1 h-12 rounded-lg bg-white/[0.05] border border-[#6B7F9C] px-4 uppercase tracking-wide focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent focus:border-accent"
           />
           <button type="submit" className={btn.primary}>
             <ScanLine size={18} /> Buscar

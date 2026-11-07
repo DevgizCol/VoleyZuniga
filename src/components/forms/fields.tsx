@@ -4,7 +4,7 @@ import clsx from "clsx";
 // Piezas de formulario compartidas (inscripción y contacto).
 
 export const inputCls =
-  "w-full h-13 min-h-[52px] rounded-lg bg-white/[0.05] border border-[#6B7F9C] px-4 text-white text-base placeholder:text-[#8FA3BF] focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F29A2E] focus:border-[#F29A2E] focus:bg-white/[0.08] transition-colors aria-[invalid=true]:border-[#FF7A6B]";
+  "w-full h-13 min-h-[52px] rounded-lg bg-white/[0.05] border border-[#6B7F9C] px-4 text-white text-base placeholder:text-steel focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent focus:border-accent focus:bg-white/[0.08] transition-colors aria-[invalid=true]:border-[#FF7A6B]";
 
 export function Field({
   label,
@@ -32,7 +32,7 @@ export function Field({
           {error}
         </p>
       ) : hint ? (
-        <p id={`${htmlFor}-hint`} className="mt-2 text-sm text-[#8FA3BF]">
+        <p id={`${htmlFor}-hint`} className="mt-2 text-sm text-steel">
           {hint}
         </p>
       ) : null}
@@ -58,8 +58,8 @@ export function ChoiceCard({
   return (
     <label
       className={clsx(
-        "relative flex cursor-pointer rounded-lg border p-4 transition-colors has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-[#F29A2E]",
-        checked ? "border-[#F29A2E] bg-[#F29A2E]/10" : "border-white/15 bg-white/[0.03] hover:border-white/35"
+        "relative flex cursor-pointer rounded-lg border p-4 transition-colors has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-accent",
+        checked ? "border-accent bg-accent/10" : "border-white/15 bg-white/[0.03] hover:border-white/35"
       )}
     >
       <input type="radio" name={name} value={value} checked={checked} onChange={() => onChange(value)} className="sr-only" />
@@ -71,10 +71,10 @@ export function ChoiceCard({
         aria-hidden="true"
         className={clsx(
           "ml-3 mt-0.5 h-5 w-5 shrink-0 rounded-full border-2 flex items-center justify-center",
-          checked ? "border-[#F29A2E]" : "border-[#8FA3BF]"
+          checked ? "border-accent" : "border-steel"
         )}
       >
-        {checked ? <span className="h-2.5 w-2.5 rounded-full bg-[#F29A2E]" /> : null}
+        {checked ? <span className="h-2.5 w-2.5 rounded-full bg-accent" /> : null}
       </span>
     </label>
   );

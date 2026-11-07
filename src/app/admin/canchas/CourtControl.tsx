@@ -33,14 +33,14 @@ export default function CourtControl({ sede, row }: { sede: string; row: RowData
     });
 
   return (
-    <Card className={clsx("p-5 sm:p-6", live && "border-[#F29A2E]/60")}>
+    <Card className={clsx("p-5 sm:p-6", live && "border-accent/60")}>
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <h2 className="font-heading font-black uppercase text-3xl leading-none">{sede}</h2>
-          <p className={clsx("mt-2 text-sm font-semibold", live ? "text-[#F29A2E]" : "text-[#7AF0A8]")}>
+          <p className={clsx("mt-2 text-sm font-semibold", live ? "text-accent" : "text-[#7AF0A8]")}>
             {live ? `En la web ahora: ${current}${row?.Mensaje ? ` · ${row.Mensaje}` : ""}` : "Normal: no se muestra aviso."}
           </p>
-          {row?.Actualizado ? <p className="text-xs text-[#8FA3BF] mt-1">Actualizado {row.Actualizado}</p> : null}
+          {row?.Actualizado ? <p className="text-xs text-steel mt-1">Actualizado {row.Actualizado}</p> : null}
         </div>
         {live ? (
           <button type="button" disabled={pending} onClick={() => publish("Normal", "")} className={btn.secondary}>
@@ -63,7 +63,7 @@ export default function CourtControl({ sede, row }: { sede: string; row: RowData
             }}
             className={clsx(
               "h-16 rounded-xl border flex flex-col items-center justify-center gap-1 text-sm font-semibold transition-colors",
-              estado === p.estado ? "border-[#F29A2E] bg-[#F29A2E]/15 text-white" : "border-white/15 text-[#C9D5E6] hover:border-white/40"
+              estado === p.estado ? "border-accent bg-accent/15 text-white" : "border-white/15 text-[#C9D5E6] hover:border-white/40"
             )}
           >
             <p.icon size={20} /> {p.label}
@@ -74,7 +74,7 @@ export default function CourtControl({ sede, row }: { sede: string; row: RowData
       {estado !== "Normal" && (
         <label className="block mt-4">
           <span className="block text-sm font-semibold mb-1.5">Mensaje para las familias</span>
-          <input value={mensaje} onChange={(e) => setMensaje(e.target.value.slice(0, 200))} className="w-full h-11 rounded-lg bg-white/[0.05] border border-[#6B7F9C] px-3.5 focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F29A2E] focus:border-[#F29A2E]" />
+          <input value={mensaje} onChange={(e) => setMensaje(e.target.value.slice(0, 200))} className="w-full h-11 rounded-lg bg-white/[0.05] border border-[#6B7F9C] px-3.5 focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent focus:border-accent" />
         </label>
       )}
 

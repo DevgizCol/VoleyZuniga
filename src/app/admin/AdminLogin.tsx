@@ -47,8 +47,8 @@ export default function AdminLogin() {
   return (
     <section className="relative isolate overflow-hidden floodlights grain text-white min-h-[100svh] flex items-center pt-24 pb-16">
       <div className="container mx-auto px-4 sm:px-6 max-w-md">
-        <form onSubmit={submit} className="rounded-2xl border border-white/10 bg-[#0B1E38]/80 backdrop-blur p-8">
-          <span className="w-12 h-12 rounded-xl bg-[#F29A2E]/15 border border-[#F29A2E]/30 flex items-center justify-center text-[#F29A2E]">
+        <form onSubmit={submit} className="rounded-2xl border border-white/10 bg-night/80 backdrop-blur p-8">
+          <span className="w-12 h-12 rounded-xl bg-accent/15 border border-accent/30 flex items-center justify-center text-accent">
             <Lock size={22} />
           </span>
           <h1 className="mt-5 font-heading font-black uppercase text-4xl leading-none">Panel del club</h1>
@@ -69,12 +69,12 @@ export default function AdminLogin() {
             autoFocus={Boolean(sentTo)}
             value={sentTo ? code : password}
             onChange={(e) => (sentTo ? setCode(e.target.value.replace(/\D/g, "")) : setPassword(e.target.value))}
-            className="w-full h-12 rounded-lg bg-white/[0.05] border border-[#6B7F9C] px-4 focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F29A2E] focus:border-[#F29A2E]"
+            className="w-full h-12 rounded-lg bg-white/[0.05] border border-[#6B7F9C] px-4 focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent focus:border-accent"
             aria-invalid={Boolean(error)}
             aria-describedby={error ? "pw-error" : undefined}
           />
           {error ? <p id="pw-error" role="alert" className="mt-2 text-sm text-[#FF9C90]">{error}</p> : null}
-          <button type="submit" disabled={busy || (sentTo ? code.length !== 6 : !password)} className="mt-6 w-full h-12 rounded-md bg-[#F29A2E] hover:bg-[#FFB14A] disabled:opacity-60 text-[#071426] font-bold inline-flex items-center justify-center gap-2">
+          <button type="submit" disabled={busy || (sentTo ? code.length !== 6 : !password)} className="mt-6 w-full h-12 rounded-md bg-accent hover:bg-accent-light disabled:opacity-60 text-primary-dark font-bold inline-flex items-center justify-center gap-2">
             {busy ? <Loader2 size={18} className="animate-spin" /> : null} {sentTo ? "Verificar" : "Entrar"}
           </button>
           {sentTo ? (

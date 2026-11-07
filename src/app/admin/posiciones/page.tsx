@@ -46,7 +46,7 @@ export default async function StandingsAdmin() {
                 </div>
                 <div className="relative overflow-x-auto">
                   <table className="w-full min-w-[560px] text-left">
-                    <thead className="text-xs text-[#8FA3BF]">
+                    <thead className="text-xs text-steel">
                       <tr>
                         <th className="py-2.5 pl-5 w-10">#</th>
                         <th className="py-2.5">Equipo</th>
@@ -61,8 +61,8 @@ export default async function StandingsAdmin() {
                     </thead>
                     <tbody>
                       {list.map((r, i) => (
-                        <tr key={r._row} className={`border-t border-white/10 ${CLUB.test(r.Equipo) ? "bg-[#F29A2E]/[0.08]" : ""}`}>
-                          <td className="py-3 pl-5 font-heading font-black text-xl text-[#8FA3BF]">{i + 1}</td>
+                        <tr key={r._row} className={`border-t border-white/10 ${CLUB.test(r.Equipo) ? "bg-accent/[0.08]" : ""}`}>
+                          <td className="py-3 pl-5 font-heading font-black text-xl text-steel">{i + 1}</td>
                           <td className="py-3 font-semibold">
                             {r.Equipo} {(r.Activo || "").toUpperCase() === "NO" ? <Badge tone="muted">Oculto</Badge> : null}
                           </td>

@@ -6,7 +6,7 @@ import { Calculator, Loader2 } from "lucide-react";
 import { applyResult } from "../actions";
 import { btn } from "../_components/ui";
 
-const input = "w-full h-11 rounded-lg bg-white/[0.05] border border-[#6B7F9C] px-3.5 focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F29A2E] focus:border-[#F29A2E]";
+const input = "w-full h-11 rounded-lg bg-white/[0.05] border border-[#6B7F9C] px-3.5 focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent focus:border-accent";
 
 export default function ApplyResult({ categories, teams }: { categories: string[]; teams: string[] }) {
   const ref = useRef<HTMLDialogElement>(null);
@@ -30,11 +30,11 @@ export default function ApplyResult({ categories, teams }: { categories: string[
       <button type="button" onClick={() => ref.current?.showModal()} className={btn.primary}>
         <Calculator size={16} /> Sumar un resultado
       </button>
-      <dialog ref={ref} className="m-auto w-[min(94vw,520px)] rounded-2xl bg-[#0B1E38] text-white border border-white/10 p-0 backdrop:bg-black/60">
+      <dialog ref={ref} className="m-auto w-[min(94vw,520px)] rounded-2xl bg-night text-white border border-white/10 p-0 backdrop:bg-black/60">
         <form onSubmit={submit} className="p-6 space-y-4">
           <div>
             <h2 className="font-heading font-black uppercase text-2xl">Sumar un resultado</h2>
-            <p className="text-sm text-[#8FA3BF] mt-1">Actualiza partidos jugados, ganados, perdidos y puntos de los dos equipos (sistema FIVB).</p>
+            <p className="text-sm text-steel mt-1">Actualiza partidos jugados, ganados, perdidos y puntos de los dos equipos (sistema FIVB).</p>
           </div>
           <label className="block">
             <span className="block text-sm font-semibold mb-1.5">Categoría</span>
@@ -48,7 +48,7 @@ export default function ApplyResult({ categories, teams }: { categories: string[
             </label>
             <label>
               <span className="block text-sm font-semibold mb-1.5">Sets</span>
-              <select name="sets-a" value={form.sa} onChange={set("sa")} className={`${input} bg-[#0F2347] text-center font-bold`}>
+              <select name="sets-a" value={form.sa} onChange={set("sa")} className={`${input} bg-primary text-center font-bold`}>
                 {[0, 1, 2, 3].map((n) => <option key={n}>{n}</option>)}
               </select>
             </label>
@@ -58,7 +58,7 @@ export default function ApplyResult({ categories, teams }: { categories: string[
             </label>
             <label>
               <span className="block text-sm font-semibold mb-1.5">Sets</span>
-              <select name="sets-b" value={form.sb} onChange={set("sb")} className={`${input} bg-[#0F2347] text-center font-bold`}>
+              <select name="sets-b" value={form.sb} onChange={set("sb")} className={`${input} bg-primary text-center font-bold`}>
                 {[0, 1, 2, 3].map((n) => <option key={n}>{n}</option>)}
               </select>
             </label>

@@ -48,10 +48,10 @@ export default async function StandingsPage({ searchParams }: { searchParams: Pr
         </Link>
       </PageHero>
 
-      <section className="bg-[#071426] text-white pb-24 sm:pb-32">
+      <section className="bg-primary-dark text-white pb-24 sm:pb-32">
         <div className="container mx-auto px-4 sm:px-6">
           {withData.length === 0 ? (
-            <div className="rounded-2xl border border-white/10 bg-gradient-to-br from-[#0F2347] to-[#071426] p-8 sm:p-12 grid md:grid-cols-[1fr_auto] gap-8 items-center">
+            <div className="rounded-2xl border border-white/10 bg-gradient-to-br from-primary to-primary-dark p-8 sm:p-12 grid md:grid-cols-[1fr_auto] gap-8 items-center">
               <div>
                 <h2 className="font-heading font-black uppercase text-4xl sm:text-5xl leading-none">La tabla arranca con el torneo</h2>
                 <p className="mt-4 text-[#C9D5E6] text-lg max-w-xl">
@@ -62,7 +62,7 @@ export default async function StandingsPage({ searchParams }: { searchParams: Pr
                 href={contact.instagramUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="h-12 px-6 inline-flex items-center gap-2 bg-[#F29A2E] hover:bg-[#FFB14A] text-[#071426] font-bold rounded-md transition-colors"
+                className="h-12 px-6 inline-flex items-center gap-2 bg-accent hover:bg-accent-light text-primary-dark font-bold rounded-md transition-colors"
               >
                 <InstagramIcon size={18} /> Seguir {contact.instagramHandle}
               </a>
@@ -84,7 +84,7 @@ export default async function StandingsPage({ searchParams }: { searchParams: Pr
               <div className="rounded-2xl border border-white/10 overflow-hidden">
                 <table className="w-full text-left">
                   <caption className="sr-only">Tabla de posiciones, {active}</caption>
-                  <thead className="bg-[#0F2347] text-xs text-[#8FA3BF]">
+                  <thead className="bg-primary text-xs text-steel">
                     <tr>
                       <th scope="col" className="py-3 pl-4 sm:pl-6 w-12 font-semibold">#</th>
                       <th scope="col" className="py-3 font-semibold">Equipo</th>
@@ -98,11 +98,11 @@ export default async function StandingsPage({ searchParams }: { searchParams: Pr
                     {table.map((r, i) => (
                       <tr
                         key={r.team}
-                        className={`border-t border-white/10 ${r.isClub ? "bg-[#F29A2E]/[0.09]" : i % 2 ? "bg-white/[0.02]" : ""}`}
+                        className={`border-t border-white/10 ${r.isClub ? "bg-accent/[0.09]" : i % 2 ? "bg-white/[0.02]" : ""}`}
                       >
                         <td className="py-4 pl-4 sm:pl-6 relative">
-                          {r.isClub && <span className="absolute left-0 inset-y-0 w-1 bg-[#F29A2E]" aria-hidden="true" />}
-                          <span className={`font-heading font-black text-2xl tabular-nums ${i < 3 ? "text-[#F29A2E]" : "text-[#8FA3BF]"}`}>{i + 1}</span>
+                          {r.isClub && <span className="absolute left-0 inset-y-0 w-1 bg-accent" aria-hidden="true" />}
+                          <span className={`font-heading font-black text-2xl tabular-nums ${i < 3 ? "text-accent" : "text-steel"}`}>{i + 1}</span>
                         </td>
                         <td className="py-4 pr-2">
                           <div className="flex items-center gap-3 min-w-0">
@@ -111,7 +111,7 @@ export default async function StandingsPage({ searchParams }: { searchParams: Pr
                               <p className={`font-semibold truncate ${r.isClub ? "text-white" : "text-[#C9D5E6]"}`}>{r.team}</p>
                               <div className="mt-1.5 h-1 rounded-full bg-white/10 overflow-hidden max-w-[220px]" aria-hidden="true">
                                 <div
-                                  className={`h-full rounded-full ${r.isClub ? "bg-[#F29A2E]" : "bg-[#8FA3BF]/60"}`}
+                                  className={`h-full rounded-full ${r.isClub ? "bg-accent" : "bg-steel/60"}`}
                                   style={{ width: `${leaderPts ? Math.max(4, (r.points / leaderPts) * 100) : 4}%` }}
                                 />
                               </div>
@@ -127,7 +127,7 @@ export default async function StandingsPage({ searchParams }: { searchParams: Pr
                   </tbody>
                 </table>
               </div>
-              <p className="mt-4 text-sm text-[#8FA3BF]">PJ: jugados · PG: ganados · PP: perdidos · Pts: puntos.</p>
+              <p className="mt-4 text-sm text-steel">PJ: jugados · PG: ganados · PP: perdidos · Pts: puntos.</p>
             </>
           )}
         </div>
@@ -138,8 +138,8 @@ export default async function StandingsPage({ searchParams }: { searchParams: Pr
 
 function Stat({ label, value, accent = false }: { label: string; value: string; accent?: boolean }) {
   return (
-    <div className={`rounded-xl p-5 border ${accent ? "bg-[#F29A2E] border-[#F29A2E] text-[#071426]" : "bg-white/[0.04] border-white/10"}`}>
-      <p className={`text-sm ${accent ? "text-[#071426]/75" : "text-[#8FA3BF]"}`}>Voley Zúñiga · {label}</p>
+    <div className={`rounded-xl p-5 border ${accent ? "bg-accent border-accent text-primary-dark" : "bg-white/[0.04] border-white/10"}`}>
+      <p className={`text-sm ${accent ? "text-primary-dark/75" : "text-steel"}`}>Voley Zúñiga · {label}</p>
       <p className="font-heading font-black text-5xl leading-none mt-1 tabular-nums">{value}</p>
     </div>
   );

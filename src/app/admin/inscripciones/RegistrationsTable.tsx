@@ -44,11 +44,11 @@ export default function RegistrationsTable({ rows }: { rows: RowData[] }) {
             onClick={() => setStatus(s)}
             className={clsx(
               "shrink-0 h-10 px-4 inline-flex items-center gap-2 rounded-full text-sm font-semibold border",
-              status === s ? "bg-[#F29A2E] border-[#F29A2E] text-[#071426]" : "border-white/15 text-[#C9D5E6] hover:border-white/40"
+              status === s ? "bg-accent border-accent text-primary-dark" : "border-white/15 text-[#C9D5E6] hover:border-white/40"
             )}
           >
             {s}
-            <span className={clsx("min-w-6 h-6 px-1.5 inline-flex items-center justify-center rounded-full text-xs", status === s ? "bg-[#071426]/15" : "bg-white/10")}>{counts[s] ?? 0}</span>
+            <span className={clsx("min-w-6 h-6 px-1.5 inline-flex items-center justify-center rounded-full text-xs", status === s ? "bg-primary-dark/15" : "bg-white/10")}>{counts[s] ?? 0}</span>
           </button>
         ))}
       </div>
@@ -56,15 +56,15 @@ export default function RegistrationsTable({ rows }: { rows: RowData[] }) {
       <div className="grid sm:grid-cols-[1fr_220px] gap-3 mb-5">
         <label className="relative">
           <span className="sr-only">Buscar</span>
-          <Search size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#8FA3BF]" />
+          <Search size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-steel" />
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Buscar por nombre, WhatsApp o código"
-            className="w-full h-11 rounded-lg bg-white/[0.05] border border-[#6B7F9C] pl-10 pr-3 focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F29A2E] focus:border-[#F29A2E]"
+            className="w-full h-11 rounded-lg bg-white/[0.05] border border-[#6B7F9C] pl-10 pr-3 focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent focus:border-accent"
           />
         </label>
-        <select value={category} onChange={(e) => setCategory(e.target.value)} aria-label="Categoría" className="h-11 rounded-lg bg-[#0F2347] border border-white/15 px-3 [color-scheme:dark]">
+        <select value={category} onChange={(e) => setCategory(e.target.value)} aria-label="Categoría" className="h-11 rounded-lg bg-primary border border-white/15 px-3 [color-scheme:dark]">
           <option value="">Todas las categorías</option>
           {categories.map((c) => (
             <option key={c}>{c}</option>
@@ -84,12 +84,12 @@ export default function RegistrationsTable({ rows }: { rows: RowData[] }) {
                   <div className="min-w-0">
                     <div className="flex flex-wrap items-center gap-2">
                       <p className="font-heading font-extrabold text-2xl leading-tight">{r.Nombre}</p>
-                      {r["Código"] ? <span className="text-xs font-bold tracking-wider text-[#8FA3BF]">{r["Código"]}</span> : null}
+                      {r["Código"] ? <span className="text-xs font-bold tracking-wider text-steel">{r["Código"]}</span> : null}
                     </div>
                     <p className="text-sm text-[#C9D5E6] mt-0.5">
                       {r.Edad} años · {r["Categoría"]} · {r.Nivel}
                     </p>
-                    <p className="text-xs text-[#8FA3BF] mt-0.5">
+                    <p className="text-xs text-steel mt-0.5">
                       {shortDate(r.Fecha)} · {r.Sede} · {r.Horario}
                       {r.Origen ? ` · vía ${r.Origen}` : null}
                     </p>
@@ -100,12 +100,12 @@ export default function RegistrationsTable({ rows }: { rows: RowData[] }) {
                         <WhatsAppIcon size={16} /> {r.WhatsApp}
                       </a>
                     ) : (
-                      <span className="text-sm text-[#8FA3BF]">{r.WhatsApp}</span>
+                      <span className="text-sm text-steel">{r.WhatsApp}</span>
                     )}
                     <NoteButton sheet="Inscripciones" row={r} />
                     <StatusSelect sheet="Inscripciones" row={r} />
                   </div>
-                  {r.Notas ? <p className="md:col-span-2 text-sm text-[#FFD9A8] bg-[#F29A2E]/10 border border-[#F29A2E]/20 rounded-lg px-3 py-2 whitespace-pre-line">{r.Notas}</p> : null}
+                  {r.Notas ? <p className="md:col-span-2 text-sm text-[#FFD9A8] bg-accent/10 border border-accent/20 rounded-lg px-3 py-2 whitespace-pre-line">{r.Notas}</p> : null}
                 </Card>
               </li>
             );

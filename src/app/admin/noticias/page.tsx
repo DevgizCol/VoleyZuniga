@@ -41,7 +41,7 @@ export default async function NewsAdmin() {
             return (
               <li key={r._row}>
                 <Card className="overflow-hidden h-full flex flex-col">
-                  <div className="relative aspect-[16/8] bg-gradient-to-br from-[#0F2347] to-[#071426]">
+                  <div className="relative aspect-[16/8] bg-gradient-to-br from-primary to-primary-dark">
                     {img ? <img src={img} alt="" className="absolute inset-0 w-full h-full object-cover" loading="lazy" /> : null}
                     <div className="absolute left-3 top-3 flex gap-2">
                       <Badge tone={draft ? "muted" : "success"}>{draft ? "Borrador" : "Publicada"}</Badge>
@@ -49,7 +49,7 @@ export default async function NewsAdmin() {
                     </div>
                   </div>
                   <div className="p-5 flex-1 flex flex-col">
-                    <p className="text-sm text-[#F29A2E] font-semibold">{shortDate(r.Fecha)}</p>
+                    <p className="text-sm text-accent font-semibold">{shortDate(r.Fecha)}</p>
                     <h2 className="font-heading font-extrabold text-2xl leading-tight mt-1">{r["Título"]}</h2>
                     <p className="text-[#B7C4D8] mt-1 line-clamp-2 flex-1">{r.Resumen}</p>
                     <div className="mt-4 flex flex-wrap gap-1">

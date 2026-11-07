@@ -98,7 +98,7 @@ export default function Product3D({
       role="img"
       aria-label={`Camiseta ${variant === "home" ? "titular" : "de líbero"} en 3D, vista ${side === "back" ? "trasera" : "frontal"}. Arrastra o usa las flechas para girarla.`}
       onKeyDown={onKeyDown}
-      className={`${className} touch-pan-y cursor-grab active:cursor-grabbing focus:outline-none focus-visible:ring-2 focus-visible:ring-[#F29A2E] rounded-3xl`}
+      className={`${className} touch-pan-y cursor-grab active:cursor-grabbing focus:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded-3xl`}
     />
   );
 }

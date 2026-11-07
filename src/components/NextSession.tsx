@@ -47,8 +47,8 @@ export default function NextSession({ sessions }: { sessions: Session[] }) {
   const when = live ? "En la cancha ahora" : inDays === 0 ? "Hoy" : inDays === 1 ? "Mañana" : DAY_NAMES[s.day];
 
   return (
-    <div className="flex items-stretch gap-0 rounded-xl overflow-hidden border border-white/15 bg-[#071426]/70 backdrop-blur-md shadow-[0_20px_60px_-20px_rgba(0,0,0,0.8)]">
-      <div className="w-1.5 bg-[#F29A2E]" />
+    <div className="flex items-stretch gap-0 rounded-xl overflow-hidden border border-white/15 bg-primary-dark/70 backdrop-blur-md shadow-[0_20px_60px_-20px_rgba(0,0,0,0.8)]">
+      <div className="w-1.5 bg-accent" />
       <div className="p-5 flex-1">
         <p className="flex items-center gap-2 text-sm text-[#B7C4D8]">
           {live ? (

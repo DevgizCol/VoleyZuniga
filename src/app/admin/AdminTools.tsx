@@ -57,14 +57,14 @@ export function GroupMessage({ gamesUrl }: { gamesUrl: string }) {
         rows={4}
         maxLength={1000}
         aria-label="Mensaje para el grupo"
-        className="w-full rounded-lg bg-white/[0.05] border border-[#6B7F9C] p-4 focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F29A2E] focus:border-[#F29A2E]"
+        className="w-full rounded-lg bg-white/[0.05] border border-[#6B7F9C] p-4 focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent focus:border-accent"
       />
       <div className="mt-3 flex flex-wrap gap-3">
         <a
           href={`https://wa.me/?text=${encodeURIComponent(text)}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="h-11 px-5 inline-flex items-center gap-2 rounded-md bg-[#25D366] text-[#071426] font-bold"
+          className="h-11 px-5 inline-flex items-center gap-2 rounded-md bg-[#25D366] text-primary-dark font-bold"
         >
           <WhatsAppIcon size={18} /> Enviar por WhatsApp
         </a>

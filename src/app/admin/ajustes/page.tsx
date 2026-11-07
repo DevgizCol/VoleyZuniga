@@ -51,7 +51,7 @@ export default async function SettingsAdmin() {
           </li>
           <li>Guarda y pulsa Redeploy. Para quitarle el acceso a alguien, borra su parte y vuelve a desplegar: su sesión se cierra sola.</li>
         </ol>
-        <p className="mt-3 text-sm text-[#8FA3BF]">Las contraseñas deben tener al menos 8 caracteres. ADMIN_PASSWORD (con ADMIN_EMAIL) sigue funcionando como usuario “Administrador”. Cambiar la contraseña de alguien también olvida sus celulares reconocidos.</p>
+        <p className="mt-3 text-sm text-steel">Las contraseñas deben tener al menos 8 caracteres. ADMIN_PASSWORD (con ADMIN_EMAIL) sigue funcionando como usuario “Administrador”. Cambiar la contraseña de alguien también olvida sus celulares reconocidos.</p>
       </Card>
     </>
   );

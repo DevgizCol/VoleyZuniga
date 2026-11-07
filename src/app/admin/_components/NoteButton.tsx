@@ -29,18 +29,18 @@ export default function NoteButton({ sheet, row }: { sheet: StatusSheet; row: Ro
     <>
       <button type="button" onClick={() => ref.current?.showModal()} className={btn.ghost} aria-label={has ? "Ver o editar nota" : "Agregar nota"}>
         <NotebookPen size={16} /> {has ? "Nota" : "Anotar"}
-        {has ? <span className="w-2 h-2 rounded-full bg-[#F29A2E]" aria-hidden="true" /> : null}
+        {has ? <span className="w-2 h-2 rounded-full bg-accent" aria-hidden="true" /> : null}
       </button>
-      <dialog ref={ref} className="m-auto w-[min(92vw,520px)] rounded-2xl bg-[#0B1E38] text-white border border-white/10 p-6 backdrop:bg-black/60">
+      <dialog ref={ref} className="m-auto w-[min(92vw,520px)] rounded-2xl bg-night text-white border border-white/10 p-6 backdrop:bg-black/60">
         <h2 className="font-heading font-black uppercase text-2xl">Nota interna</h2>
-        <p className="text-sm text-[#8FA3BF] mt-1">Solo la ve el equipo. Ej.: “Vino a la clase el sábado, nivel intermedio”.</p>
+        <p className="text-sm text-steel mt-1">Solo la ve el equipo. Ej.: “Vino a la clase el sábado, nivel intermedio”.</p>
         <textarea
           value={text}
           onChange={(e) => setText(e.target.value)}
           rows={5}
           maxLength={1000}
           aria-label="Nota"
-          className="mt-4 w-full rounded-lg bg-white/[0.05] border border-[#6B7F9C] p-3 focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F29A2E] focus:border-[#F29A2E]"
+          className="mt-4 w-full rounded-lg bg-white/[0.05] border border-[#6B7F9C] p-3 focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent focus:border-accent"
         />
         <div className="mt-4 flex justify-end gap-2">
           <button type="button" onClick={() => ref.current?.close()} className={btn.secondary}>

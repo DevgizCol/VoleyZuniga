@@ -28,18 +28,18 @@ export default async function Footer() {
               href={contact.instagramUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 w-fit text-sm font-semibold text-white hover:text-[#F29A2E] transition-colors"
+              className="inline-flex items-center gap-2 w-fit text-sm font-semibold text-white hover:text-accent transition-colors"
             >
-              <InstagramIcon size={18} className="text-[#F29A2E]" /> Instagram {contact.instagramHandle}
+              <InstagramIcon size={18} className="text-accent" /> Instagram {contact.instagramHandle}
             </a>
             {reviewUrl ? (
-              <a href={reviewUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 w-fit text-sm font-semibold text-white hover:text-[#F29A2E] transition-colors">
-                <Star size={18} className="text-[#F29A2E]" aria-hidden="true" /> Califícanos en Google
+              <a href={reviewUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 w-fit text-sm font-semibold text-white hover:text-accent transition-colors">
+                <Star size={18} className="text-accent" aria-hidden="true" /> Califícanos en Google
               </a>
             ) : null}
             <Link
               href="/inscripciones"
-              className="group mt-1 h-12 px-5 w-fit inline-flex items-center gap-2 rounded-md bg-[#F29A2E] hover:bg-[#FFB14A] text-[#071426] font-bold transition-colors"
+              className="group mt-1 h-12 px-5 w-fit inline-flex items-center gap-2 rounded-md bg-accent hover:bg-accent-light text-primary-dark font-bold transition-colors"
             >
               Reservar clase gratis <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
             </Link>
@@ -48,11 +48,11 @@ export default async function Footer() {
           <nav aria-label="Pie de página" className="md:col-span-3">
             <h2 className="font-heading font-bold text-xl mb-4 text-white">Navegar</h2>
             <ul className="grid grid-cols-2 gap-x-6 gap-y-2.5 text-sm text-[#B7C4D8]">
-              <li><Link href="/inscripciones" className="hover:text-[#F29A2E] transition-colors">Clase gratis</Link></li>
+              <li><Link href="/inscripciones" className="hover:text-accent transition-colors">Clase gratis</Link></li>
               {NAV_LINKS.map((l) => (
-                <li key={l.href}><Link href={l.href} className="hover:text-[#F29A2E] transition-colors">{l.name}</Link></li>
+                <li key={l.href}><Link href={l.href} className="hover:text-accent transition-colors">{l.name}</Link></li>
               ))}
-              <li><Link href="/galeria" className="hover:text-[#F29A2E] transition-colors">Galería</Link></li>
+              <li><Link href="/galeria" className="hover:text-accent transition-colors">Galería</Link></li>
             </ul>
           </nav>
 
@@ -61,16 +61,16 @@ export default async function Footer() {
             <ul className="flex flex-col gap-3.5 text-sm text-[#B7C4D8]">
               {SEDES.map((s) => (
                 <li key={s.value} className="flex items-start gap-3">
-                  <MapPin size={18} className="text-[#F29A2E] shrink-0 mt-0.5" />
+                  <MapPin size={18} className="text-accent shrink-0 mt-0.5" />
                   <span>{s.label}</span>
                 </li>
               ))}
               <li className="flex items-center gap-3">
-                <Phone size={18} className="text-[#F29A2E] shrink-0" />
+                <Phone size={18} className="text-accent shrink-0" />
                 <a href={telLink(contact)} className="hover:text-white">{contact.phoneDisplay}</a>
               </li>
               <li className="flex items-center gap-3">
-                <Mail size={18} className="text-[#F29A2E] shrink-0" />
+                <Mail size={18} className="text-accent shrink-0" />
                 <a href={`mailto:${contact.email}`} className="hover:text-white break-all">{contact.email}</a>
               </li>
             </ul>
@@ -82,14 +82,14 @@ export default async function Footer() {
           Voley Zúñiga
         </p>
 
-        <div className="relative pt-6 border-t border-white/10 flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs text-[#8FA3BF]">
+        <div className="relative pt-6 border-t border-white/10 flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs text-steel">
           <p>
             © 2026 {SITE.name}.{" "}
-            <Link href="/privacidad" className="underline underline-offset-2 hover:text-[#F29A2E]">
+            <Link href="/privacidad" className="underline underline-offset-2 hover:text-accent">
               Política de datos
             </Link>
             {" · "}
-            <Link href="/admin" className="underline underline-offset-2 hover:text-[#F29A2E]">
+            <Link href="/admin" className="underline underline-offset-2 hover:text-accent">
               Acceso entrenadores
             </Link>
           </p>

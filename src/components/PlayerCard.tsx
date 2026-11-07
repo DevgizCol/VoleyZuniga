@@ -6,7 +6,7 @@ import type { Player } from "@/lib/club";
 export default function PlayerCard({ player }: { player: Player }) {
   return (
     <figure className="player-card group relative aspect-[3/4] rounded-2xl p-[3px] bg-[linear-gradient(140deg,#FFB14A,#F29A2E_35%,#0F2347_60%,#F29A2E)]">
-      <div className="relative h-full w-full rounded-[14px] overflow-hidden bg-[#0B1E38]">
+      <div className="relative h-full w-full rounded-[14px] overflow-hidden bg-night">
         {player.photo ? (
           <BrandPhoto src={player.photo} alt={`Foto de ${player.name}`} hover sizes={CARD_SIZES} className="absolute inset-0" />
         ) : (
@@ -20,13 +20,13 @@ export default function PlayerCard({ player }: { player: Player }) {
           </div>
         )}
         {player.number && player.photo ? (
-          <span aria-hidden="true" className="absolute top-2 right-3 z-10 font-heading font-black text-6xl leading-none text-[#F29A2E] drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)]">
+          <span aria-hidden="true" className="absolute top-2 right-3 z-10 font-heading font-black text-6xl leading-none text-accent drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)]">
             {player.number}
           </span>
         ) : null}
-        <figcaption className="absolute inset-x-0 bottom-0 z-10 p-4 pt-14 bg-gradient-to-t from-[#071426] via-[#071426]/85 to-transparent">
+        <figcaption className="absolute inset-x-0 bottom-0 z-10 p-4 pt-14 bg-gradient-to-t from-primary-dark via-primary-dark/85 to-transparent">
           <span className="block font-heading font-black uppercase text-2xl leading-none">{player.name}</span>
-          <span className="mt-1 block text-sm font-semibold text-[#F29A2E]">
+          <span className="mt-1 block text-sm font-semibold text-accent">
             {[player.position, player.number ? `#${player.number}` : ""].filter(Boolean).join(" · ")}
           </span>
         </figcaption>

@@ -40,7 +40,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
   };
 
   return (
-    <article className="bg-[#071426] text-white">
+    <article className="bg-primary-dark text-white">
       <JsonLd data={jsonLd} />
       <header className="relative isolate overflow-hidden pt-40 sm:pt-44 pb-12">
         <ViewTransition name={`news-${a.slug}`} share="morph" default="none">
@@ -48,10 +48,10 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
             <ArticleCover image={a.image} title={a.title} category={a.category} large id="article" />
           </div>
         </ViewTransition>
-        <div className="absolute inset-0 -z-10 bg-gradient-to-t from-[#071426] via-[#071426]/80 to-[#071426]/40" />
+        <div className="absolute inset-0 -z-10 bg-gradient-to-t from-primary-dark via-primary-dark/80 to-primary-dark/40" />
         <div className="container mx-auto px-4 sm:px-6 max-w-3xl">
           <Link href="/noticias" className="inline-flex items-center gap-2 text-sm text-[#C9D5E6] hover:text-white"><ArrowLeft size={16} /> Todas las noticias</Link>
-          <p className="mt-6 text-[#F29A2E] font-semibold">{a.category} · {longDate(a.date)}</p>
+          <p className="mt-6 text-accent font-semibold">{a.category} · {longDate(a.date)}</p>
           <h1 className="mt-3 font-heading font-black uppercase leading-[0.92] text-[clamp(2.6rem,9vw,5rem)]">{a.title}</h1>
           {a.summary ? <p className="mt-5 text-xl text-[#C9D5E6] leading-relaxed">{a.summary}</p> : null}
         </div>

@@ -32,7 +32,7 @@ export default function AdminNav({ variant }: { variant: "side" | "top" }) {
               aria-current={isActive(item.href) ? "page" : undefined}
               className={clsx(
                 "shrink-0 h-10 px-3 inline-flex items-center gap-2 rounded-full text-sm font-semibold transition-colors",
-                isActive(item.href) ? "bg-[#F29A2E] text-[#071426]" : "text-[#C9D5E6] hover:bg-white/5"
+                isActive(item.href) ? "bg-accent text-primary-dark" : "text-[#C9D5E6] hover:bg-white/5"
               )}
             >
               <Icon size={16} /> {item.label}
@@ -54,7 +54,7 @@ export default function AdminNav({ variant }: { variant: "side" | "top" }) {
             aria-current={isActive(item.href) ? "page" : undefined}
             className={clsx(
               "h-11 px-3 flex items-center gap-3 rounded-lg font-semibold transition-colors",
-              isActive(item.href) ? "bg-[#F29A2E] text-[#071426]" : "text-[#C9D5E6] hover:bg-white/5 hover:text-white"
+              isActive(item.href) ? "bg-accent text-primary-dark" : "text-[#C9D5E6] hover:bg-white/5 hover:text-white"
             )}
           >
             <Icon size={18} /> {item.label}

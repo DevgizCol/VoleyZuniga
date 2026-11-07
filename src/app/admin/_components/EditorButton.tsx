@@ -51,7 +51,7 @@ export default function EditorButton({ sheet, fields, title, mode, row, defaults
 
 function NewsPreviewHint() {
   return (
-    <p className="text-sm text-[#8FA3BF]">
+    <p className="text-sm text-steel">
       Consejo: escribe un párrafo por línea. Para la imagen, sube la foto a Google Drive, compártela como “Cualquier persona con el enlace” y pega
       el enlace.
     </p>

@@ -73,7 +73,7 @@ export default async function PassCard({ params }: { params: Promise<{ codigo: s
               <p className="mt-1 text-[#FFC2BA]">{used}</p>
             </Card>
           ) : missingColumn ? (
-            <Card className="p-5 border-[#F29A2E]/50 bg-[#F29A2E]/10">
+            <Card className="p-5 border-accent/50 bg-accent/10">
               <p className="font-semibold">Falta la columna “{FREE_CLASS_COL}” en la pestaña Inscripciones.</p>
               <p className="mt-1 text-sm text-[#C9D5E6]">Créala en la hoja (en cualquier posición) para poder registrar la clase gratis.</p>
             </Card>
@@ -91,7 +91,7 @@ export default async function PassCard({ params }: { params: Promise<{ codigo: s
             <dl className="grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-3">
               {facts.map(([k, v]) => (
                 <div key={k}>
-                  <dt className="text-xs text-[#8FA3BF]">{k}</dt>
+                  <dt className="text-xs text-steel">{k}</dt>
                   <dd className="font-semibold">{v}</dd>
                 </div>
               ))}
@@ -102,7 +102,7 @@ export default async function PassCard({ params }: { params: Promise<{ codigo: s
 
         <Card className="p-5 space-y-4">
           <div>
-            <p className="text-xs text-[#8FA3BF] mb-2">Estado de la inscripción</p>
+            <p className="text-xs text-steel mb-2">Estado de la inscripción</p>
             <StatusSelect sheet="Inscripciones" row={r} />
           </div>
           {wa ? (

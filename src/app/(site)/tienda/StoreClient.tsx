@@ -60,10 +60,10 @@ export default function StoreClient({ products }: { products: Product[] }) {
   return (
     <>
       {/* Personalizador */}
-      <section id="personalizar" className="scroll-mt-28 bg-[#071426] text-white pb-20 sm:pb-28">
+      <section id="personalizar" className="scroll-mt-28 bg-primary-dark text-white pb-20 sm:pb-28">
         <div className="container mx-auto px-4 sm:px-6">
-          <div className="grid lg:grid-cols-2 gap-8 lg:gap-14 items-center rounded-3xl border border-white/10 bg-gradient-to-br from-[#0F2347] via-[#0B1E38] to-[#071426] p-6 sm:p-10 lg:p-14 overflow-hidden relative">
-            <div className="absolute -left-24 -top-24 w-96 h-96 rounded-full bg-[#F29A2E]/10 blur-3xl" aria-hidden="true" />
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-14 items-center rounded-3xl border border-white/10 bg-gradient-to-br from-primary via-night to-primary-dark p-6 sm:p-10 lg:p-14 overflow-hidden relative">
+            <div className="absolute -left-24 -top-24 w-96 h-96 rounded-full bg-accent/10 blur-3xl" aria-hidden="true" />
             <div className="relative">
               <div className="relative aspect-square max-w-[460px] mx-auto">
                 <div className="absolute inset-6 rounded-full bg-[radial-gradient(circle,rgba(242,154,46,0.22),transparent_65%)]" aria-hidden="true" />
@@ -77,7 +77,7 @@ export default function StoreClient({ products }: { products: Product[] }) {
             </div>
 
             <div className="relative">
-              <p className="text-[#F29A2E] font-semibold">Personalízala</p>
+              <p className="text-accent font-semibold">Personalízala</p>
               <h2 className="font-heading font-black uppercase text-5xl sm:text-6xl leading-[0.9] mt-2">Tu nombre en la espalda</h2>
               <p className="mt-4 text-[#C9D5E6] text-lg">{jersey.description}</p>
 
@@ -91,9 +91,9 @@ export default function StoreClient({ products }: { products: Product[] }) {
                         type="button"
                         onClick={() => setVariant(v)}
                         aria-pressed={variant === v}
-                        className={clsx("h-12 rounded-lg border font-semibold flex items-center justify-center gap-2", variant === v ? "border-[#F29A2E] bg-[#F29A2E]/10" : "border-white/15 hover:border-white/35")}
+                        className={clsx("h-12 rounded-lg border font-semibold flex items-center justify-center gap-2", variant === v ? "border-accent bg-accent/10" : "border-white/15 hover:border-white/35")}
                       >
-                        <span className={clsx("w-4 h-4 rounded-full border border-white/40", v === "home" ? "bg-[#0F2347]" : "bg-[#F29A2E]")} />
+                        <span className={clsx("w-4 h-4 rounded-full border border-white/40", v === "home" ? "bg-primary" : "bg-accent")} />
                         {v === "home" ? "Titular" : "Líbero"}
                       </button>
                     ))}
@@ -103,11 +103,11 @@ export default function StoreClient({ products }: { products: Product[] }) {
                 <div className="grid grid-cols-[1fr_7rem] gap-3">
                   <label className="block">
                     <span className="block font-semibold mb-2">Nombre</span>
-                    <input name="jersey-name" autoComplete="off" value={name} onChange={(e) => setName(e.target.value.slice(0, 12))} placeholder="Opcional" maxLength={12} className="w-full h-12 rounded-lg bg-white/[0.05] border border-[#6B7F9C] px-4 uppercase placeholder:normal-case placeholder:text-[#8FA3BF] focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F29A2E] focus:border-[#F29A2E]" />
+                    <input name="jersey-name" autoComplete="off" value={name} onChange={(e) => setName(e.target.value.slice(0, 12))} placeholder="Opcional" maxLength={12} className="w-full h-12 rounded-lg bg-white/[0.05] border border-[#6B7F9C] px-4 uppercase placeholder:normal-case placeholder:text-steel focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent focus:border-accent" />
                   </label>
                   <label className="block">
                     <span className="block font-semibold mb-2">Número</span>
-                    <input name="jersey-number" autoComplete="off" value={number} onChange={(e) => setNumber(e.target.value.replace(/\D/g, "").slice(0, 2))} inputMode="numeric" className="w-full h-12 rounded-lg bg-white/[0.05] border border-[#6B7F9C] px-4 text-center font-heading font-black text-2xl focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F29A2E] focus:border-[#F29A2E]" />
+                    <input name="jersey-number" autoComplete="off" value={number} onChange={(e) => setNumber(e.target.value.replace(/\D/g, "").slice(0, 2))} inputMode="numeric" className="w-full h-12 rounded-lg bg-white/[0.05] border border-[#6B7F9C] px-4 text-center font-heading font-black text-2xl focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent focus:border-accent" />
                   </label>
                 </div>
 
@@ -115,7 +115,7 @@ export default function StoreClient({ products }: { products: Product[] }) {
                   <p className="font-semibold mb-2">Talla</p>
                   <div className="flex flex-wrap gap-2" role="radiogroup" aria-label="Talla">
                     {SIZES.map((s) => (
-                      <button key={s} type="button" role="radio" aria-checked={size === s} onClick={() => setSize(s)} className={clsx("h-11 min-w-12 px-3 rounded-lg border font-semibold", size === s ? "bg-white text-[#071426] border-white" : "border-white/15 hover:border-white/40")}>
+                      <button key={s} type="button" role="radio" aria-checked={size === s} onClick={() => setSize(s)} className={clsx("h-11 min-w-12 px-3 rounded-lg border font-semibold", size === s ? "bg-white text-primary-dark border-white" : "border-white/15 hover:border-white/40")}>
                         {s}
                       </button>
                     ))}
@@ -126,7 +126,7 @@ export default function StoreClient({ products }: { products: Product[] }) {
               <div className="mt-8 pt-6 border-t border-white/10 flex flex-col sm:flex-row sm:items-center gap-4">
                 <p className="font-heading font-black text-4xl tabular-nums">{cop(jersey.price)}</p>
                 <div className="flex flex-1 flex-wrap gap-3 sm:justify-end">
-                  <button type="button" onClick={addJersey} className="h-12 px-5 inline-flex items-center gap-2 rounded-md bg-[#F29A2E] hover:bg-[#FFB14A] text-[#071426] font-bold">
+                  <button type="button" onClick={addJersey} className="h-12 px-5 inline-flex items-center gap-2 rounded-md bg-accent hover:bg-accent-light text-primary-dark font-bold">
                     {added === "jersey" ? <><Check size={18} /> Agregada</> : <><ShoppingCart size={18} /> Agregar al carrito</>}
                   </button>
                   <a href={wa(directMessage)} target="_blank" rel="noopener noreferrer" className="h-12 px-5 inline-flex items-center gap-2 rounded-md border border-white/25 hover:border-white font-semibold">
@@ -140,18 +140,18 @@ export default function StoreClient({ products }: { products: Product[] }) {
       </section>
 
       {/* Catálogo */}
-      <section className="bg-[#EEF2F7] text-[#0F2347] py-20 sm:py-28">
+      <section className="bg-mist text-primary py-20 sm:py-28">
         <div className="container mx-auto px-4 sm:px-6">
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-10">
             <h2 className="font-heading font-black uppercase text-5xl sm:text-6xl leading-none">Catálogo</h2>
-            <button type="button" onClick={() => setIsCartOpen(true)} className="h-12 px-5 inline-flex items-center gap-2 rounded-md bg-[#0F2347] text-white font-semibold w-fit">
+            <button type="button" onClick={() => setIsCartOpen(true)} className="h-12 px-5 inline-flex items-center gap-2 rounded-md bg-primary text-white font-semibold w-fit">
               <ShoppingCart size={18} /> Ver carrito
             </button>
           </div>
           <ul className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {products.map((p) => (
               <li key={p.id} className="group rounded-2xl bg-white overflow-hidden shadow-[0_1px_0_rgba(15,35,71,0.06),0_24px_48px_-28px_rgba(15,35,71,0.45)] flex flex-col">
-                <div className="relative aspect-[4/3] overflow-hidden bg-[#0B1E38]">
+                <div className="relative aspect-[4/3] overflow-hidden bg-night">
                   <Image src={p.image} alt="" fill sizes="(min-width:1024px) 33vw, (min-width:640px) 50vw, 100vw" unoptimized className="object-contain transition-transform duration-500 group-hover:scale-105" />
                   <span className="absolute top-3 left-3 h-7 px-3 inline-flex items-center rounded-full bg-white/90 text-xs font-semibold">{p.category}</span>
                 </div>
@@ -160,7 +160,7 @@ export default function StoreClient({ products }: { products: Product[] }) {
                   <p className="text-[#44546F] mt-1.5 text-sm flex-1">{p.description}</p>
                   <div className="mt-5 flex items-center justify-between">
                     <p className="font-heading font-black text-3xl tabular-nums">{cop(p.price)}</p>
-                    <button type="button" onClick={() => addProduct(p)} className="h-11 px-4 inline-flex items-center gap-1.5 rounded-md bg-[#0F2347] hover:bg-[#071426] text-white font-semibold">
+                    <button type="button" onClick={() => addProduct(p)} className="h-11 px-4 inline-flex items-center gap-1.5 rounded-md bg-primary hover:bg-primary-dark text-white font-semibold">
                       {added === p.id ? <><Check size={18} /> Listo</> : p.customizable ? "Personalizar" : <><Plus size={18} /> Agregar</>}
                     </button>
                   </div>

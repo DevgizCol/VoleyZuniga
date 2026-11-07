@@ -11,7 +11,7 @@ const sections: { title: string; body: React.ReactNode }[] = [
     body: (
       <p>
         Club Voley Zúñiga, con domicilio en Medellín (Antioquia, Colombia) y sede principal en el Polideportivo 3 Canchas, barrio Buenos Aires. Puedes contactarnos por WhatsApp al +57 312 845 9210, al correo clubvoleyzuniga@gmail.com o desde el{" "}
-        <Link href="/contacto" className="text-[#F29A2E] underline underline-offset-2">
+        <Link href="/contacto" className="text-accent underline underline-offset-2">
           formulario de contacto
         </Link>
         .
@@ -72,10 +72,10 @@ export default function PrivacyPage() {
   return (
     <>
       <PageHero kicker="Ley 1581 de 2012" title="Tus datos" intro="Cómo recogemos, usamos y protegemos los datos de deportistas, padres y acudientes. Versión 2026-11-06 (última actualización: 6 de noviembre de 2026)." />
-      <section className="bg-[#071426] text-white pb-24">
+      <section className="bg-primary-dark text-white pb-24">
         <div className="container mx-auto px-4 sm:px-6 grid lg:grid-cols-12 gap-10">
           <nav aria-label="Secciones" className="hidden lg:block lg:col-span-3">
-            <ul className="sticky top-32 space-y-2 text-sm text-[#8FA3BF]">
+            <ul className="sticky top-32 space-y-2 text-sm text-steel">
               {sections.map((s, i) => (
                 <li key={s.title}><a href={`#s${i}`} className="hover:text-white">{s.title}</a></li>
               ))}

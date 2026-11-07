@@ -27,7 +27,7 @@ export default function TeamBadge({
 
   if (isClub) {
     return (
-      <span className={clsx(dims, "shrink-0 rounded-full bg-[#F3F6FB] ring-2 ring-[#F29A2E] flex items-center justify-center p-1.5")}>
+      <span className={clsx(dims, "shrink-0 rounded-full bg-[#F3F6FB] ring-2 ring-accent flex items-center justify-center p-1.5")}>
         <Image src="/logo-trim.png" alt="" width={800} height={473} className="w-full h-auto" />
       </span>
     );
@@ -45,7 +45,7 @@ export default function TeamBadge({
       aria-hidden="true"
       className={clsx(
         dims,
-        "relative shrink-0 rounded-full overflow-hidden ring-2 ring-[#8FA3BF]/50 flex items-center justify-center font-heading font-black text-white",
+        "relative shrink-0 rounded-full overflow-hidden ring-2 ring-steel/50 flex items-center justify-center font-heading font-black text-white",
         "bg-[linear-gradient(135deg,#1B3A6B_0%,#0F2347_55%,#0B1E38_100%)] shadow-[inset_0_2px_0_rgba(255,255,255,0.12)]"
       )}
     >

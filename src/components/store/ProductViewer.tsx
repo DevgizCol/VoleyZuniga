@@ -46,7 +46,7 @@ export default function ProductViewer(props: Props) {
     <div className="relative w-full aspect-square">
       {!ready && <Flat {...props} />}
       <Product3D {...props} onReady={() => setReady(true)} onError={() => setFailed(true)} className={`absolute inset-0 w-full h-full transition-opacity duration-500 ${ready ? "opacity-100" : "opacity-0"}`} />
-      {ready && <p className="absolute bottom-0 inset-x-0 text-center text-xs text-[#8FA3BF] pointer-events-none">Arrástrala para girarla</p>}
+      {ready && <p className="absolute bottom-0 inset-x-0 text-center text-xs text-steel pointer-events-none">Arrástrala para girarla</p>}
     </div>
   );
 }

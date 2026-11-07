@@ -45,12 +45,12 @@ export default async function MessagesAdmin({ searchParams }: { searchParams: Pr
                         <p className="font-heading font-extrabold text-2xl leading-tight">{m.Nombre}</p>
                         <Badge>{m.Asunto}</Badge>
                       </div>
-                      <p className="text-xs text-[#8FA3BF] mt-0.5">{shortDate(m.Fecha)} · {m.Contacto}</p>
+                      <p className="text-xs text-steel mt-0.5">{shortDate(m.Fecha)} · {m.Contacto}</p>
                     </div>
                     <StatusSelect sheet="Contacto" row={m} />
                   </div>
                   <p className="mt-3 text-[#DCE4EF] whitespace-pre-line">{m.Mensaje}</p>
-                  {m.Notas ? <p className="mt-3 text-sm text-[#FFD9A8] bg-[#F29A2E]/10 border border-[#F29A2E]/20 rounded-lg px-3 py-2 whitespace-pre-line">{m.Notas}</p> : null}
+                  {m.Notas ? <p className="mt-3 text-sm text-[#FFD9A8] bg-accent/10 border border-accent/20 rounded-lg px-3 py-2 whitespace-pre-line">{m.Notas}</p> : null}
                   <div className="mt-4 flex flex-wrap gap-2">
                     {wa ? (
                       <a href={wa} target="_blank" rel="noopener noreferrer" className={btn.whatsapp}>
