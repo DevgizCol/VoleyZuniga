@@ -34,12 +34,12 @@ Reglas del ciclo: `.claude/skills/voleyzuniga-ciclo-cambio/SKILL.md`. Investigac
 | 6 | Video de portada: botón pausar/reproducir, respeta reducir movimiento, no se descarga con ahorro de datos o 2G/3G | Accesibilidad/Rendimiento | Hecho | PR #43 |
 | 7 | Fotos de Drive por tamaño de uso: `srcSet` 480–1600 + `sizes` por lugar | Rendimiento | Hecho | PR #42 |
 | 8 | Fuentes: quitado Big Shoulders 600 (1 uso); Figtree 500 se conserva (menú) | Rendimiento | Hecho | PR #42 |
-| 9 | Fotos en color en móvil (`hover: none`) y confirmación de inscripción con una acción principal | Diseño | Fotos en color en móvil: en PR; confirmación con una acción: pendiente | PR #46 |
-| 10 | Menú móvil: foco, Escape, devolver foco | Accesibilidad | En PR | PR #46 |
-| 11 | Timeout de lectura 4–5 s, `loading.tsx`, no cachear respaldo vacío si la hoja falla | Rendimiento | Pendiente (verificar bug) | — |
-| 12 | `/partidos` y `/posiciones` dinámicas por `searchParams` | Rendimiento | Pendiente | — |
-| 13 | Rate limit compartido (Upstash/Vercel WAF) | Seguridad | Pendiente (decidir costo) | — |
-| 14 | Lighthouse real en móvil | QA | Pendiente | — |
+| 9 | Fotos en color en móvil (`hover: none`) y confirmación de inscripción con una acción principal | Diseño | Hecho | PR #46, #52 |
+| 10 | Menú móvil: foco, Escape, devolver foco | Accesibilidad | Hecho | PR #46 |
+| 11 | Timeout de lectura 4–5 s, `loading.tsx`, no cachear respaldo vacío si la hoja falla | Rendimiento | Hecho: 5 s en lecturas públicas, carga en /partidos y /posiciones | feat/pendientes-final |
+| 12 | `/partidos` y `/posiciones` dinámicas por `searchParams` | Rendimiento | Descartado: los datos ya salen de caché; solo se renderiza | — |
+| 13 | Rate limit compartido (Upstash/Vercel WAF) | Seguridad | Hecho en código (Upstash gratis); regla WAF y variables: manual (`docs/seguridad/limite-peticiones.md`) | feat/pendientes-final |
+| 14 | Lighthouse real en móvil | QA | Hecho: rendimiento 90–97, accesibilidad 97–100 | feat/pendientes-final |
 | 15 | Clasificar transcripciones de videos y cruzar con esta cola | Investigación | Hecho (`docs/investigacion/ideas-videos.md`) | PR #28 |
 | 16 | **Mejorar el panel `/admin`** (pedido del usuario). Auditoría en celular hecha (ver abajo); mejoras por ciclo | Panel | Auditado; 16a–16d y 16f hechos | PR #27, #40, #41 |
 | 16a | Posiciones desborda a lo ancho en celular (565 px en 390): el `sr-only` absoluto de la última columna escapaba del `overflow-x-auto` | Panel | Hecho | PR #27 |
@@ -51,14 +51,18 @@ Reglas del ciclo: `.claude/skills/voleyzuniga-ciclo-cambio/SKILL.md`. Investigac
 | 17 | Dependabot + `npm audit --omit=dev` en CI | Seguridad | Hecho | PR #29 |
 | 18 | `error.tsx` / `global-error.tsx` con reintento | Buenas prácticas | Hecho | PR #29 |
 | 19 | Prioridad a la imagen principal de la portada (LCP) | Rendimiento | Hecho | PR #29 |
-| 20 | Google Business + QR de reseñas en el pase | SEO/Mercadeo | Pendiente (club) | — |
-| 21 | Prueba de accesibilidad automática (axe) en CI | Accesibilidad | Pendiente | — |
-| 22 | Lighthouse en CI para móvil | Rendimiento | Pendiente | — |
-| 23 | Tokens de color en el tema de Tailwind (`#F29A2E` ×261) | Diseño | Pendiente | — |
-| 24 | Plan de respuesta a incidentes | Seguridad | Hecho: `docs/seguridad/plan-incidentes.md` | este PR |
-| 25 | Microinteracciones (Emil Kowalski, con `reduced-motion`) | Diseño | Pendiente | — |
-| 26 | Precio o rango visible en la web | Mercadeo | Pendiente (decisión del club) | — |
-| 27 | Mantener despierto Apps Script (activador de tiempo cada ~5 min) para evitar arranques en frío de 10+ s | Rendimiento | Idea (gasta cuota diaria de Apps Script) | — |
+| 20 | Google Business + reseñas | SEO/Mercadeo | Código hecho; crear la ficha: club (`docs/mercadeo/google-business.md`) | feat/pendientes-final |
+| 21 | Prueba de accesibilidad automática (axe) en CI | Accesibilidad | Hecho | feat/pendientes-final |
+| 22 | Lighthouse en CI para móvil | Rendimiento | Hecho | feat/pendientes-final |
+| 23 | Tokens de color en el tema de Tailwind | Diseño | Hecho (562 usos) | feat/pendientes-final |
+| 24 | Plan de respuesta a incidentes | Seguridad | Hecho: `docs/seguridad/plan-incidentes.md` | PR #47 |
+| 25 | Microinteracciones (Emil Kowalski, con `reduced-motion`) | Diseño | Hecho | feat/pendientes-final |
+| 26 | Precio visible | Mercadeo | Hecho: $60.000 mensualidad | feat/pendientes-final |
+| 27 | Mantener despierto Apps Script | Rendimiento | En observación: logs avisan lecturas de más de 10 s; actuar solo si aparecen | feat/pendientes-final |
+| 28 | Ley 1581: acudiente y versión de la política en el consentimiento, imagen opcional, borrado a 6 meses, política actualizada | Legal | Hecho | feat/pendientes-final |
+| 29 | Panel: usuarios con correo, contraseña + código por correo, celular reconocido | Seguridad | Hecho | feat/pendientes-final |
+| 30 | Logos reales de Instagram y WhatsApp | Diseño | Hecho | feat/pendientes-final |
+| 31 | Logos de las entidades en "Club afiliado a" y otras redes del club | Diseño | Pendiente: archivos oficiales y lista de redes | — |
 
 ## Run
 

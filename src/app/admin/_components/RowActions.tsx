@@ -27,7 +27,7 @@ export function DeleteButton({ sheet, row, label, compact = false }: { sheet: Ed
       <button type="button" onClick={() => ref.current?.showModal()} className={compact ? btn.ghost : btn.secondary} aria-label={`Eliminar ${label}`}>
         <Trash2 size={16} /> {compact ? null : "Eliminar"}
       </button>
-      <dialog ref={ref} className="m-auto w-[min(92vw,420px)] rounded-2xl bg-[#0B1E38] text-white border border-white/10 p-6 backdrop:bg-black/60">
+      <dialog ref={ref} className="m-auto w-[min(92vw,420px)] rounded-2xl bg-night text-white border border-white/10 p-6 backdrop:bg-black/60">
         <h2 className="font-heading font-black uppercase text-2xl">¿Eliminar?</h2>
         <p className="mt-2 text-[#C9D5E6]">
           Se borrará <strong className="text-white">{label}</strong> de la hoja y de la web. Queda registrado en el historial.

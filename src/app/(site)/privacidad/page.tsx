@@ -10,8 +10,8 @@ const sections: { title: string; body: React.ReactNode }[] = [
     title: "1. Responsable del tratamiento",
     body: (
       <p>
-        Club Voley Zúñiga, Medellín (Antioquia, Colombia). Puedes contactarnos por WhatsApp al +57 312 845 9210, al correo clubvoleyzuniga@gmail.com o desde el{" "}
-        <Link href="/contacto" className="text-[#F29A2E] underline underline-offset-2">
+        Club Voley Zúñiga, con domicilio en Medellín (Antioquia, Colombia) y sede principal en el Polideportivo 3 Canchas, barrio Buenos Aires. Puedes contactarnos por WhatsApp al +57 312 845 9210, al correo clubvoleyzuniga@gmail.com o desde el{" "}
+        <Link href="/contacto" className="text-accent underline underline-offset-2">
           formulario de contacto
         </Link>
         .
@@ -22,7 +22,7 @@ const sections: { title: string; body: React.ReactNode }[] = [
     title: "2. Datos que recogemos",
     body: (
       <p>
-        En la inscripción: nombre y edad del deportista, categoría, nivel, sede y horario de interés, y un número de WhatsApp de contacto. En el formulario de contacto: nombre, correo, teléfono, motivo y mensaje. No pedimos documentos de identidad, datos financieros ni fotografías a través de este sitio.
+        En la inscripción: nombre y edad del deportista, categoría, nivel, sede y horario de interés, un número de WhatsApp de contacto y, si es menor de edad, el nombre y parentesco de quien autoriza. Guardamos la fecha y la versión de esta política que se aceptó. En el formulario de contacto: nombre, correo, teléfono, motivo y mensaje. No pedimos documentos de identidad, datos financieros ni fotografías a través de este sitio.
       </p>
     ),
   },
@@ -30,7 +30,7 @@ const sections: { title: string; body: React.ReactNode }[] = [
     title: "3. Para qué los usamos",
     body: (
       <p>
-        Gestionar inscripciones y clases de prueba, responder consultas y PQRS, y comunicarnos contigo sobre horarios, convocatorias y cambios en los entrenamientos. No vendemos ni cedemos tus datos a terceros con fines comerciales.
+        Gestionar inscripciones y clases de prueba, responder consultas y PQRS, comunicarnos contigo sobre horarios, convocatorias y cambios en los entrenamientos, y enviarte novedades del club (puedes pedir que no te las enviemos en cualquier momento). Solo si lo autorizas aparte, publicar fotos y videos del deportista en entrenamientos y partidos en la web y las redes del club; esa autorización es opcional y puedes retirarla cuando quieras. No vendemos ni cedemos tus datos a terceros con fines comerciales.
       </p>
     ),
   },
@@ -62,7 +62,7 @@ const sections: { title: string; body: React.ReactNode }[] = [
     title: "7. Cuánto tiempo los conservamos",
     body: (
       <p>
-        Mientras sea necesario para gestionar la inscripción o la consulta, y hasta que pidas su eliminación. Las solicitudes que no terminen en inscripción se depuran periódicamente.
+        Las inscripciones que no terminan en matrícula se borran automáticamente a los 6 meses. Los datos de deportistas matriculados se conservan mientras pertenezcan al club y hasta 1 año después de su retiro. Los mensajes de contacto, mientras se atiende la consulta. En cualquier momento puedes pedir que los eliminemos antes.
       </p>
     ),
   },
@@ -71,11 +71,11 @@ const sections: { title: string; body: React.ReactNode }[] = [
 export default function PrivacyPage() {
   return (
     <>
-      <PageHero kicker="Ley 1581 de 2012" title="Tus datos" intro="Cómo recogemos, usamos y protegemos los datos de deportistas, padres y acudientes. Última actualización: 8 de octubre de 2026." />
-      <section className="bg-[#071426] text-white pb-24">
+      <PageHero kicker="Ley 1581 de 2012" title="Tus datos" intro="Cómo recogemos, usamos y protegemos los datos de deportistas, padres y acudientes. Versión 2026-11-06 (última actualización: 6 de noviembre de 2026)." />
+      <section className="bg-primary-dark text-white pb-24">
         <div className="container mx-auto px-4 sm:px-6 grid lg:grid-cols-12 gap-10">
           <nav aria-label="Secciones" className="hidden lg:block lg:col-span-3">
-            <ul className="sticky top-32 space-y-2 text-sm text-[#8FA3BF]">
+            <ul className="sticky top-32 space-y-2 text-sm text-steel">
               {sections.map((s, i) => (
                 <li key={s.title}><a href={`#s${i}`} className="hover:text-white">{s.title}</a></li>
               ))}

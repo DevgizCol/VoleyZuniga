@@ -9,7 +9,7 @@ import { btn } from "./ui";
 import type { FieldDef, RowData } from "./types";
 
 const input =
-  "w-full min-h-11 rounded-lg bg-white/[0.05] border border-[#6B7F9C] px-3.5 text-white placeholder:text-[#8FA3BF] focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F29A2E] focus:border-[#F29A2E] aria-[invalid=true]:border-[#E5484D] transition-colors";
+  "w-full min-h-11 rounded-lg bg-white/[0.05] border border-[#6B7F9C] px-3.5 text-white placeholder:text-steel focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent focus:border-accent aria-[invalid=true]:border-[#E5484D] transition-colors";
 
 // Formulario genérico para crear o editar una fila de la hoja.
 export default function RowForm({
@@ -69,10 +69,10 @@ export default function RowForm({
             const checked = initial ? String(value).toUpperCase() !== "NO" : true;
             return (
               <label key={f.name} className={clsx("flex items-start gap-3 rounded-lg border border-white/10 bg-white/[0.03] p-3.5 cursor-pointer", f.wide !== false && "sm:col-span-2")}>
-                <input type="checkbox" name={f.name} defaultChecked={checked} className="mt-0.5 h-5 w-5 accent-[#F29A2E]" />
+                <input type="checkbox" name={f.name} defaultChecked={checked} className="mt-0.5 h-5 w-5 accent-accent" />
                 <span>
                   <span className="font-semibold block">{f.label}</span>
-                  {f.help ? <span className="text-sm text-[#8FA3BF]">{f.help}</span> : null}
+                  {f.help ? <span className="text-sm text-steel">{f.help}</span> : null}
                 </span>
               </label>
             );
@@ -82,10 +82,10 @@ export default function RowForm({
             <div key={f.name} className={clsx(f.wide && "sm:col-span-2")}>
               <label htmlFor={id} className="block text-sm font-semibold mb-1.5">
                 {f.label}
-                {f.required ? <span className="text-[#F29A2E]"> *</span> : null}
+                {f.required ? <span className="text-accent"> *</span> : null}
               </label>
               {f.type === "select" ? (
-                <select id={id} name={f.name} defaultValue={value || f.options?.[0]} aria-invalid={invalid} aria-describedby={describedBy} className={clsx(input, "bg-[#0F2347]")}>
+                <select id={id} name={f.name} defaultValue={value || f.options?.[0]} aria-invalid={invalid} aria-describedby={describedBy} className={clsx(input, "bg-primary")}>
                   {f.options?.map((o) => (
                     <option key={o} value={o}>
                       {o === "" ? "No" : o}
@@ -123,7 +123,7 @@ export default function RowForm({
                   {err(f.name)}
                 </p>
               ) : f.help ? (
-                <p id={`${id}-help`} className="mt-1.5 text-sm text-[#8FA3BF]">
+                <p id={`${id}-help`} className="mt-1.5 text-sm text-steel">
                   {f.help}
                 </p>
               ) : null}
@@ -140,7 +140,7 @@ export default function RowForm({
         </p>
       ) : null}
 
-      <div className="sticky -bottom-6 -mx-5 sm:-mx-6 px-5 sm:px-6 py-4 bg-[#0B1E38]/95 backdrop-blur border-t border-white/10 flex justify-end">
+      <div className="sticky -bottom-6 -mx-5 sm:-mx-6 px-5 sm:px-6 py-4 bg-night/95 backdrop-blur border-t border-white/10 flex justify-end">
         <button type="submit" disabled={pending} className={btn.primary}>
           {pending ? <Loader2 size={18} className="animate-spin" /> : <Save size={18} />} {pending ? "Guardando…" : submitLabel ?? (row ? "Guardar cambios" : "Crear")}
         </button>

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { pageMeta } from "@/lib/seo";
 import Link from "next/link";
-import { CalendarPlus, CalendarCheck, Clock, MapPin, Navigation, ArrowRight, Camera } from "lucide-react";
+import { CalendarPlus, CalendarCheck, Clock, MapPin, Navigation, ArrowRight } from "lucide-react";
 import { siteUrl } from "@/lib/site-url";
 import PageHero from "@/components/PageHero";
 import JsonLd from "@/components/JsonLd";
@@ -10,6 +10,7 @@ import TeamBadge from "@/components/TeamBadge";
 import { getSettings } from "@/lib/content";
 import { CATEGORIES } from "@/data/registration";
 import { bogotaToday, calendarUrl, countdownLabel, dateParts, getMatches, time12, type Match } from "@/lib/matches";
+import { InstagramIcon } from "@/components/BrandIcons";
 
 export const metadata: Metadata = pageMeta("/partidos", "Partidos", "Calendario de partidos y resultados del Club Voley Zúñiga.", true);
 
@@ -80,7 +81,7 @@ export default async function GamesPage({ searchParams }: { searchParams: Promis
         </div>
       </PageHero>
 
-      <section className="bg-[#071426] text-white pb-24 sm:pb-32">
+      <section className="bg-primary-dark text-white pb-24 sm:pb-32">
         <div className="container mx-auto px-4 sm:px-6">
           <div className="py-6">
             <CategoryFilter basePath="/partidos" categories={categories} active={active} />
@@ -124,11 +125,11 @@ export default async function GamesPage({ searchParams }: { searchParams: Promis
 function FeaturedMatch({ m }: { m: Match }) {
   const d = dateParts(m.date);
   return (
-    <article className="relative mt-4 rounded-2xl overflow-hidden border border-white/10 bg-gradient-to-br from-[#0F2347] via-[#0B1E38] to-[#071426] shadow-[0_40px_80px_-40px_rgba(242,154,46,0.35)]">
-      <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[#F29A2E] via-[#FFB14A] to-[#F29A2E]" />
+    <article className="relative mt-4 rounded-2xl overflow-hidden border border-white/10 bg-gradient-to-br from-primary via-night to-primary-dark shadow-[0_40px_80px_-40px_rgba(242,154,46,0.35)]">
+      <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-accent via-accent-light to-accent" />
       <div className="flex items-center justify-between gap-3 px-5 sm:px-8 pt-6">
-        <span className="text-sm font-semibold text-[#F29A2E]">Próximo partido · {m.category}</span>
-        <span className="shrink-0 whitespace-nowrap h-8 px-3 inline-flex items-center rounded-full bg-[#F29A2E] text-[#071426] text-sm font-bold">
+        <span className="text-sm font-semibold text-accent">Próximo partido · {m.category}</span>
+        <span className="shrink-0 whitespace-nowrap h-8 px-3 inline-flex items-center rounded-full bg-accent text-primary-dark text-sm font-bold">
           {countdownLabel(m.date)}
         </span>
       </div>
@@ -137,8 +138,8 @@ function FeaturedMatch({ m }: { m: Match }) {
         <TeamSide name={m.home} isClub={m.clubIsHome} logo={m.clubIsHome ? "" : m.rivalLogo} label="Local" />
         <div className="text-center">
           <p className="font-heading font-black text-5xl sm:text-7xl leading-none tabular-nums">{d.day}</p>
-          <p className="font-heading font-bold uppercase text-xl sm:text-2xl text-[#F29A2E]">{d.month}</p>
-          <p className="mt-2 font-heading font-black text-white/30 text-2xl">VS</p>
+          <p className="font-heading font-bold uppercase text-xl sm:text-2xl text-accent">{d.month}</p>
+          <p className="mt-2 font-heading font-black text-white/60 text-2xl">VS</p>
         </div>
         <TeamSide name={m.away} isClub={m.clubPlays && !m.clubIsHome} logo={m.clubIsHome ? m.rivalLogo : ""} label="Visitante" />
       </div>
@@ -146,11 +147,11 @@ function FeaturedMatch({ m }: { m: Match }) {
       <div className="border-t border-white/10 px-5 sm:px-8 py-5 flex flex-col lg:flex-row lg:items-center gap-4 lg:justify-between">
         <div className="flex flex-wrap gap-x-6 gap-y-2 text-[#C9D5E6]">
           <span className="inline-flex items-center gap-2">
-            <Clock size={18} className="text-[#F29A2E]" /> {d.weekday.charAt(0).toUpperCase() + d.weekday.slice(1)} {d.day} de {d.monthLong} · {time12(m.time)}
+            <Clock size={18} className="text-accent" /> {d.weekday.charAt(0).toUpperCase() + d.weekday.slice(1)} {d.day} de {d.monthLong} · {time12(m.time)}
           </span>
           {m.venue && (
             <span className="inline-flex items-center gap-2">
-              <MapPin size={18} className="text-[#F29A2E]" /> {m.venue}
+              <MapPin size={18} className="text-accent" /> {m.venue}
             </span>
           )}
         </div>
@@ -159,7 +160,7 @@ function FeaturedMatch({ m }: { m: Match }) {
             href={calendarUrl(m)}
             target="_blank"
             rel="noopener noreferrer"
-            className="h-11 px-5 inline-flex items-center gap-2 bg-[#F29A2E] hover:bg-[#FFB14A] text-[#071426] font-bold rounded-md transition-colors"
+            className="h-11 px-5 inline-flex items-center gap-2 bg-accent hover:bg-accent-light text-primary-dark font-bold rounded-md transition-colors"
           >
             <CalendarPlus size={18} /> Agregar a mi calendario
           </a>
@@ -187,7 +188,7 @@ function TeamSide({ name, isClub, logo, label }: { name: string; isClub: boolean
         <p className={`font-heading font-black uppercase text-xl sm:text-3xl leading-tight break-words ${isClub ? "text-white" : "text-[#C9D5E6]"}`}>
           {name}
         </p>
-        <p className="text-xs text-[#8FA3BF] mt-1">{label}</p>
+        <p className="text-xs text-steel mt-1">{label}</p>
       </div>
     </div>
   );
@@ -196,9 +197,9 @@ function TeamSide({ name, isClub, logo, label }: { name: string; isClub: boolean
 function DateBlock({ iso, muted = false }: { iso: string; muted?: boolean }) {
   const d = dateParts(iso);
   return (
-    <div className={`w-16 shrink-0 text-center rounded-lg py-2 ${muted ? "bg-white/[0.04]" : "bg-[#F29A2E]/10 border border-[#F29A2E]/30"}`}>
+    <div className={`w-16 shrink-0 text-center rounded-lg py-2 ${muted ? "bg-white/[0.04]" : "bg-accent/10 border border-accent/30"}`}>
       <p className="font-heading font-black text-3xl leading-none tabular-nums">{d.day}</p>
-      <p className={`font-heading font-bold uppercase text-sm ${muted ? "text-[#8FA3BF]" : "text-[#F29A2E]"}`}>{d.month}</p>
+      <p className={`font-heading font-bold uppercase text-sm ${muted ? "text-steel" : "text-accent"}`}>{d.month}</p>
     </div>
   );
 }
@@ -222,7 +223,7 @@ function UpcomingRow({ m }: { m: Match }) {
         target="_blank"
         rel="noopener noreferrer"
         aria-label={`Agregar ${m.home} vs ${m.away} a mi calendario`}
-        className="hidden sm:inline-flex h-10 w-10 items-center justify-center rounded-md border border-white/15 hover:border-[#F29A2E] hover:text-[#F29A2E] transition-colors"
+        className="hidden sm:inline-flex h-10 w-10 items-center justify-center rounded-md border border-white/15 hover:border-accent hover:text-accent transition-colors"
       >
         <CalendarPlus size={18} />
       </a>
@@ -261,11 +262,11 @@ function ResultRow({ m }: { m: Match }) {
         {score ? (
           <>
             {score[1]}
-            <span className="text-white/30 mx-1">–</span>
+            <span className="text-white/60 mx-1">–</span>
             {score[2]}
           </>
         ) : (
-          <span className="text-base font-semibold text-[#8FA3BF]">{m.status || "Sin marcador"}</span>
+          <span className="text-base font-semibold text-steel">{m.status || "Sin marcador"}</span>
         )}
       </p>
     </li>
@@ -274,7 +275,7 @@ function ResultRow({ m }: { m: Match }) {
 
 function EmptyUpcoming({ filtered, instagram: contact }: { filtered: boolean; instagram: { instagramUrl: string; instagramHandle: string } }) {
   return (
-    <div className="mt-4 rounded-2xl border border-white/10 bg-gradient-to-br from-[#0F2347] to-[#071426] p-8 sm:p-12 grid md:grid-cols-[1fr_auto] gap-8 items-center">
+    <div className="mt-4 rounded-2xl border border-white/10 bg-gradient-to-br from-primary to-primary-dark p-8 sm:p-12 grid md:grid-cols-[1fr_auto] gap-8 items-center">
       <div>
         <h2 className="font-heading font-black uppercase text-4xl sm:text-5xl leading-none">
           {filtered ? "Sin partidos para esta categoría" : "Pronto publicaremos el calendario"}
@@ -288,9 +289,9 @@ function EmptyUpcoming({ filtered, instagram: contact }: { filtered: boolean; in
         href={contact.instagramUrl}
         target="_blank"
         rel="noopener noreferrer"
-        className="h-12 px-6 inline-flex items-center gap-2 bg-[#F29A2E] hover:bg-[#FFB14A] text-[#071426] font-bold rounded-md transition-colors"
+        className="h-12 px-6 inline-flex items-center gap-2 bg-accent hover:bg-accent-light text-primary-dark font-bold rounded-md transition-colors"
       >
-        <Camera size={18} /> Seguir {contact.instagramHandle}
+        <InstagramIcon size={18} /> Seguir {contact.instagramHandle}
       </a>
     </div>
   );
@@ -301,8 +302,8 @@ function SubscribeBox() {
   const webcal = `webcal://${host}/calendario.ics`;
   const google = `https://calendar.google.com/calendar/render?cid=${encodeURIComponent(webcal)}`;
   return (
-    <div className="mt-16 rounded-2xl border border-[#F29A2E]/30 bg-gradient-to-r from-[#F29A2E]/[0.12] to-transparent p-6 sm:p-8 grid md:grid-cols-[auto_1fr_auto] gap-5 items-center">
-      <span className="w-14 h-14 rounded-xl bg-[#F29A2E] text-[#071426] flex items-center justify-center">
+    <div className="mt-16 rounded-2xl border border-accent/30 bg-gradient-to-r from-accent/[0.12] to-transparent p-6 sm:p-8 grid md:grid-cols-[auto_1fr_auto] gap-5 items-center">
+      <span className="w-14 h-14 rounded-xl bg-accent text-primary-dark flex items-center justify-center">
         <CalendarCheck size={28} />
       </span>
       <div>
@@ -310,7 +311,7 @@ function SubscribeBox() {
         <p className="mt-2 text-[#C9D5E6]">Suscríbete una vez y cada partido nuevo aparece solo en tu calendario, con hora y sede.</p>
       </div>
       <div className="flex flex-wrap gap-3">
-        <a href={google} target="_blank" rel="noopener noreferrer" className="h-12 px-5 inline-flex items-center gap-2 rounded-md bg-[#F29A2E] hover:bg-[#FFB14A] text-[#071426] font-bold">
+        <a href={google} target="_blank" rel="noopener noreferrer" className="h-12 px-5 inline-flex items-center gap-2 rounded-md bg-accent hover:bg-accent-light text-primary-dark font-bold">
           Google Calendar
         </a>
         <a href={webcal} className="h-12 px-5 inline-flex items-center gap-2 rounded-md border border-white/25 hover:border-white font-semibold">

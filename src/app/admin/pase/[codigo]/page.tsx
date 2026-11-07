@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { CheckCircle2, CircleAlert, MessageCircle, ArrowLeft } from "lucide-react";
+import { CheckCircle2, CircleAlert, ArrowLeft, Star } from "lucide-react";
 import { adminRead } from "@/lib/sheets";
+import { getSettings } from "@/lib/content";
 import { FREE_CLASS_COL, findByCode } from "@/lib/admin/free-class";
 import { PageHeader, Card, Empty, NotConnected, btn } from "../../_components/ui";
 import { shortDate, waLink } from "../../_components/format";
 import StatusSelect from "../../_components/StatusSelect";
 import FreeClassActions from "./FreeClassActions";
+import { WhatsAppIcon } from "@/components/BrandIcons";
 
 export const metadata: Metadata = { title: "Ficha del pase" };
 export const dynamic = "force-dynamic";
@@ -15,8 +17,17 @@ export const dynamic = "force-dynamic";
 export default async function PassCard({ params }: { params: Promise<{ codigo: string }> }) {
   const { codigo } = await params;
   const code = decodeURIComponent(codigo).trim().toUpperCase();
-  const table = await adminRead("Inscripciones");
+  const [table, { reviewUrl }] = await Promise.all([adminRead("Inscripciones"), getSettings()]);
   if (!table) return <NotConnected />;
+  // Un encabezado mal escrito ("Codigo ", sin tilde) haría que ningún pase aparezca: decirlo claro.
+  if (!table.headers.includes("Código")) {
+    return (
+      <>
+        <PageHeader title="Falta la columna Código" description="En la pestaña Inscripciones, el encabezado debe decir exactamente “Código” (con tilde y sin espacios)." />
+        <Empty title="Corrige el encabezado y vuelve a escanear" />
+      </>
+    );
+  }
   const r = findByCode(table.rows, code);
   if (!r) {
     return (
@@ -31,6 +42,8 @@ export default async function PassCard({ params }: { params: Promise<{ codigo: s
 
   const used = r[FREE_CLASS_COL];
   const wa = waLink(r.WhatsApp || "", `Hola, te escribimos del Club Voley Zúñiga sobre la clase de ${r.Nombre}.`);
+  // Tras la clase gratis (no antes): pedir la reseña cuando ya hubo una experiencia real.
+  const reviewWa = reviewUrl ? waLink(r.WhatsApp || "", `¡Gracias por venir a la clase de prueba de ${r.Nombre}! Si te gustó, ¿nos ayudas con una reseña en Google? Nos toma 1 minuto y ayuda a otras familias a encontrarnos: ${reviewUrl}`) : "";
   const missingColumn = !table.headers.includes(FREE_CLASS_COL);
   const facts: [string, string][] = [
     ["Edad", r.Edad ? `${r.Edad} años` : "—"],
@@ -60,7 +73,7 @@ export default async function PassCard({ params }: { params: Promise<{ codigo: s
               <p className="mt-1 text-[#FFC2BA]">{used}</p>
             </Card>
           ) : missingColumn ? (
-            <Card className="p-5 border-[#F29A2E]/50 bg-[#F29A2E]/10">
+            <Card className="p-5 border-accent/50 bg-accent/10">
               <p className="font-semibold">Falta la columna “{FREE_CLASS_COL}” en la pestaña Inscripciones.</p>
               <p className="mt-1 text-sm text-[#C9D5E6]">Créala en la hoja (en cualquier posición) para poder registrar la clase gratis.</p>
             </Card>
@@ -78,7 +91,7 @@ export default async function PassCard({ params }: { params: Promise<{ codigo: s
             <dl className="grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-3">
               {facts.map(([k, v]) => (
                 <div key={k}>
-                  <dt className="text-xs text-[#8FA3BF]">{k}</dt>
+                  <dt className="text-xs text-steel">{k}</dt>
                   <dd className="font-semibold">{v}</dd>
                 </div>
               ))}
@@ -89,7 +102,7 @@ export default async function PassCard({ params }: { params: Promise<{ codigo: s
 
         <Card className="p-5 space-y-4">
           <div>
-            <p className="text-xs text-[#8FA3BF] mb-2">Estado de la inscripción</p>
+            <p className="text-xs text-steel mb-2">Estado de la inscripción</p>
             <StatusSelect sheet="Inscripciones" row={r} />
           </div>
           {wa ? (
@@ -99,7 +112,12 @@ export default async function PassCard({ params }: { params: Promise<{ codigo: s
               rel="noopener noreferrer"
               className={`${btn.secondary} w-full`}
             >
-              <MessageCircle size={18} /> Escribir a la familia <span className="sr-only">(abre WhatsApp)</span>
+              <WhatsAppIcon size={18} /> Escribir a la familia <span className="sr-only">(abre WhatsApp)</span>
+            </a>
+          ) : null}
+          {used && reviewWa ? (
+            <a href={reviewWa} target="_blank" rel="noopener noreferrer" className={`${btn.secondary} w-full`}>
+              <Star size={18} aria-hidden /> Pedir reseña en Google <span className="sr-only">(abre WhatsApp)</span>
             </a>
           ) : null}
         </Card>

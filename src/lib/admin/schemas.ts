@@ -104,6 +104,11 @@ export const SETTING_RULES: Record<string, { label: string; help: string; schema
     help: "Con o sin +57, por ejemplo 312 845 9210. Cambia todos los botones de WhatsApp y llamada de la web.",
     schema: z.string().trim().refine((v) => /^(\+?57)?\s*3\d{2}\s*\d{3}\s*\d{4}$/.test(v.replace(/[-.]/g, " ")), "Escribe un celular colombiano de 10 dígitos."),
   },
+  resenas_url: {
+    label: "Enlace de reseñas de Google",
+    help: "En tu ficha de Google Business → “Pedir reseñas” → copiar enlace (empieza por https://g.page/r/…). Aparece en el pie de página y en la ficha del pase tras la clase gratis. Vacío: no se pide reseña.",
+    schema: z.union([z.literal(""), z.string().trim().max(300, "El enlace es demasiado largo.").startsWith("https://", "El enlace debe empezar por https://")]),
+  },
   correo: { label: "Correo de contacto", help: "Se muestra en el pie de página y en Contacto.", schema: z.string().trim().email("Escribe un correo válido.") },
   instagram: {
     label: "Instagram",
@@ -141,7 +146,7 @@ export const SETTING_RULES: Record<string, { label: string; help: string; schema
   },
   precio_desde: {
     label: "Mensualidad desde",
-    help: "Valor de referencia, por ejemplo “$80.000”. Se muestra en la ruta del deportista y en las preguntas frecuentes. Vacío: se dice que el valor se envía por WhatsApp.",
+    help: "Valor de referencia, por ejemplo “$80.000”. Se muestra en la ruta del deportista y en las preguntas frecuentes. Vacío: se oculta y se dice que el valor se envía por WhatsApp.",
     schema: text(40, "El valor"),
   },
   cupos: {

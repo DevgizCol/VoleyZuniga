@@ -1,7 +1,8 @@
 // Simulador local del Apps Script (docs/google-sheets/Code.gs) para ver el panel en desarrollo sin tocar la hoja real.
 // Uso: node scripts/dev/mock-sheets.mjs   y en .env.local:
 //   SHEETS_WEBAPP_URL=http://localhost:3999/exec  SHEETS_SECRET=desarrollo-local-0000000000
-//   ADMIN_PASSWORD=<12+ caracteres>  SESSION_SECRET=<32+ caracteres>
+//   ADMIN_USERS=Nombre:correo@ejemplo.com:<8+ caracteres>  SESSION_SECRET=<32+ caracteres>
+// El código de acceso al panel aparece en la consola de este simulador.
 // Datos ficticios en memoria: se pierden al cerrar.
 import { createServer } from "node:http";
 
@@ -50,6 +51,7 @@ const sheets = {
   Ajustes: t(["Clave", "Valor"], [
     ["telefono", "300 000 0000"], ["correo", "club@example.com"], ["instagram", "voleyzuniga"],
     ["inscripciones_abiertas", "SI"], ["aviso_portada", ""],
+    ["afiliaciones", "Liga Antioqueña de Voleibol, INDER Medellín, Alcaldía de Medellín, Presupuesto Participativo"], ["resenas_url", "https://g.page/r/ejemplo/review"],
   ]),
 };
 
@@ -72,6 +74,11 @@ createServer(async (req, res) => {
   for await (const chunk of req) raw += chunk;
   const body = JSON.parse(raw || "{}");
   if (body.secret !== SECRET) return json(res, { ok: false, error: "unauthorized" });
+  // Código de acceso al panel: en local se muestra en la consola en vez de enviarse por correo.
+  if (body.action === "loginCode") {
+    console.log(`[mock] código para ${body.name} <${body.email}>: ${body.code}`);
+    return json(res, { ok: true });
+  }
   const s = sheet(body.sheet);
   const action = String(body.action || "").replace("admin.", "");
   const idx = Number(body.row) - 2;

@@ -69,10 +69,10 @@ function secretOk_(provided) {
   return !!expected && expected.length >= 24 && provided === expected;
 }
 
-// Evita inyección de fórmulas (=, +, -, @) al abrir la hoja.
+// Evita inyección de fórmulas (=, +, -, @, tabulador, retorno) al abrir la hoja.
 function clean_(value, max) {
   var s = String(value == null ? "" : value).trim().slice(0, max || MAX_LEN);
-  return /^[=+\-@]/.test(s) ? "'" + s : s;
+  return /^[=+\-@\t\r]/.test(s) ? "'" + s : s;
 }
 
 // Arma la fila según los encabezados reales de la hoja: el club puede insertar o reordenar columnas
@@ -94,6 +94,7 @@ function doPost(e) {
     var body = JSON.parse(e.postData.contents);
     if (!secretOk_(body.secret)) return json_({ ok: false, error: "unauthorized" });
     if (body.action && String(body.action).indexOf("admin.") === 0) return json_(adminAction_(body));
+    if (body.action === "loginCode") return json_(loginCode_(body));
 
     var name = body.sheet;
     if (!WRITABLE.hasOwnProperty(name)) return json_({ ok: false, error: "sheet_not_allowed" });
@@ -259,6 +260,20 @@ function notify_(sheetName, fields, values, stamp, sheetUrl) {
   MailApp.sendEmail(to, subject.replace(/[\r\n]+/g, " "), plain, options);
 }
 
+// ---------- Panel: código de acceso por correo ----------
+
+// La web decide a quién y qué código; aquí solo se valida el formato y se envía.
+function loginCode_(body) {
+  var email = String(body.email || "").trim();
+  var code = String(body.code || "");
+  var name = String(body.name || "").replace(/[\r\n]+/g, " ").slice(0, 40);
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email) || !/^\d{6}$/.test(code)) return { ok: false, error: "bad_request" };
+  MailApp.sendEmail(email, "[Voley Zúñiga] Tu código para entrar al panel: " + code,
+    "Hola " + name + ",\n\nTu código para entrar al panel del club es: " + code + "\n\nVence en 10 minutos. " +
+    "Si no fuiste tú, cambia tu contraseña: alguien la conoce.", { name: "Club Voley Zúñiga (panel)" });
+  return { ok: true };
+}
+
 // ---------- Panel de administración: crear, editar y borrar ----------
 
 // Escribe los valores como texto plano para que Sheets no convierta fechas, horas ni números.
@@ -422,7 +437,46 @@ function rowsOf_(name) {
   });
 }
 
+// ---------- Ley 1581: borrado de inscripciones que no terminaron en matrícula ----------
+
+var PURGE_MONTHS = 6;
+
+// Filas (número de fila en la hoja, de mayor a menor) de inscripciones con fecha anterior a `cutoff` (AAAA-MM-DD)
+// que no están "Matriculado". Busca las columnas por nombre: el club puede reordenarlas.
+function rowsToPurge_(headers, values, cutoff) {
+  var f = headers.indexOf("Fecha");
+  var s = headers.indexOf("Estado");
+  if (f === -1 || s === -1) return []; // sin las columnas no se borra nada
+  var out = [];
+  values.forEach(function (r, i) {
+    var day = String(r[f]).slice(0, 10);
+    if (/^\d{4}-\d{2}-\d{2}$/.test(day) && day < cutoff && String(r[s]).trim() !== "Matriculado") out.push(i + 2);
+  });
+  return out.reverse(); // de abajo hacia arriba para que los números de fila no se corran
+}
+
+function depurarInscripciones() {
+  var sh = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Inscripciones");
+  if (!sh) return;
+  var lock = LockService.getScriptLock();
+  lock.waitLock(15000);
+  try {
+    var values = sh.getDataRange().getDisplayValues();
+    var headers = values.shift().map(function (h) { return String(h).trim(); });
+    var limit = new Date();
+    limit.setMonth(limit.getMonth() - PURGE_MONTHS);
+    var rows = rowsToPurge_(headers, values, Utilities.formatDate(limit, TZ, "yyyy-MM-dd"));
+    rows.forEach(function (n) { sh.deleteRow(n); });
+    // En el Historial solo la cantidad: nunca nombres ni teléfonos de menores.
+    if (rows.length) log_("Sistema", "Borró", "Inscripciones", rows.length + " inscripciones sin matrícula de más de " + PURGE_MONTHS + " meses (Ley 1581)");
+  } finally {
+    lock.releaseLock();
+  }
+}
+
 function resumenSemanal() {
+  // Corre cada lunes con el mismo activador del resumen (aunque no haya correo configurado).
+  try { depurarInscripciones(); } catch (err) { console.error("Depuración: " + err); }
   var to = PropertiesService.getScriptProperties().getProperty("NOTIFY_EMAIL");
   if (!to) return;
   var ss = SpreadsheetApp.getActiveSpreadsheet();

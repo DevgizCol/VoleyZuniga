@@ -4,13 +4,14 @@ import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { Menu, X, ShoppingCart, MessageCircle, Phone, ChevronDown } from "lucide-react";
+import { Menu, X, ShoppingCart, Phone, ChevronDown } from "lucide-react";
 import clsx from "clsx";
 import { useCart } from "@/context/CartContext";
 import CourtStatusBanner from "./CourtStatusBanner";
 import { NAV_LINKS, NAV_MENU, SITE } from "@/config/site";
 import { useContact } from "./ContactProvider";
 import type { CourtNotice } from "@/lib/court";
+import { WhatsAppIcon } from "@/components/BrandIcons";
 
 export default function Header({ notices = [] }: { notices?: CourtNotice[] }) {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -68,7 +69,7 @@ export default function Header({ notices = [] }: { notices?: CourtNotice[] }) {
     <>
       <a
         href="#contenido"
-        className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:bg-[#F29A2E] focus:text-[#071426] focus:px-4 focus:py-2 focus:font-bold"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:bg-accent focus:text-primary-dark focus:px-4 focus:py-2 focus:font-bold"
       >
         Saltar al contenido
       </a>
@@ -76,7 +77,7 @@ export default function Header({ notices = [] }: { notices?: CourtNotice[] }) {
       <header
         style={{ viewTransitionName: "site-header" }}
         className={clsx(
-          "fixed top-0 inset-x-0 z-50 bg-[#071426]/85 backdrop-blur-md transition-shadow",
+          "fixed top-0 inset-x-0 z-50 bg-primary-dark/85 backdrop-blur-md transition-shadow",
           isScrolled ? "shadow-[0_1px_0_rgba(143,163,191,0.2)]" : ""
         )}
       >
@@ -95,7 +96,7 @@ export default function Header({ notices = [] }: { notices?: CourtNotice[] }) {
               const itemCls = (active: boolean) =>
                 clsx(
                   "px-3 py-2 text-sm font-medium transition-colors border-b-2",
-                  active ? "text-white border-[#F29A2E]" : "text-[#B7C4D8] border-transparent hover:text-white"
+                  active ? "text-white border-accent" : "text-[#B7C4D8] border-transparent hover:text-white"
                 );
               if (!("children" in item)) {
                 return (
@@ -122,7 +123,7 @@ export default function Header({ notices = [] }: { notices?: CourtNotice[] }) {
                     hidden={!groupOpen}
                     className="absolute left-0 top-full pt-2 min-w-44"
                   >
-                    <li className="rounded-lg border border-white/10 bg-[#0B1E38] shadow-[0_20px_40px_-12px_rgba(0,0,0,0.6)] py-2">
+                    <li className="rounded-lg border border-white/10 bg-night shadow-[0_20px_40px_-12px_rgba(0,0,0,0.6)] py-2">
                       {item.children.map((c) => (
                         <Link
                           key={c.href}
@@ -131,7 +132,7 @@ export default function Header({ notices = [] }: { notices?: CourtNotice[] }) {
                           onClick={() => setGroupOpen(false)}
                           className={clsx(
                             "block px-4 py-2 text-sm font-medium transition-colors",
-                            isActive(c.href) ? "text-[#F29A2E]" : "text-[#C9D5E6] hover:text-white hover:bg-white/5"
+                            isActive(c.href) ? "text-accent" : "text-[#C9D5E6] hover:text-white hover:bg-white/5"
                           )}
                         >
                           {c.name}
@@ -147,24 +148,24 @@ export default function Header({ notices = [] }: { notices?: CourtNotice[] }) {
           <div className="flex items-center gap-1">
             <Link
               href="/inscripciones"
-              className="hidden lg:inline-flex ml-2 px-5 h-10 items-center bg-[#F29A2E] hover:bg-[#FFB14A] text-[#071426] font-bold text-sm rounded-md transition-colors"
+              className="hidden lg:inline-flex ml-2 px-5 h-10 items-center bg-accent hover:bg-accent-light text-primary-dark font-bold text-sm rounded-md transition-colors"
             >
               Clase gratis
             </Link>
             <button
               onClick={() => setIsCartOpen(true)}
               aria-label={itemCount > 0 ? `Abrir carrito, ${itemCount} productos` : "Abrir carrito"}
-              className="relative w-11 h-11 flex items-center justify-center text-white hover:text-[#F29A2E] transition-colors"
+              className="relative w-11 h-11 flex items-center justify-center text-white hover:text-accent transition-colors"
             >
               <ShoppingCart size={21} />
               {itemCount > 0 && (
-                <span className="absolute top-1 right-1 min-w-4 h-4 px-1 bg-[#F29A2E] text-[#071426] text-[10px] font-bold flex items-center justify-center rounded-full">
+                <span className="absolute top-1 right-1 min-w-4 h-4 px-1 bg-accent text-primary-dark text-[10px] font-bold flex items-center justify-center rounded-full">
                   {itemCount}
                 </span>
               )}
             </button>
             <button
-              className="lg:hidden w-11 h-11 flex items-center justify-center text-white hover:text-[#F29A2E] transition-colors"
+              className="lg:hidden w-11 h-11 flex items-center justify-center text-white hover:text-accent transition-colors"
               ref={openRef}
               onClick={() => setMenuOpen(true)}
               aria-label="Abrir menú"
@@ -184,7 +185,7 @@ export default function Header({ notices = [] }: { notices?: CourtNotice[] }) {
         aria-label="Menú"
         aria-hidden={!menuOpen}
         className={clsx(
-          "fixed inset-0 z-[60] bg-[#071426] lg:hidden flex flex-col overflow-y-auto transition-transform duration-300 ease-out",
+          "fixed inset-0 z-[60] bg-primary-dark lg:hidden flex flex-col overflow-y-auto transition-transform duration-300 ease-out",
           menuOpen ? "translate-x-0" : "translate-x-full invisible"
         )}
         style={{ paddingTop: "env(safe-area-inset-top, 0px)", paddingBottom: "env(safe-area-inset-bottom, 0px)" }}
@@ -196,7 +197,7 @@ export default function Header({ notices = [] }: { notices?: CourtNotice[] }) {
             ref={closeRef}
             onClick={() => setMenuOpen(false)}
             aria-label="Cerrar menú"
-            className="w-11 h-11 flex items-center justify-center text-white hover:text-[#F29A2E]"
+            className="w-11 h-11 flex items-center justify-center text-white hover:text-accent"
           >
             <X size={26} />
           </button>
@@ -212,7 +213,7 @@ export default function Header({ notices = [] }: { notices?: CourtNotice[] }) {
               aria-current={isActive(link.href) ? "page" : undefined}
               className={clsx(
                 "py-3 border-b border-white/10 font-heading font-bold text-[1.7rem] leading-tight",
-                isActive(link.href) ? "text-[#F29A2E]" : "text-white"
+                isActive(link.href) ? "text-accent" : "text-white"
               )}
             >
               {link.name}
@@ -224,7 +225,7 @@ export default function Header({ notices = [] }: { notices?: CourtNotice[] }) {
           <Link
             href="/inscripciones"
             onClick={() => setMenuOpen(false)}
-            className="flex items-center justify-center h-14 bg-[#F29A2E] text-[#071426] font-bold text-lg rounded-md"
+            className="flex items-center justify-center h-14 bg-accent text-primary-dark font-bold text-lg rounded-md"
           >
             Reservar clase gratis
           </Link>
@@ -235,10 +236,10 @@ export default function Header({ notices = [] }: { notices?: CourtNotice[] }) {
               rel="noopener noreferrer"
               className="h-12 flex items-center justify-center gap-2 border border-[#25D366]/50 text-[#25D366] font-semibold rounded-md"
             >
-              <MessageCircle size={18} /> WhatsApp
+              <WhatsAppIcon size={18} /> WhatsApp
             </a>
             <a href={tel} className="h-12 flex items-center justify-center gap-2 border border-white/20 text-white font-semibold rounded-md">
-              <Phone size={18} className="text-[#F29A2E]" /> Llamar
+              <Phone size={18} className="text-accent" /> Llamar
             </a>
           </div>
         </div>

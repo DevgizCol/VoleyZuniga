@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { LogOut, MessageCircle, Copy, Check } from "lucide-react";
+import { LogOut, Copy, Check } from "lucide-react";
+import { WhatsAppIcon } from "@/components/BrandIcons";
 
 export function LogoutButton({ compact = false }: { compact?: boolean }) {
   const router = useRouter();
@@ -56,16 +57,16 @@ export function GroupMessage({ gamesUrl }: { gamesUrl: string }) {
         rows={4}
         maxLength={1000}
         aria-label="Mensaje para el grupo"
-        className="w-full rounded-lg bg-white/[0.05] border border-[#6B7F9C] p-4 focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F29A2E] focus:border-[#F29A2E]"
+        className="w-full rounded-lg bg-white/[0.05] border border-[#6B7F9C] p-4 focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent focus:border-accent"
       />
       <div className="mt-3 flex flex-wrap gap-3">
         <a
           href={`https://wa.me/?text=${encodeURIComponent(text)}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="h-11 px-5 inline-flex items-center gap-2 rounded-md bg-[#25D366] text-[#071426] font-bold"
+          className="h-11 px-5 inline-flex items-center gap-2 rounded-md bg-[#25D366] text-primary-dark font-bold"
         >
-          <MessageCircle size={18} /> Enviar por WhatsApp
+          <WhatsAppIcon size={18} /> Enviar por WhatsApp
         </a>
         <button
           type="button"

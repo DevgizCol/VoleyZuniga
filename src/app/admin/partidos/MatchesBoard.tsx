@@ -54,16 +54,16 @@ export default function MatchesBoard({ rows, initialView }: { rows: RowData[]; i
               onClick={() => setView(t.id)}
               className={clsx(
                 "shrink-0 h-10 px-4 inline-flex items-center gap-2 rounded-full text-sm font-semibold border",
-                view === t.id ? "bg-[#F29A2E] border-[#F29A2E] text-[#071426]" : "border-white/15 text-[#C9D5E6] hover:border-white/40",
-                t.id === "pendientes" && groups.pendientes.length > 0 && view !== t.id && "border-[#F29A2E]/60"
+                view === t.id ? "bg-accent border-accent text-primary-dark" : "border-white/15 text-[#C9D5E6] hover:border-white/40",
+                t.id === "pendientes" && groups.pendientes.length > 0 && view !== t.id && "border-accent/60"
               )}
             >
               {t.label}
-              <span className={clsx("min-w-6 h-6 px-1.5 inline-flex items-center justify-center rounded-full text-xs", view === t.id ? "bg-[#071426]/15" : "bg-white/10")}>{groups[t.id].length}</span>
+              <span className={clsx("min-w-6 h-6 px-1.5 inline-flex items-center justify-center rounded-full text-xs", view === t.id ? "bg-primary-dark/15" : "bg-white/10")}>{groups[t.id].length}</span>
             </button>
           ))}
         </div>
-        <select value={category} onChange={(e) => setCategory(e.target.value)} aria-label="Categoría" className="h-10 rounded-lg bg-[#0F2347] border border-white/15 px-3 [color-scheme:dark]">
+        <select value={category} onChange={(e) => setCategory(e.target.value)} aria-label="Categoría" className="h-10 rounded-lg bg-primary border border-white/15 px-3 [color-scheme:dark]">
           <option value="">Todas las categorías</option>
           {categories.map((c) => (
             <option key={c}>{c}</option>
@@ -84,9 +84,9 @@ export default function MatchesBoard({ rows, initialView }: { rows: RowData[]; i
               <li key={m._row}>
                 <Card className="p-4 sm:p-5 flex flex-col md:flex-row md:items-center gap-4">
                   <div className="flex items-center gap-4 flex-1 min-w-0">
-                    <div className="w-16 shrink-0 text-center rounded-lg py-2 bg-[#F29A2E]/10 border border-[#F29A2E]/30">
+                    <div className="w-16 shrink-0 text-center rounded-lg py-2 bg-accent/10 border border-accent/30">
                       <p className="font-heading font-black text-3xl leading-none">{d.day}</p>
-                      <p className="font-heading font-bold uppercase text-sm text-[#F29A2E]">{d.month}</p>
+                      <p className="font-heading font-bold uppercase text-sm text-accent">{d.month}</p>
                     </div>
                     <div className="min-w-0">
                       <div className="flex flex-wrap items-center gap-2">

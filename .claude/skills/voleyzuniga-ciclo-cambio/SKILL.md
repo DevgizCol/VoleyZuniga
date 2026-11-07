@@ -14,10 +14,12 @@ Objetivo: entregar cambios pequeños, verificados y vistos por el usuario. No cu
 3. **Cambio mínimo** (Ponytail): reutilizar lo existente; lógica nueva no trivial lleva su prueba en `tests/*.test.ts`.
 4. **Gate técnico** (todos deben pasar):
    ```bash
-   npx tsc --noEmit && npm run lint && npm test && npm run build
+   npx tsc --noEmit && npm run lint && npm test && npm run build && npm run test:a11y
    ```
+   `test:a11y` corre axe (WCAG 2.2 AA + títulos en orden) en las rutas públicas con pantalla de celular; si se agrega una ruta, sumarla a `e2e/a11y.spec.ts`. Compilar antes: la prueba usa la última compilación.
 5. **Gate de otra familia**: `gemini_verificar` (nivel `experto`) con el diff y criterios explícitos. Rechazo → corregir y repetir.
 6. **Mostrar en local**: `npm run dev -- -p 3000` en segundo plano; dar al usuario las URLs exactas y qué mirar. Esperar su visto bueno.
+   - Revisar **también en celular** (390 px de ancho): todo cambio debe verse y funcionar igual en móvil.
    - Panel `/admin`: arrancar antes `node scripts/dev/mock-sheets.mjs` (hoja simulada) con `.env.local` de desarrollo (ver cabecera del script). Nunca iniciar sesión en producción desde el navegador de prueba: la herramienta imprime el código ejecutado y expone la cookie.
 7. **Cerrar** el servidor (y el navegador de prueba) tras el visto bueno; comprobar que no quedan procesos `next`.
 8. **Commit + PR** con `~/.local/bin/gh pr create`; cuerpo: qué corrige, verificación, pendientes, pasos manuales (p. ej. "publicar nueva versión del Apps Script", variables de entorno en Vercel).
@@ -31,7 +33,7 @@ Objetivo: entregar cambios pequeños, verificados y vistos por el usuario. No cu
 - Nunca subir a Vercel ni fusionar sin orden explícita.
 - `useEffect` siempre con llaves `{ ... }`: una flecha que devuelve una llamada (p. ej. `scrollIntoView()`, que en Chrome reciente devuelve una promesa) rompe la página con `destroy is not a function` y el lint no lo detecta.
 - Metadata de Next: se combina de forma superficial (una página sin `openGraph` hereda el de la portada) y `openGraph.images` en config tapa un `opengraph-image` propio. Verificar `og:*` con curl.
-- Detener servidores con `TaskStop` o `kill <PID>` (ver `pgrep -af`), nunca `pkill -f <patrón>`: el patrón coincide con el propio comando, lo mata y deja huérfanos.
+- Detener servidores con `TaskStop` o `kill <PID>` (ver `pgrep -af`), nunca `pkill -f <patrón>`: el patrón coincide con el propio comando, lo mata y deja huérfanos; lo mismo con `kill $(ps … | grep <patrón>)` si el mismo comando contiene ese texto (p. ej. al reiniciar el simulador): buscar el PID en un comando y matar/arrancar en otro.
 - Datos en caché de 5 min en local: para ver cambios de la hoja simulada pedir con `Cache-Control: no-cache` (o recarga forzada).
 - Worktrees de prueba: crearlos dentro del mismo disco que el repo (Turbopack no resuelve `node_modules` enlazado desde `/tmp`).
 

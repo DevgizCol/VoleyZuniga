@@ -120,7 +120,7 @@ export default function RootLayout({
       lang="es-CO"
       className={`${figtree.variable} ${display.variable} scroll-smooth antialiased`}
     >
-      <body className="min-h-screen flex flex-col font-sans text-white bg-[#071426] selection:bg-[#F29A2E] selection:text-white">
+      <body className="min-h-screen flex flex-col font-sans text-white bg-primary-dark selection:bg-accent selection:text-white">
         <JsonLd data={jsonLd} />
         <CartProvider>{children}</CartProvider>
         {/* Los scripts de analítica solo existen en Vercel; en Docker u otro hosting darían 404. */}

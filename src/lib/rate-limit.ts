@@ -50,3 +50,46 @@ export function recordFailure(key: string, windowMs: number, now = Date.now()): 
 export function resetLimit(key: string): void {
   buckets.delete(key);
 }
+
+// ---------- Límite compartido entre instancias (Upstash Redis, plan gratis) ----------
+// Variables: UPSTASH_REDIS_REST_URL y UPSTASH_REDIS_REST_TOKEN, o KV_REST_API_URL y KV_REST_API_TOKEN
+// (las que crea la integración de Upstash en Vercel con el prefijo "KV"). Sin ellas, solo cuenta el límite en memoria.
+
+function upstash(): { url: string; token: string } | null {
+  const url = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL;
+  const token = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN;
+  return url?.startsWith("https://") && token ? { url, token } : null;
+}
+
+async function redis(commands: (string | number)[][]): Promise<{ result?: unknown }[] | null> {
+  const cfg = upstash();
+  if (!cfg) return null;
+  try {
+    const res = await fetch(`${cfg.url}/pipeline`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${cfg.token}`, "Content-Type": "application/json" },
+      body: JSON.stringify(commands),
+      cache: "no-store",
+      signal: AbortSignal.timeout(1500),
+    });
+    return res.ok ? ((await res.json()) as { result?: unknown }[]) : null;
+  } catch {
+    return null; // si Upstash falla, sigue valiendo el límite en memoria
+  }
+}
+
+/**
+ * Cuenta la petición en memoria (al instante, antes de cualquier await: las ráfagas no se cuelan)
+ * y en Upstash (compartido entre instancias). Bloquea si cualquiera de los dos supera el máximo.
+ */
+export async function sharedLimited(key: string, max: number, windowMs: number): Promise<boolean> {
+  const local = isRateLimited(key, max, windowMs);
+  const out = await redis([["INCR", `rl:${key}`], ["PEXPIRE", `rl:${key}`, windowMs, "NX"]]);
+  const remote = Number(out?.[0]?.result);
+  return local || (Number.isFinite(remote) && remote > max);
+}
+
+export async function resetShared(key: string): Promise<void> {
+  resetLimit(key);
+  await redis([["DEL", `rl:${key}`]]);
+}

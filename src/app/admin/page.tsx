@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Inbox, Users, Mail, CalendarDays, ArrowRight, MessageCircle, CheckCircle2, CloudRain } from "lucide-react";
+import { Inbox, Users, Mail, CalendarDays, ArrowRight, CheckCircle2, CloudRain } from "lucide-react";
 import { getAdmin } from "@/lib/auth";
 import { adminRead } from "@/lib/sheets";
 import { funnel } from "@/lib/admin/free-class";
@@ -10,6 +10,7 @@ import EditorButton from "./_components/EditorButton";
 import { Card, PageHeader, Badge, NotConnected, btn } from "./_components/ui";
 import { FIXTURE_FIELDS, NEWS_FIELDS } from "./_components/fields";
 import { bogotaToday, daysAgo, isoDate, shortDate, hhmm, waLink } from "./_components/format";
+import { WhatsAppIcon } from "@/components/BrandIcons";
 
 export const dynamic = "force-dynamic";
 
@@ -58,22 +59,22 @@ export default async function AdminHome() {
       </div>
 
       {fun.total.inscritos > 0 ? (
-        <section aria-labelledby="embudo" className="mb-8 rounded-2xl border border-white/10 bg-[#0B1E38] p-5">
+        <section aria-labelledby="embudo" className="mb-8 rounded-2xl border border-white/10 bg-night p-5">
           <h2 id="embudo" className="font-heading font-black uppercase text-2xl">Embudo · últimos 30 días</h2>
-          <p className="text-sm text-[#8FA3BF]">De la inscripción a la matrícula, pasando por la clase gratis.</p>
+          <p className="text-sm text-steel">De la inscripción a la matrícula, pasando por la clase gratis.</p>
           <ol className="mt-4 grid grid-cols-3 gap-3">
             {([["Inscritos", fun.total.inscritos, ""], ["Clase gratis", fun.total.asistieron, pct(fun.total.asistieron)], ["Matriculados", fun.total.matriculados, pct(fun.total.matriculados)]] as const).map(([label, n, p]) => (
               <li key={label} className="rounded-xl bg-white/[0.04] p-3">
-                <p className="text-xs text-[#8FA3BF]">{label}</p>
+                <p className="text-xs text-steel">{label}</p>
                 <p className="font-heading font-black text-3xl tabular-nums">{n}</p>
-                {p ? <p className="text-xs text-[#F29A2E] font-semibold">{p} de los inscritos</p> : null}
+                {p ? <p className="text-xs text-accent font-semibold">{p} de los inscritos</p> : null}
               </li>
             ))}
           </ol>
           <div className="mt-4 overflow-x-auto">
             <table className="w-full text-sm text-left">
               <caption className="sr-only">Embudo por canal de llegada</caption>
-              <thead className="text-xs text-[#8FA3BF]">
+              <thead className="text-xs text-steel">
                 <tr>
                   <th className="py-2 pr-3 font-semibold">Canal</th>
                   <th className="py-2 px-3 font-semibold text-right">Inscritos</th>
@@ -99,8 +100,8 @@ export default async function AdminHome() {
       {(toScore.length > 0 || alerts.length > 0) && (
         <div className="grid md:grid-cols-2 gap-3 mb-8">
           {toScore.length > 0 && (
-            <Link href="/admin/partidos?vista=resultados" className="rounded-2xl border border-[#F29A2E]/40 bg-[#F29A2E]/10 p-5 flex items-center gap-4 hover:bg-[#F29A2E]/15">
-              <CalendarDays className="text-[#F29A2E] shrink-0" />
+            <Link href="/admin/partidos?vista=resultados" className="rounded-2xl border border-accent/40 bg-accent/10 p-5 flex items-center gap-4 hover:bg-accent/15">
+              <CalendarDays className="text-accent shrink-0" />
               <span className="flex-1">
                 <strong className="block">{toScore.length === 1 ? "Falta 1 resultado" : `Faltan ${toScore.length} resultados`} por cargar</strong>
                 <span className="text-sm text-[#C9D5E6]">Partidos ya jugados sin marcador.</span>
@@ -109,8 +110,8 @@ export default async function AdminHome() {
             </Link>
           )}
           {alerts.length > 0 && (
-            <Link href="/admin/canchas" className="rounded-2xl border border-[#F29A2E]/40 bg-[#F29A2E]/10 p-5 flex items-center gap-4 hover:bg-[#F29A2E]/15">
-              <CloudRain className="text-[#F29A2E] shrink-0" />
+            <Link href="/admin/canchas" className="rounded-2xl border border-accent/40 bg-accent/10 p-5 flex items-center gap-4 hover:bg-accent/15">
+              <CloudRain className="text-accent shrink-0" />
               <span className="flex-1">
                 <strong className="block">Aviso activo en la web</strong>
                 <span className="text-sm text-[#C9D5E6]">{alerts.map((a) => `${a.Estado} · ${a.Sede}`).join(" / ")}</span>
@@ -148,7 +149,7 @@ export default async function AdminHome() {
                       </div>
                       {wa ? (
                         <a href={wa} target="_blank" rel="noopener noreferrer" className={btn.whatsapp}>
-                          <MessageCircle size={16} /> Escribir
+                          <WhatsAppIcon size={16} /> Escribir
                         </a>
                       ) : null}
                       <StatusSelect sheet="Inscripciones" row={r} />
@@ -178,7 +179,7 @@ export default async function AdminHome() {
                       <p className="font-semibold truncate">
                         {m.Local} vs {m.Visitante}
                       </p>
-                      <p className="text-sm text-[#8FA3BF]">
+                      <p className="text-sm text-steel">
                         {shortDate(m.Fecha)} · {hhmm(m.Hora) || "por confirmar"} · {m["Categoría"]}
                       </p>
                     </div>
@@ -202,7 +203,7 @@ export default async function AdminHome() {
                 <Badge tone={msgsNew.length ? "accent" : "muted"}>{msgsNew.length === 1 ? "1 nuevo" : `${msgsNew.length} nuevos`}</Badge>
               </div>
               <p className="font-semibold">
-                {messages[0].Nombre} · <span className="text-[#8FA3BF] font-normal">{messages[0].Asunto}</span>
+                {messages[0].Nombre} · <span className="text-steel font-normal">{messages[0].Asunto}</span>
               </p>
               <p className="text-[#C9D5E6] mt-1 line-clamp-3">{messages[0].Mensaje}</p>
               <Link href="/admin/mensajes" className={`${btn.ghost} mt-3`}>
@@ -218,13 +219,13 @@ export default async function AdminHome() {
 
 function Stat({ href, icon, label, value, detail, accent = false }: { href: string; icon: React.ReactNode; label: string; value: string | number; detail?: string; accent?: boolean }) {
   return (
-    <Link href={href} className={`rounded-2xl p-4 sm:p-5 border transition-colors ${accent ? "bg-[#F29A2E] border-[#F29A2E] text-[#071426] hover:bg-[#FFB14A]" : "bg-[#0B1E38] border-white/10 hover:border-white/25"}`}>
-      <span className={`flex items-center gap-2 text-sm ${accent ? "text-[#071426]/80" : "text-[#8FA3BF]"}`}>
+    <Link href={href} className={`rounded-2xl p-4 sm:p-5 border transition-colors ${accent ? "bg-accent border-accent text-primary-dark hover:bg-accent-light" : "bg-night border-white/10 hover:border-white/25"}`}>
+      <span className={`flex items-center gap-2 text-sm ${accent ? "text-primary-dark/80" : "text-steel"}`}>
         {icon}
         {label}
       </span>
       <span className="block font-heading font-black text-4xl sm:text-5xl leading-none mt-2 tabular-nums">{value}</span>
-      {detail ? <span className={`block text-xs mt-1.5 ${accent ? "text-[#071426]/80" : "text-[#8FA3BF]"}`}>{detail}</span> : null}
+      {detail ? <span className={`block text-xs mt-1.5 ${accent ? "text-primary-dark/80" : "text-steel"}`}>{detail}</span> : null}
     </Link>
   );
 }

@@ -9,7 +9,7 @@ import type { RowData } from "./types";
 
 const tone = (e: string) =>
   ({
-    Nuevo: "bg-[#F29A2E] text-[#071426] border-[#F29A2E]",
+    Nuevo: "bg-accent text-primary-dark border-accent",
     Contactado: "bg-[#3B82F6]/20 text-[#A9C8FF] border-[#3B82F6]/40",
     Respondido: "bg-[#3B82F6]/20 text-[#A9C8FF] border-[#3B82F6]/40",
     Matriculado: "bg-[#25D366]/20 text-[#7AF0A8] border-[#25D366]/40",
@@ -39,7 +39,7 @@ export default function StatusSelect({ sheet, row }: { sheet: StatusSheet; row: 
       className={clsx("h-10 rounded-lg border px-3 text-sm font-bold cursor-pointer disabled:opacity-70 [color-scheme:dark]", tone(optimistic))}
     >
       {options.map((o) => (
-        <option key={o} value={o} className="bg-[#0F2347] text-white">
+        <option key={o} value={o} className="bg-primary text-white">
           {o}
         </option>
       ))}

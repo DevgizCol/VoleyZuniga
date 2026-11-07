@@ -36,7 +36,7 @@ export default async function StoreAdmin() {
             return (
               <li key={p._row}>
                 <Card className={`overflow-hidden h-full flex flex-col ${hidden ? "opacity-60" : ""}`}>
-                  <div className="relative aspect-[4/3] bg-[#071426]">
+                  <div className="relative aspect-[4/3] bg-primary-dark">
                     <img src={img} alt="" className="absolute inset-0 w-full h-full object-contain" loading="lazy" />
                     <div className="absolute left-3 top-3 flex gap-2">
                       {p["Categoría"] ? <Badge>{p["Categoría"]}</Badge> : null}

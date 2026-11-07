@@ -19,7 +19,7 @@ export default async function HistoryAdmin({ searchParams }: { searchParams: Pro
     const s = p.toString();
     return s ? `/admin/historial?${s}` : "/admin/historial";
   };
-  const chip = (active: boolean) => `shrink-0 h-9 px-3 inline-flex items-center rounded-full text-sm font-semibold border ${active ? "bg-[#F29A2E] border-[#F29A2E] text-[#071426]" : "border-white/15 text-[#C9D5E6] hover:border-white/40"}`;
+  const chip = (active: boolean) => `shrink-0 h-9 px-3 inline-flex items-center rounded-full text-sm font-semibold border ${active ? "bg-accent border-accent text-primary-dark" : "border-white/15 text-[#C9D5E6] hover:border-white/40"}`;
 
   return (
     <>
@@ -46,7 +46,7 @@ export default async function HistoryAdmin({ searchParams }: { searchParams: Pro
             <Card className="divide-y divide-white/10">
               {rows.map((r, i) => (
                 <div key={r._row ?? i} className="p-4 grid sm:grid-cols-[150px_1fr] gap-1 sm:gap-4">
-                  <p className="text-sm text-[#8FA3BF] tabular-nums">{r.Fecha}</p>
+                  <p className="text-sm text-steel tabular-nums">{r.Fecha}</p>
                   <div>
                     <div className="flex flex-wrap items-center gap-2">
                       <strong>{r.Usuario}</strong>

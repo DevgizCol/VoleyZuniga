@@ -27,14 +27,14 @@ export default function PageHero({
     <section
       className={clsx(
         "relative isolate overflow-hidden pt-40 sm:pt-44 pb-14 sm:pb-20",
-        accent ? "bg-[#F29A2E] text-[#071426]" : "floodlights grain text-white"
+        accent ? "bg-accent text-primary-dark" : "floodlights grain text-white"
       )}
     >
       {photo ? (
         <>
           <BrandPhoto src={photo} alt="" eager className="absolute inset-0 -z-20" />
-          <div className="absolute inset-0 -z-10 bg-gradient-to-r from-[#071426] via-[#071426]/85 to-[#071426]/30" aria-hidden="true" />
-          <div className="absolute inset-x-0 bottom-0 h-24 -z-10 bg-gradient-to-t from-[#071426] to-transparent" aria-hidden="true" />
+          <div className="absolute inset-0 -z-10 bg-gradient-to-r from-primary-dark via-primary-dark/85 to-primary-dark/30" aria-hidden="true" />
+          <div className="absolute inset-x-0 bottom-0 h-24 -z-10 bg-gradient-to-t from-primary-dark to-transparent" aria-hidden="true" />
         </>
       ) : accent ? (
         <div className="absolute inset-x-0 bottom-0 h-1/2 -z-10 opacity-20" aria-hidden="true">
@@ -53,14 +53,14 @@ export default function PageHero({
         <Volleyball className="hidden sm:block absolute -z-10 right-[6%] top-1/2 -translate-y-1/3 w-56 lg:w-72 ball-float drop-shadow-[0_30px_40px_rgba(7,20,38,0.45)]" id="hero-accent-ball" />
       ) : null}
       <div className="container mx-auto px-4 sm:px-6 hero-rise">
-        <p className={clsx("inline-flex items-center gap-2 font-semibold", accent ? "text-[#071426]" : "text-[#F29A2E]")}>
-          <span className={clsx("h-px w-8", accent ? "bg-[#071426]" : "bg-[#F29A2E]")} /> {kicker}
+        <p className={clsx("inline-flex items-center gap-2 font-semibold", accent ? "text-primary-dark" : "text-accent")}>
+          <span className={clsx("h-px w-8", accent ? "bg-primary-dark" : "bg-accent")} /> {kicker}
         </p>
         <h1 className="mt-4 font-heading font-black uppercase leading-[0.88] tracking-tight text-[clamp(3rem,12vw,7rem)] max-w-4xl">
           {title}
         </h1>
         {intro ? (
-          <p className={clsx("mt-5 text-lg sm:text-xl max-w-2xl leading-relaxed", accent ? "text-[#071426]/80" : "text-[#C9D5E6]")}>{intro}</p>
+          <p className={clsx("mt-5 text-lg sm:text-xl max-w-2xl leading-relaxed", accent ? "text-primary-dark/80" : "text-[#C9D5E6]")}>{intro}</p>
         ) : null}
         {children ? <div className="mt-8">{children}</div> : null}
       </div>

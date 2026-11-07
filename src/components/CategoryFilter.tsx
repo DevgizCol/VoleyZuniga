@@ -29,7 +29,7 @@ export default function CategoryFilter({
             className={clsx(
               "shrink-0 h-10 px-4 inline-flex items-center rounded-full text-sm font-semibold border transition-colors",
               isActive
-                ? "bg-[#F29A2E] border-[#F29A2E] text-[#071426]"
+                ? "bg-accent border-accent text-primary-dark"
                 : "border-white/15 text-[#C9D5E6] hover:border-white/40 hover:text-white"
             )}
           >

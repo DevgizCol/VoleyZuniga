@@ -13,7 +13,7 @@ export default function CourtStatusBanner({ notices }: { notices: CourtNotice[] 
   const Icon = main.tipo === "rain" ? CloudRain : main.tipo === "cancel" ? AlertTriangle : Info;
 
   return (
-    <aside role="status" className="w-full bg-[#F29A2E] text-[#071426]" style={{ paddingTop: "env(safe-area-inset-top, 0px)" }}>
+    <aside role="status" className="w-full bg-accent text-primary-dark" style={{ paddingTop: "env(safe-area-inset-top, 0px)" }}>
       <div className="container mx-auto px-4 sm:px-6 py-2 flex items-center gap-3">
         <Icon size={18} className="shrink-0" />
         <p className="flex-1 text-sm leading-snug">

@@ -23,7 +23,14 @@ export function sheetsConfigured(): boolean {
   return Boolean(process.env.SHEETS_WEBAPP_URL && process.env.SHEETS_SECRET);
 }
 
-const TIMEOUT_MS = 15000;
+const TIMEOUT_MS = 15000; // panel y escrituras: aguantan el arranque en frío de Apps Script
+const PUBLIC_READ_TIMEOUT_MS = 5000; // visitantes: mejor el respaldo que esperar
+
+// Deja rastro en los logs de Vercel de cada lectura lenta: con datos se decide si hace falta mantener despierto Apps Script.
+function logSlow(what: string, t0: number) {
+  const ms = Date.now() - t0;
+  if (ms > 10000) console.warn(`[sheets] ${what} tardó ${(ms / 1000).toFixed(1)} s`);
+}
 
 /** Agrega una fila a Inscripciones o Contacto. Devuelve false si no se pudo guardar. */
 export async function appendToSheet(sheet: WritableSheet, data: Row): Promise<boolean> {
@@ -64,13 +71,15 @@ export async function readSheet(sheet: ReadableSheet | PrivateSheet, revalidateS
     // Apps Script no permite leer cabeceras personalizadas, por eso el secreto va en la consulta
     // (servidor a servidor, sobre HTTPS; nunca llega al navegador).
     const target = `${url}?sheet=${encodeURIComponent(sheet)}&secret=${encodeURIComponent(secret)}${cols ? `&cols=${encodeURIComponent(cols.join(","))}` : ""}`;
+    const t0 = Date.now();
     const res = await fetch(target, {
       redirect: "follow",
       ...(revalidateSeconds > 0
         ? { next: { revalidate: revalidateSeconds, tags: [sheetTag(sheet)] } }
         : { cache: "no-store" as const }),
-      signal: AbortSignal.timeout(TIMEOUT_MS),
+      signal: AbortSignal.timeout(PUBLIC_READ_TIMEOUT_MS),
     });
+    logSlow(`lectura de ${sheet}`, t0);
     if (!res.ok) return null;
     const json = (await res.json()) as { ok?: boolean; rows?: Row[] };
     return json.ok && Array.isArray(json.rows) ? json.rows : null;
@@ -95,7 +104,9 @@ export async function adminRead(sheet: AdminSheet): Promise<AdminTable | null> {
   if (!url || !secret) return null;
   try {
     const target = `${url}?sheet=${encodeURIComponent(sheet)}&all=1&secret=${encodeURIComponent(secret)}`;
+    const t0 = Date.now();
     const res = await fetch(target, { redirect: "follow", cache: "no-store", signal: AbortSignal.timeout(TIMEOUT_MS) });
+    logSlow(`lectura admin de ${sheet}`, t0);
     if (!res.ok) return null;
     const json = (await res.json()) as { ok?: boolean; headers?: string[]; rows?: AdminRow[] };
     return json.ok && Array.isArray(json.rows) ? { headers: json.headers ?? [], rows: json.rows } : null;
@@ -135,5 +146,27 @@ export async function adminMutate(payload: {
   } catch (err) {
     console.error("[sheets] escritura admin falló:", err instanceof Error ? err.message : err);
     return { ok: false, error: "network" };
+  }
+}
+
+/** Envía el código de acceso al panel por correo (MailApp de Apps Script, gratis). */
+export async function sendLoginCode(email: string, name: string, code: string): Promise<boolean> {
+  const url = process.env.SHEETS_WEBAPP_URL;
+  const secret = process.env.SHEETS_SECRET;
+  if (!url || !secret) return false;
+  try {
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify({ secret, action: "loginCode", email, name, code }),
+      redirect: "follow",
+      cache: "no-store",
+      signal: AbortSignal.timeout(TIMEOUT_MS),
+    });
+    if (!res.ok) return false;
+    return ((await res.json()) as { ok?: boolean }).ok === true;
+  } catch (err) {
+    console.error("[sheets] envío de código falló:", err instanceof Error ? err.message : err);
+    return false;
   }
 }

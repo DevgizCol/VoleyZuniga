@@ -50,7 +50,7 @@ export default function ContactForm() {
 
   if (status === "sent") {
     return (
-      <div role="status" className="rounded-2xl border border-white/10 bg-[#0B1E38]/70 p-8 sm:p-10">
+      <div role="status" className="rounded-2xl border border-white/10 bg-night/70 p-8 sm:p-10">
         <span className="w-14 h-14 rounded-full bg-[#25D366]/15 border border-[#25D366]/40 flex items-center justify-center text-[#25D366]">
           <Check size={28} />
         </span>
@@ -66,7 +66,7 @@ export default function ContactForm() {
   const err = (k: keyof typeof errors) => (touched ? errors[k] : null);
 
   return (
-    <form onSubmit={submit} noValidate className="relative rounded-2xl border border-white/10 bg-[#0B1E38]/70 p-6 sm:p-10 space-y-6">
+    <form onSubmit={submit} noValidate className="relative rounded-2xl border border-white/10 bg-night/70 p-6 sm:p-10 space-y-6">
       <Honeypot value={honeypot} onChange={setHoneypot} />
       <div role="radiogroup" aria-label="Motivo" className="grid sm:grid-cols-2 gap-3">
         {CONTACT_TOPICS.map((t) => (
@@ -90,7 +90,7 @@ export default function ContactForm() {
       {serverError ? (
         <p role="alert" className="rounded-lg border border-[#FF7A6B]/40 bg-[#FF7A6B]/10 p-4 text-[#FFC2BA]">{serverError}</p>
       ) : null}
-      <button type="submit" disabled={status === "sending"} className="h-14 px-7 inline-flex items-center gap-2 rounded-md bg-[#F29A2E] hover:bg-[#FFB14A] disabled:opacity-60 text-[#071426] font-bold text-lg transition-colors">
+      <button type="submit" disabled={status === "sending"} className="h-14 px-7 inline-flex items-center gap-2 rounded-md bg-accent hover:bg-accent-light disabled:opacity-60 text-primary-dark font-bold text-lg transition-colors">
         {status === "sending" ? <><Loader2 size={20} className="animate-spin" /> Enviando…</> : <><Send size={20} /> Enviar mensaje</>}
       </button>
     </form>

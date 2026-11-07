@@ -46,12 +46,12 @@ export default async function SettingsAdmin() {
         <ol className="mt-4 space-y-2 text-[#B7C4D8] list-decimal pl-5">
           <li>En Vercel abre el proyecto → Settings → Environment Variables.</li>
           <li>
-            Crea o edita <code className="text-[#FFD9A8]">ADMIN_USERS</code> con el formato <code className="text-[#FFD9A8]">Nombre:contraseña</code>, separados por punto y
-            coma. Ejemplo: <code className="text-[#FFD9A8]">Profe Carlos:una-clave-larga; Equipo técnico:otra-clave-larga</code>
+            Crea o edita <code className="text-[#FFD9A8]">ADMIN_USERS</code> con el formato <code className="text-[#FFD9A8]">Nombre:correo:contraseña</code>, separados por punto y
+            coma. Ejemplo: <code className="text-[#FFD9A8]">Zúñiga:director@correo.com:una-clave-larga; Contabilidad:conta@correo.com:otra-clave-larga</code>. La primera vez en cada celular llega un código a ese correo.
           </li>
           <li>Guarda y pulsa Redeploy. Para quitarle el acceso a alguien, borra su parte y vuelve a desplegar: su sesión se cierra sola.</li>
         </ol>
-        <p className="mt-3 text-sm text-[#8FA3BF]">Las contraseñas deben tener al menos 8 caracteres. ADMIN_PASSWORD sigue funcionando como usuario “Administrador”.</p>
+        <p className="mt-3 text-sm text-steel">Las contraseñas deben tener al menos 8 caracteres. ADMIN_PASSWORD (con ADMIN_EMAIL) sigue funcionando como usuario “Administrador”. Cambiar la contraseña de alguien también olvida sus celulares reconocidos.</p>
       </Card>
     </>
   );

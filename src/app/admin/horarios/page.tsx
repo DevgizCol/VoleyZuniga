@@ -31,9 +31,9 @@ export default async function SchedulesAdmin() {
         <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-4">
           {days.map((day) => (
             <Card key={day} className="overflow-hidden">
-              <div className="px-5 py-3 bg-[#0F2347] border-b border-white/10 flex items-baseline justify-between">
+              <div className="px-5 py-3 bg-primary border-b border-white/10 flex items-baseline justify-between">
                 <h2 className="font-heading font-black uppercase text-2xl">{day}</h2>
-                <span className="text-xs text-[#8FA3BF]">{(() => { const n = rows.filter((r) => r["Día"] === day).length; return `${n} ${n === 1 ? "sesión" : "sesiones"}`; })()}</span>
+                <span className="text-xs text-steel">{(() => { const n = rows.filter((r) => r["Día"] === day).length; return `${n} ${n === 1 ? "sesión" : "sesiones"}`; })()}</span>
               </div>
               <ul className="divide-y divide-white/10">
                 {rows
@@ -45,10 +45,10 @@ export default async function SchedulesAdmin() {
                         <div className="flex items-start justify-between gap-2">
                           <div>
                             <p className="font-heading font-extrabold text-xl leading-none tabular-nums">
-                              {t(r.Inicio)} <span className="text-[#8FA3BF] text-base">– {t(r.Fin)}</span>
+                              {t(r.Inicio)} <span className="text-steel text-base">– {t(r.Fin)}</span>
                             </p>
                             <p className="font-semibold mt-1">{r.Grupo}</p>
-                            <p className="text-sm text-[#8FA3BF]">{r.Sede}</p>
+                            <p className="text-sm text-steel">{r.Sede}</p>
                           </div>
                           {hidden ? <Badge tone="muted">Oculto</Badge> : null}
                         </div>

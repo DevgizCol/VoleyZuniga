@@ -32,14 +32,14 @@ export default function SettingField({ settingKey, label, help, type = "text", r
       } else toast.error(res.message);
     });
 
-  const input = "w-full min-h-11 rounded-lg bg-white/[0.05] border border-[#6B7F9C] px-3.5 focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F29A2E] focus:border-[#F29A2E]";
+  const input = "w-full min-h-11 rounded-lg bg-white/[0.05] border border-[#6B7F9C] px-3.5 focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent focus:border-accent";
 
   return (
-    <div className="rounded-2xl border border-white/10 bg-[#0B1E38] p-5">
+    <div className="rounded-2xl border border-white/10 bg-night p-5">
       <label htmlFor={id} className="font-heading font-extrabold text-xl block">
         {label}
       </label>
-      <p className="text-sm text-[#8FA3BF] mt-0.5 mb-3">{help}</p>
+      <p className="text-sm text-steel mt-0.5 mb-3">{help}</p>
       <div className="flex flex-col sm:flex-row gap-2 sm:items-start">
         {type === "yesno" ? (
           <div role="radiogroup" aria-label={label} className="flex gap-2 flex-1">
@@ -50,7 +50,7 @@ export default function SettingField({ settingKey, label, help, type = "text", r
                 role="radio"
                 aria-checked={draft === o}
                 onClick={() => setDraft(o)}
-                className={`h-11 px-5 rounded-lg border font-bold ${draft === o ? (o === "SI" ? "bg-[#25D366] border-[#25D366] text-[#071426]" : "bg-[#E5484D] border-[#E5484D] text-white") : "border-white/15 text-[#C9D5E6]"}`}
+                className={`h-11 px-5 rounded-lg border font-bold ${draft === o ? (o === "SI" ? "bg-[#25D366] border-[#25D366] text-primary-dark" : "bg-[#E5484D] border-[#E5484D] text-white") : "border-white/15 text-[#C9D5E6]"}`}
               >
                 {o === "SI" ? "Sí, abiertas" : "No, cerradas"}
               </button>

@@ -36,3 +36,21 @@ describe("clientIp", () => {
     expect(clientIp(req)).toBe("10.0.0.1");
   });
 });
+
+describe("sharedLimited (Upstash)", () => {
+  it("bloquea cuando el contador compartido supera el máximo aunque esta instancia no haya visto nada", async () => {
+    const { vi } = await import("vitest");
+    const { sharedLimited } = await import("@/lib/rate-limit");
+    vi.stubEnv("UPSTASH_REDIS_REST_URL", "https://x.upstash.io");
+    vi.stubEnv("UPSTASH_REDIS_REST_TOKEN", "t");
+    const fetchMock = vi.fn(async () => new Response(JSON.stringify([{ result: 6 }, { result: 1 }])));
+    vi.stubGlobal("fetch", fetchMock);
+    expect(await sharedLimited("test:shared", 5, 60_000)).toBe(true);
+    expect(fetchMock).toHaveBeenCalledWith("https://x.upstash.io/pipeline", expect.objectContaining({ method: "POST" }));
+    // Si Upstash falla, decide solo el límite en memoria.
+    vi.stubGlobal("fetch", vi.fn(async () => { throw new Error("caído"); }));
+    expect(await sharedLimited("test:shared2", 5, 60_000)).toBe(false);
+    vi.unstubAllGlobals();
+    vi.unstubAllEnvs();
+  });
+});

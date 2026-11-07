@@ -7,8 +7,8 @@ export default function ArticleCover({ image, title, category, large = false, id
     return <BrandPhoto src={image} alt="" hover sizes={large ? "100vw" : CARD_SIZES} className="absolute inset-0" />;
   }
   return (
-    <div className="absolute inset-0 bg-gradient-to-br from-[#0F2347] via-[#0B1E38] to-[#071426] overflow-hidden" aria-hidden="true">
-      <svg viewBox="0 0 360 200" className="absolute inset-0 w-full h-full text-[#F29A2E]/25" preserveAspectRatio="xMidYMid slice">
+    <div className="absolute inset-0 bg-gradient-to-br from-primary via-night to-primary-dark overflow-hidden" aria-hidden="true">
+      <svg viewBox="0 0 360 200" className="absolute inset-0 w-full h-full text-accent/25" preserveAspectRatio="xMidYMid slice">
         <rect x="10" y="10" width="340" height="180" fill="none" stroke="currentColor" strokeWidth="2" />
         <line x1="180" y1="0" x2="180" y2="200" stroke="currentColor" strokeWidth="3" />
         <line x1="120" y1="10" x2="120" y2="190" stroke="currentColor" />

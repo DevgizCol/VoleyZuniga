@@ -41,26 +41,26 @@ export default function MethodologyPage() {
   return (
     <>
       <PageHero art="trajectory" kicker="Cómo entrenamos" title="Metodología" intro="Cuatro pilares que trabajamos en todas las categorías, con la exigencia ajustada a cada edad." />
-      <section className="bg-[#071426] text-white pb-24 sm:pb-32">
+      <section className="bg-primary-dark text-white pb-24 sm:pb-32">
         <div className="container mx-auto px-4 sm:px-6 grid md:grid-cols-2 gap-5">
           {PILLARS.map(({ Icon, title, subtitle, text, points }) => (
-            <article key={title} className="group rounded-2xl border border-white/10 bg-gradient-to-br from-[#0F2347] to-[#0B1E38] p-7 sm:p-10 hover:border-[#F29A2E]/50 transition-colors">
-              <span className="w-14 h-14 rounded-xl bg-[#F29A2E]/10 border border-[#F29A2E]/30 flex items-center justify-center text-[#F29A2E]">
+            <article key={title} className="group rounded-2xl border border-white/10 bg-gradient-to-br from-primary to-night p-7 sm:p-10 hover:border-accent/50 transition-colors">
+              <span className="w-14 h-14 rounded-xl bg-accent/10 border border-accent/30 flex items-center justify-center text-accent">
                 <Icon size={28} />
               </span>
               <h2 className="font-heading font-black uppercase text-4xl leading-none mt-6">{title}</h2>
-              <p className="text-[#F29A2E] font-semibold mt-2">{subtitle}</p>
+              <p className="text-accent font-semibold mt-2">{subtitle}</p>
               <p className="mt-4 text-[#C9D5E6] leading-relaxed">{text}</p>
               <ul className="mt-6 pt-6 border-t border-white/10 space-y-2.5">
                 {points.map((p) => (
-                  <li key={p} className="flex gap-3 text-[#B7C4D8]"><Check size={18} className="text-[#F29A2E] shrink-0 mt-1" />{p}</li>
+                  <li key={p} className="flex gap-3 text-[#B7C4D8]"><Check size={18} className="text-accent shrink-0 mt-1" />{p}</li>
                 ))}
               </ul>
             </article>
           ))}
         </div>
         <div className="container mx-auto px-4 sm:px-6 mt-12">
-          <Link href="/inscripciones" className="h-14 px-7 inline-flex items-center gap-2 rounded-md bg-[#F29A2E] hover:bg-[#FFB14A] text-[#071426] font-bold text-lg">
+          <Link href="/inscripciones" className="h-14 px-7 inline-flex items-center gap-2 rounded-md bg-accent hover:bg-accent-light text-primary-dark font-bold text-lg">
             Reservar clase gratis <ArrowRight size={20} />
           </Link>
         </div>

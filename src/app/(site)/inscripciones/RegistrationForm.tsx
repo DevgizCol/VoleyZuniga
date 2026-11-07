@@ -3,11 +3,12 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import clsx from "clsx";
-import { ArrowLeft, ArrowRight, Check, Minus, Plus, MessageCircle, Loader2, Clock, MapPin, Download, Share2, CalendarPlus, UserPlus } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, Minus, Plus, Loader2, Clock, MapPin, Download, Share2, CalendarPlus, UserPlus } from "lucide-react";
 import { downloadPass, makeCode, passQrText, qrMatrix, sharePass, type PassData } from "@/lib/pass";
-import { CATEGORIES, NIVELES, SEDES, categoryForAge } from "@/data/registration";
+import { CATEGORIES, NIVELES, PARENTESCOS, SEDES, categoryForAge } from "@/data/registration";
 import { useContact } from "@/components/ContactProvider";
 import { ChoiceCard, Field, Honeypot, focusFirstInvalid, inputCls } from "@/components/forms/fields";
+import { WhatsAppIcon } from "@/components/BrandIcons";
 
 const PHONE_RE = /^[+\d][\d\s().-]{6,19}$/;
 const STEPS = ["Deportista", "Categoría", "Contacto"] as const;
@@ -72,6 +73,9 @@ export default function RegistrationForm({ horarios, perCategory }: Props) {
   const [horario, setHorario] = useState<string>(() => sched(categoryForAge(12).value).horario);
   const [phone, setPhone] = useState("");
   const [consent, setConsent] = useState(false);
+  const [guardian, setGuardian] = useState("");
+  const [parentesco, setParentesco] = useState<string>(PARENTESCOS[0]);
+  const [imageOk, setImageOk] = useState(false);
   const [honeypot, setHoneypot] = useState("");
   const [touched, setTouched] = useState(false);
   const [status, setStatus] = useState<Status>("idle");
@@ -121,9 +125,11 @@ export default function RegistrationForm({ horarios, perCategory }: Props) {
   const errors = {
     name: name.trim().length < 2 ? "Escribe el nombre del deportista." : null,
     phone: !PHONE_RE.test(phone.trim()) ? "Escribe un número de WhatsApp válido, por ejemplo 312 845 9210." : null,
+    // Ley 1581: con menores, queda registrado quién da la autorización.
+    guardian: age < 18 && guardian.trim().length < 3 ? "Escribe el nombre de quien autoriza (madre, padre o acudiente)." : null,
     consent: !consent ? "Necesitamos tu autorización para guardar estos datos." : null,
   };
-  const stepValid = [!errors.name, true, !errors.phone && !errors.consent][step];
+  const stepValid = [!errors.name, true, !errors.phone && !errors.guardian && !errors.consent][step];
 
   const next = () => {
     setTouched(true);
@@ -151,7 +157,7 @@ export default function RegistrationForm({ horarios, perCategory }: Props) {
       const res = await fetch("/api/registrations", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, age, category, level, sede, horario, phone, consent, code: passCode, origin: trafficOrigin(), website: honeypot }),
+        body: JSON.stringify({ name, age, category, level, sede, horario, phone, consent, guardian: age < 18 ? guardian : "", parentesco: age < 18 ? parentesco : "", imageOk, code: passCode, origin: trafficOrigin(), website: honeypot }),
       });
       if (res.ok) {
         setStatus("saved");
@@ -187,7 +193,7 @@ export default function RegistrationForm({ horarios, perCategory }: Props) {
   if (status === "saved" || status === "offline") {
     return (
       <div className="grid lg:grid-cols-12 gap-8 items-start">
-        <div className="lg:col-span-7 rounded-2xl border border-white/10 bg-gradient-to-br from-[#0F2347] to-[#071426] p-8 sm:p-10" role="status">
+        <div className="lg:col-span-7 rounded-2xl border border-white/10 bg-gradient-to-br from-primary to-primary-dark p-8 sm:p-10" role="status">
           <span className="w-14 h-14 rounded-full bg-[#25D366]/15 border border-[#25D366]/40 flex items-center justify-center text-[#25D366]">
             <Check size={28} />
           </span>
@@ -203,9 +209,9 @@ export default function RegistrationForm({ horarios, perCategory }: Props) {
             href={wa(waMessage)}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-8 h-14 px-7 inline-flex items-center gap-2 rounded-md bg-[#25D366] text-[#071426] font-bold text-lg hover:brightness-110"
+            className="mt-8 h-14 px-7 inline-flex items-center gap-2 rounded-md bg-[#25D366] text-primary-dark font-bold text-lg hover:brightness-110"
           >
-            <MessageCircle size={20} /> Agendar por WhatsApp
+            <WhatsAppIcon size={20} /> Agendar por WhatsApp
           </a>
           <div className="mt-8 pt-8 border-t border-white/10">
             <p className="font-heading font-extrabold text-2xl">Tu pase de clase de prueba</p>
@@ -252,7 +258,7 @@ export default function RegistrationForm({ horarios, perCategory }: Props) {
                 rel="noopener noreferrer"
                 className="h-12 px-5 inline-flex items-center gap-2 rounded-md border border-white/25 hover:border-white font-semibold"
               >
-                <CalendarPlus size={18} className="text-[#F29A2E]" /> Agregar a mi calendario
+                <CalendarPlus size={18} className="text-accent" /> Agregar a mi calendario
               </a>
             ) : null}
             <a
@@ -264,8 +270,8 @@ export default function RegistrationForm({ horarios, perCategory }: Props) {
               <UserPlus size={18} className="text-[#25D366]" /> Invitar a un amigo
             </a>
           </div>
-          {calendarUrl ? <p className="mt-2 text-sm text-[#8FA3BF]">La fecha del calendario es tentativa: el día exacto lo confirmamos por WhatsApp.</p> : null}
-          <p className="mt-6 text-sm text-[#8FA3BF]">
+          {calendarUrl ? <p className="mt-2 text-sm text-steel">La fecha del calendario es tentativa: el día exacto lo confirmamos por WhatsApp.</p> : null}
+          <p className="mt-6 text-sm text-steel">
             ¿Te equivocaste en algo?{" "}
             <button type="button" onClick={() => { setStatus("idle"); setStep(0); }} className="underline underline-offset-2 hover:text-white">
               Corregir datos
@@ -281,15 +287,15 @@ export default function RegistrationForm({ horarios, perCategory }: Props) {
 
   return (
     <div className="grid lg:grid-cols-12 gap-8 items-start">
-      <form ref={formRef} onSubmit={submit} noValidate className="scroll-mt-32 lg:col-span-7 relative rounded-2xl border border-white/10 bg-[#0B1E38]/70 p-6 sm:p-10">
+      <form ref={formRef} onSubmit={submit} noValidate className="scroll-mt-32 lg:col-span-7 relative rounded-2xl border border-white/10 bg-night/70 p-6 sm:p-10">
         <Honeypot value={honeypot} onChange={setHoneypot} />
 
         {/* Progreso: tres zonas, como la cancha dividida por las líneas de ataque */}
         <ol className="grid grid-cols-3 gap-2 mb-10" aria-label="Pasos">
           {STEPS.map((s, i) => (
             <li key={s} aria-current={i === step ? "step" : undefined}>
-              <div className={clsx("h-1.5 rounded-full transition-colors", i <= step ? "bg-[#F29A2E]" : "bg-white/15")} />
-              <p className={clsx("mt-2 text-sm font-semibold", i === step ? "text-white" : "text-[#8FA3BF]")}>
+              <div className={clsx("h-1.5 rounded-full transition-colors", i <= step ? "bg-accent" : "bg-white/15")} />
+              <p className={clsx("mt-2 text-sm font-semibold", i === step ? "text-white" : "text-steel")}>
                 {i + 1}. {s}
               </p>
             </li>
@@ -314,7 +320,7 @@ export default function RegistrationForm({ horarios, perCategory }: Props) {
             </Field>
             <Field label="Edad" htmlFor="age" hint="Con la edad te sugerimos la categoría y el horario.">
               <div className="flex items-center gap-3">
-                <button type="button" onClick={() => changeAge(age - 1)} aria-label="Restar un año" className="w-13 h-13 min-w-[52px] min-h-[52px] rounded-lg border border-white/15 hover:border-[#F29A2E] flex items-center justify-center">
+                <button type="button" onClick={() => changeAge(age - 1)} aria-label="Restar un año" className="w-13 h-13 min-w-[52px] min-h-[52px] rounded-lg border border-white/15 hover:border-accent flex items-center justify-center">
                   <Minus size={20} />
                 </button>
                 <input
@@ -327,14 +333,14 @@ export default function RegistrationForm({ horarios, perCategory }: Props) {
                   onChange={(e) => changeAge(Number(e.target.value))}
                   className={clsx(inputCls, "w-28 text-center font-heading font-black text-3xl")}
                 />
-                <button type="button" onClick={() => changeAge(age + 1)} aria-label="Sumar un año" className="w-13 h-13 min-w-[52px] min-h-[52px] rounded-lg border border-white/15 hover:border-[#F29A2E] flex items-center justify-center">
+                <button type="button" onClick={() => changeAge(age + 1)} aria-label="Sumar un año" className="w-13 h-13 min-w-[52px] min-h-[52px] rounded-lg border border-white/15 hover:border-accent flex items-center justify-center">
                   <Plus size={20} />
                 </button>
                 <span className="text-[#B7C4D8]">años</span>
               </div>
             </Field>
-            <div className="rounded-lg border border-[#F29A2E]/30 bg-[#F29A2E]/[0.07] p-4 flex gap-3 items-start">
-              <Check size={20} className="text-[#F29A2E] shrink-0 mt-0.5" />
+            <div className="rounded-lg border border-accent/30 bg-accent/[0.07] p-4 flex gap-3 items-start">
+              <Check size={20} className="text-accent shrink-0 mt-0.5" />
               <p className="text-[#C9D5E6]">
                 Le corresponde <strong className="text-white">{categoryForAge(age).value}</strong>: {sched(categoryForAge(age).value).horario}, en {sched(categoryForAge(age).value).sede}.
               </p>
@@ -360,14 +366,14 @@ export default function RegistrationForm({ horarios, perCategory }: Props) {
             </div>
             <div className="grid sm:grid-cols-2 gap-5">
               <Field label="Sede" htmlFor="sede">
-                <select id="sede" value={sede} onChange={(e) => setSede(e.target.value)} className={clsx(inputCls, "appearance-none bg-[#0B1E38]")}>
+                <select id="sede" value={sede} onChange={(e) => setSede(e.target.value)} className={clsx(inputCls, "appearance-none bg-night")}>
                   {(SEDES.some((x) => x.value === sede) ? [...SEDES] : [{ value: sede, label: sede }, ...SEDES]).map((s) => (
                     <option key={s.value} value={s.value}>{s.label}</option>
                   ))}
                 </select>
               </Field>
               <Field label="Horario" htmlFor="horario" hint={horario === sched(cat.value).horario ? "Es el horario de su categoría." : "Distinto al de su categoría: lo confirmamos contigo."}>
-                <select id="horario" value={horario} onChange={(e) => setHorario(e.target.value)} className={clsx(inputCls, "appearance-none bg-[#0B1E38]")}>
+                <select id="horario" value={horario} onChange={(e) => setHorario(e.target.value)} className={clsx(inputCls, "appearance-none bg-night")}>
                   {(horarios.some((h) => h.value === horario) ? horarios : [{ value: horario, label: horario }, ...horarios]).map((h) => (
                     <option key={h.value} value={h.value}>{h.label}</option>
                   ))}
@@ -395,19 +401,42 @@ export default function RegistrationForm({ horarios, perCategory }: Props) {
                 aria-describedby={touched && errors.phone ? "phone-error" : "phone-hint"}
               />
             </Field>
+            {age < 18 ? (
+              <div className="grid sm:grid-cols-[1fr_auto] gap-4">
+                <Field label="Nombre de quien autoriza" htmlFor="guardian" error={touched ? errors.guardian : null} hint="El deportista es menor de edad: la autorización la da su madre, padre o acudiente.">
+                  <input
+                    id="guardian"
+                    autoComplete="name"
+                    className={inputCls}
+                    value={guardian}
+                    onChange={(e) => setGuardian(e.target.value)}
+                    maxLength={100}
+                    aria-invalid={touched && Boolean(errors.guardian)}
+                    aria-describedby={touched && errors.guardian ? "guardian-error" : "guardian-hint"}
+                  />
+                </Field>
+                <Field label="Parentesco" htmlFor="parentesco">
+                  <select id="parentesco" value={parentesco} onChange={(e) => setParentesco(e.target.value)} className={clsx(inputCls, "appearance-none bg-night")}>
+                    {PARENTESCOS.map((p) => (
+                      <option key={p} value={p}>{p}</option>
+                    ))}
+                  </select>
+                </Field>
+              </div>
+            ) : null}
             <div>
               <label className="flex gap-3 items-start cursor-pointer">
                 <input
                   type="checkbox"
                   checked={consent}
                   onChange={(e) => setConsent(e.target.checked)}
-                  className="mt-1 h-5 w-5 accent-[#F29A2E] shrink-0"
+                  className="mt-1 h-5 w-5 accent-accent shrink-0"
                   aria-invalid={touched && Boolean(errors.consent)}
                   aria-describedby={touched && errors.consent ? "consent-error" : undefined}
                 />
                 <span className="text-[#C9D5E6]">
-                  Autorizo al Club Voley Zúñiga a tratar estos datos para gestionar la inscripción, según la{" "}
-                  <Link href="/privacidad" target="_blank" className="text-[#F29A2E] underline underline-offset-2">
+                  Autorizo al Club Voley Zúñiga a tratar estos datos para gestionar la inscripción y enviarme novedades del club, según la{" "}
+                  <Link href="/privacidad" target="_blank" className="text-accent underline underline-offset-2">
                     política de datos
                   </Link>{" "}
                   (Ley 1581 de 2012). Si el deportista es menor de edad, la autorización la da su acudiente.
@@ -415,6 +444,12 @@ export default function RegistrationForm({ horarios, perCategory }: Props) {
               </label>
               {touched && errors.consent ? <p id="consent-error" role="alert" className="mt-2 text-sm text-[#FF9C90]">{errors.consent}</p> : null}
             </div>
+            <label className="flex gap-3 items-start cursor-pointer">
+              <input type="checkbox" checked={imageOk} onChange={(e) => setImageOk(e.target.checked)} className="mt-1 h-5 w-5 accent-accent shrink-0" />
+              <span className="text-[#C9D5E6]">
+                Autorizo publicar fotos y videos del deportista en entrenamientos y partidos, en la web y las redes del club. <span className="text-steel">(Opcional)</span>
+              </span>
+            </label>
             {serverError ? (
               <p role="alert" className="rounded-lg border border-[#FF7A6B]/40 bg-[#FF7A6B]/10 p-4 text-[#FFC2BA]">
                 {serverError}
@@ -434,7 +469,7 @@ export default function RegistrationForm({ horarios, perCategory }: Props) {
           <button
             type="submit"
             disabled={status === "sending"}
-            className="h-14 px-7 inline-flex items-center gap-2 rounded-md bg-[#F29A2E] hover:bg-[#FFB14A] disabled:opacity-60 text-[#071426] font-bold text-lg transition-colors"
+            className="h-14 px-7 inline-flex items-center gap-2 rounded-md bg-accent hover:bg-accent-light disabled:opacity-60 text-primary-dark font-bold text-lg transition-colors"
           >
             {status === "sending" ? (
               <>
@@ -483,17 +518,17 @@ function Pass({
   const { contact } = useContact();
   const matrix = confirmed && code ? qrMatrix(passQrText({ name, age, category, level, sede, horario, code, contact })) : null;
   return (
-    <div className="relative rounded-2xl overflow-hidden bg-[#F3F6FB] text-[#0F2347] shadow-[0_40px_80px_-30px_rgba(0,0,0,0.7)]">
-      <div className="relative bg-[#0F2347] text-white px-6 py-5 overflow-hidden">
-        <svg viewBox="0 0 360 200" className="absolute -right-10 -top-6 w-64 text-[#F29A2E]/30" aria-hidden="true">
+    <div className="relative rounded-2xl overflow-hidden bg-[#F3F6FB] text-primary shadow-[0_40px_80px_-30px_rgba(0,0,0,0.7)]">
+      <div className="relative bg-primary text-white px-6 py-5 overflow-hidden">
+        <svg viewBox="0 0 360 200" className="absolute -right-10 -top-6 w-64 text-accent/30" aria-hidden="true">
           <rect x="10" y="10" width="340" height="180" fill="none" stroke="currentColor" strokeWidth="3" />
           <line x1="180" y1="10" x2="180" y2="190" stroke="currentColor" strokeWidth="4" />
           <line x1="120" y1="10" x2="120" y2="190" stroke="currentColor" strokeWidth="2" />
           <line x1="240" y1="10" x2="240" y2="190" stroke="currentColor" strokeWidth="2" />
         </svg>
-        <p className="relative text-sm text-[#F29A2E] font-semibold">{confirmed ? "Inscripción enviada" : "Tu inscripción"}</p>
+        <p className="relative text-sm text-accent font-semibold">{confirmed ? "Inscripción enviada" : "Tu inscripción"}</p>
         <p className="relative font-heading font-black uppercase text-3xl leading-tight mt-1 break-words min-h-[2.5rem]">
-          {name.trim() || <span className="text-white/30">Nombre del deportista</span>}
+          {name.trim() || <span className="text-white/60">Nombre del deportista</span>}
         </p>
       </div>
       <div className="px-6 py-5 grid grid-cols-2 gap-x-4 gap-y-4">
@@ -512,9 +547,9 @@ function Pass({
       </div>
       {/* Perforación del pase */}
       <div className="relative h-6" aria-hidden="true">
-        <div className="absolute inset-x-6 top-1/2 border-t-2 border-dashed border-[#0F2347]/20" />
-        <div className="absolute -left-3 top-0 w-6 h-6 rounded-full bg-[#071426]" />
-        <div className="absolute -right-3 top-0 w-6 h-6 rounded-full bg-[#071426]" />
+        <div className="absolute inset-x-6 top-1/2 border-t-2 border-dashed border-primary/20" />
+        <div className="absolute -left-3 top-0 w-6 h-6 rounded-full bg-primary-dark" />
+        <div className="absolute -right-3 top-0 w-6 h-6 rounded-full bg-primary-dark" />
       </div>
       <div className="px-6 pt-3 pb-6 space-y-2 text-sm">
         <p className="flex gap-2"><Clock size={16} className="text-[#C46F0A] shrink-0 mt-0.5" /> {horario}</p>
@@ -531,7 +566,7 @@ function Pass({
           </div>
         ) : null}
       </div>
-      <div className="bg-[#F29A2E] text-[#071426] text-center py-3 font-heading font-black uppercase text-xl">Clase de prueba sin costo</div>
+      <div className="bg-accent text-primary-dark text-center py-3 font-heading font-black uppercase text-xl">Clase de prueba sin costo</div>
     </div>
   );
 }
