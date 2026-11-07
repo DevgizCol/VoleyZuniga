@@ -75,6 +75,20 @@ function clean_(value, max) {
   return /^[=+\-@]/.test(s) ? "'" + s : s;
 }
 
+// Arma la fila según los encabezados reales de la hoja: el club puede insertar o reordenar columnas
+// (p. ej. "Origen" o "Clase gratis" al inicio) sin que los datos caigan bajo otro encabezado.
+// Si falta algún encabezado esperado (alguien renombró una columna), devuelve null y se usa el orden fijo.
+function buildRowByHeaders_(headers, fields, after, data, stamp) {
+  var need = ["Fecha", "Estado"].concat(fields);
+  for (var i = 0; i < need.length; i++) if (headers.indexOf(need[i]) === -1) return null;
+  return headers.map(function (h) {
+    if (h === "Fecha") return stamp;
+    if (h === "Estado") return "Nuevo";
+    if (fields.indexOf(h) !== -1 || after.indexOf(h) !== -1 || h === "Origen") return clean_(data[h]);
+    return "";
+  });
+}
+
 function doPost(e) {
   try {
     var body = JSON.parse(e.postData.contents);
@@ -105,12 +119,14 @@ function doPost(e) {
       var ss = SpreadsheetApp.getActiveSpreadsheet();
       var sh = ss.getSheetByName(name);
       if (!sh) return json_({ ok: false, error: "sheet_missing" });
-      sh.appendRow(row);
+      var headers = sh.getRange(1, 1, 1, sh.getLastColumn()).getValues()[0].map(function (h) { return String(h).trim(); });
+      var byName = buildRowByHeaders_(headers, fields, after, data, stamp);
+      sh.appendRow(byName || row);
       rowNumber = sh.getLastRow();
-      // "Origen" (canal de llegada) se escribe por nombre y solo si el club creó esa columna: no desplaza las demás.
-      if (name === "Inscripciones" && data.Origen) {
-        var originCol = sh.getRange(1, 1, 1, sh.getLastColumn()).getValues()[0].indexOf("Origen");
-        if (originCol !== -1) sh.getRange(rowNumber, originCol + 1).setNumberFormat("@").setValue(clean_(String(data.Origen).slice(0, 40)));
+      // Respaldo con orden fijo: "Origen" solo si su columna está después de los datos (nunca encima de otra).
+      if (!byName && data.Origen) {
+        var originCol = headers.indexOf("Origen");
+        if (originCol >= row.length) sh.getRange(rowNumber, originCol + 1).setNumberFormat("@").setValue(clean_(String(data.Origen).slice(0, 40)));
       }
       sheetUrl = ss.getUrl() + "#gid=" + sh.getSheetId() + "&range=A" + rowNumber;
     } finally {
