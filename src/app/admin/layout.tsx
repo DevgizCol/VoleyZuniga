@@ -18,7 +18,7 @@ export const viewport: Viewport = { themeColor: "#071426" };
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const user = await getAdmin();
-  if (!user) return <AdminLogin />;
+  if (!user) return <main id="contenido"><AdminLogin /></main>;
 
   const sheetUrl = process.env.SHEET_URL;
   return (

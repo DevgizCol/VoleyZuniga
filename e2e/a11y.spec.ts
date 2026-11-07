@@ -20,9 +20,10 @@ const rutas = [
 for (const ruta of rutas) {
   test(`accesibilidad ${ruta}`, async ({ page }) => {
     await page.goto(ruta);
-    const { violations } = await new AxeBuilder({ page })
-      .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"])
-      .analyze();
+    const wcag = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"]).analyze();
+    // Estructura (aparte: withRules reemplaza a withTags): un solo h1, títulos en orden y contenido dentro de <main>.
+    const estructura = await new AxeBuilder({ page }).withRules(["page-has-heading-one", "heading-order", "landmark-one-main"]).analyze();
+    const violations = [...wcag.violations, ...estructura.violations];
     // Resumen legible en el fallo: regla, impacto y primeros nodos afectados.
     const resumen = violations.map((v) => ({
       regla: v.id,
