@@ -69,10 +69,10 @@ function secretOk_(provided) {
   return !!expected && expected.length >= 24 && provided === expected;
 }
 
-// Evita inyección de fórmulas (=, +, -, @) al abrir la hoja.
+// Evita inyección de fórmulas (=, +, -, @, tabulador, retorno) al abrir la hoja.
 function clean_(value, max) {
   var s = String(value == null ? "" : value).trim().slice(0, max || MAX_LEN);
-  return /^[=+\-@]/.test(s) ? "'" + s : s;
+  return /^[=+\-@\t\r]/.test(s) ? "'" + s : s;
 }
 
 // Arma la fila según los encabezados reales de la hoja: el club puede insertar o reordenar columnas

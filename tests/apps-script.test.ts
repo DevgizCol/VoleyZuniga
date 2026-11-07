@@ -47,3 +47,12 @@ describe("rowsToPurge_ (Code.gs, Ley 1581)", () => {
     expect(purge(["Nombre", "Estado"], values, "2026-05-06")).toEqual([]);
   });
 });
+
+describe("clean_ (Code.gs)", () => {
+  const clean = ctx.clean_ as (v: unknown, max?: number) => string;
+  it("neutraliza fórmulas al inicio y deja el texto normal", () => {
+    expect(clean("=HYPERLINK(\"x\")")).toBe("'=HYPERLINK(\"x\")");
+    expect(clean("@SUM(A1)")).toBe("'@SUM(A1)");
+    expect(clean("Sí (2026-11-06) · autoriza Ana")).toBe("Sí (2026-11-06) · autoriza Ana");
+  });
+});
