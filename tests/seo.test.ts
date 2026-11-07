@@ -17,6 +17,8 @@ describe("logos de afiliaciones", async () => {
     expect(logo("Liga Antioqueña de Voleibol")).toContain("liga");
     expect(logo("Liga de Voleibol de Antioquia")).toContain("liga");
     expect(logo("Alcaldía de Medellín")).toContain("alcaldia");
+    expect(logo("Presupuesto Participativo")).toContain("presupuesto");
+    expect(logo("PP Comuna 10")).toContain("presupuesto");
     expect(logo("Club Deportivo X")).toBeUndefined();
   });
 });
