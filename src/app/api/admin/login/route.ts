@@ -15,9 +15,9 @@ import {
   sessionCookieOptions,
 } from "@/lib/auth";
 import { sendLoginCode } from "@/lib/sheets";
-import { clientIp, isRateLimited, resetLimit } from "@/lib/rate-limit";
+import { clientIp, resetShared, sharedLimited } from "@/lib/rate-limit";
 
-// Límite de intentos fallidos por IP (best-effort; por instancia). Frena fuerza bruta básica.
+// Límite de intentos por IP, compartido entre instancias si Upstash está configurado. Frena fuerza bruta.
 const MAX_ATTEMPTS = 5;
 const WINDOW_MS = 15 * 60 * 1000;
 
@@ -25,8 +25,8 @@ const WINDOW_MS = 15 * 60 * 1000;
 export async function POST(request: Request) {
   if (!sameOrigin(request)) return NextResponse.json({ ok: false, error: "Solicitud inválida" }, { status: 403 });
   const key = `login:${clientIp(request)}`;
-  // Se cuenta el intento antes de cualquier await: ráfagas paralelas no pueden saltarse el tope.
-  if (isRateLimited(key, MAX_ATTEMPTS, WINDOW_MS)) {
+  // El intento se cuenta en memoria antes del primer await: ráfagas paralelas no pueden saltarse el tope.
+  if (await sharedLimited(key, MAX_ATTEMPTS, WINDOW_MS)) {
     return NextResponse.json(
       { ok: false, error: "Demasiados intentos. Intenta de nuevo en unos minutos." },
       { status: 429 }
@@ -52,7 +52,7 @@ export async function POST(request: Request) {
 
   const store = await cookies();
   if (deviceTrusted(store.get(DEVICE_COOKIE)?.value, user)) {
-    resetLimit(key);
+    await resetShared(key);
     const token = createSessionToken(user);
     if (!token) return NextResponse.json({ ok: false, error: "No se pudo crear la sesión." }, { status: 500 });
     const res = NextResponse.json({ ok: true, name: user.name });

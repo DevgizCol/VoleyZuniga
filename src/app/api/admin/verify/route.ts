@@ -11,14 +11,14 @@ import {
   sessionCookieOptions,
   verifyOtp,
 } from "@/lib/auth";
-import { clientIp, isRateLimited, resetLimit } from "@/lib/rate-limit";
+import { clientIp, resetShared, sharedLimited } from "@/lib/rate-limit";
 
 // Paso 2: el código del correo. Al acertar, abre la sesión y deja el celular reconocido.
 export async function POST(request: Request) {
   if (!sameOrigin(request)) return NextResponse.json({ ok: false, error: "Solicitud inválida" }, { status: 403 });
   const key = `verify:${clientIp(request)}`;
   // 5 intentos por 15 min sobre 1.000.000 de códigos posibles que vencen en 10 min.
-  if (isRateLimited(key, 5, 15 * 60 * 1000)) {
+  if (await sharedLimited(key, 5, 15 * 60 * 1000)) {
     return NextResponse.json({ ok: false, error: "Demasiados intentos. Vuelve a escribir tu contraseña en unos minutos." }, { status: 429 });
   }
   let code = "";
@@ -32,7 +32,7 @@ export async function POST(request: Request) {
   const user = verifyOtp(store.get(OTP_COOKIE)?.value, code);
   if (!user) return NextResponse.json({ ok: false, error: "Código incorrecto o vencido." }, { status: 401 });
 
-  resetLimit(key);
+  await resetShared(key);
   const session = createSessionToken(user);
   const device = createDeviceToken(user);
   if (!session || !device) return NextResponse.json({ ok: false, error: "No se pudo crear la sesión." }, { status: 500 });

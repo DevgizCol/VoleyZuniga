@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { appendToSheet, sheetsConfigured } from "@/lib/sheets";
-import { clientIp, isRateLimited } from "@/lib/rate-limit";
+import { clientIp, sharedLimited } from "@/lib/rate-limit";
 import { CONTACT_TOPICS, isOneOf } from "@/data/contact";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
@@ -10,7 +10,7 @@ const text = (v: unknown, max: number) => (typeof v === "string" ? v.trim().slic
 
 export async function POST(request: Request) {
   // Tope global: frena el envío masivo de correos aunque el atacante rote de IP.
-  if (isRateLimited(`contact:${clientIp(request)}`, 5, 60 * 60 * 1000) || isRateLimited("contact:global", 40, 60 * 60 * 1000)) {
+  if ((await sharedLimited(`contact:${clientIp(request)}`, 5, 60 * 60 * 1000)) || (await sharedLimited("contact:global", 40, 60 * 60 * 1000))) {
     return NextResponse.json(
       { ok: false, error: "Has enviado varios mensajes seguidos. Intenta de nuevo en un rato." },
       { status: 429 }

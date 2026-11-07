@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { appendToSheet, sheetsConfigured } from "@/lib/sheets";
-import { clientIp, isRateLimited } from "@/lib/rate-limit";
+import { clientIp, sharedLimited } from "@/lib/rate-limit";
 import { CATEGORIES, NIVELES, PARENTESCOS, POLICY_VERSION, SEDES } from "@/data/registration";
 import { getSessions, getSettings, validHorarios } from "@/lib/content";
 import { isOneOf } from "@/data/contact";
@@ -16,7 +16,7 @@ const text = (v: unknown, max: number) => (typeof v === "string" ? v.trim().slic
 
 export async function POST(request: Request) {
   // Tope global: frena el envío masivo de correos aunque el atacante rote de IP.
-  if (isRateLimited(`registration:${clientIp(request)}`, 5, 60 * 60 * 1000) || isRateLimited("registration:global", 40, 60 * 60 * 1000)) {
+  if ((await sharedLimited(`registration:${clientIp(request)}`, 5, 60 * 60 * 1000)) || (await sharedLimited("registration:global", 40, 60 * 60 * 1000))) {
     return NextResponse.json(
       { ok: false, error: "Has enviado varias solicitudes seguidas. Intenta de nuevo en un rato." },
       { status: 429 }
