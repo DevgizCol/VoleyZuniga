@@ -1,4 +1,5 @@
 import React from "react";
+import DevGizCredit from "./DevGizCredit";
 import Link from "next/link";
 import Image from "next/image";
 import { Phone, Mail, MapPin, Camera, ArrowRight } from "lucide-react";
@@ -75,7 +76,7 @@ export default async function Footer() {
           Voley Zúñiga
         </p>
 
-        <div className="relative pt-6 border-t border-white/10 flex flex-col md:flex-row justify-between gap-3 text-xs text-[#8FA3BF]">
+        <div className="relative pt-6 border-t border-white/10 flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs text-[#8FA3BF]">
           <p>
             © 2026 {SITE.name}.{" "}
             <Link href="/privacidad" className="underline underline-offset-2 hover:text-[#F29A2E]">
@@ -86,12 +87,7 @@ export default async function Footer() {
               Acceso entrenadores
             </Link>
           </p>
-          <p>
-            Sitio web por{" "}
-            <a href="https://devgiz.vercel.app/" target="_blank" rel="noopener noreferrer" className="text-white font-semibold hover:text-[#F29A2E]">
-              DevGiz
-            </a>
-          </p>
+          <DevGizCredit />
         </div>
       </div>
     </footer>
