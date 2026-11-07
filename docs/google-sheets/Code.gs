@@ -262,15 +262,46 @@ function notify_(sheetName, fields, values, stamp, sheetUrl) {
 
 // ---------- Panel: código de acceso por correo ----------
 
+// Correo del código: mismo estilo que el aviso de inscripción. Función pura (sin servicios de Google) para probarla.
+function loginCodeEmail_(name, code, expires, siteUrl) {
+  var first = String(name).split(" ")[0];
+  var logo = /^https:\/\//.test(siteUrl)
+    ? '<tr><td align="center" style="background:#FFFFFF;padding:16px 24px 8px 24px;">' +
+      '<img src="' + esc_(siteUrl) + '/email-logo.png" width="160" alt="Club Voley Zúñiga" style="display:block;border:0;height:auto;max-width:160px;"></td></tr>'
+    : "";
+  var html =
+    '<div style="background:#F4F6FA;padding:24px 12px;font-family:Arial,Helvetica,sans-serif;">' +
+    '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:480px;margin:0 auto;background:#FFFFFF;border-radius:12px;overflow:hidden;">' + logo +
+    '<tr><td style="background:#0F284B;padding:20px 24px;border-bottom:4px solid #F29A2E;">' +
+    '<div style="color:#F29A2E;font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:bold;">Panel del club</div>' +
+    '<div style="color:#FFFFFF;font-size:22px;font-weight:bold;margin-top:4px;">Tu código de acceso</div></td></tr>' +
+    '<tr><td style="padding:24px 24px 8px 24px;font-size:16px;color:#0B1E38;line-height:1.5;">Hola ' + esc_(first) +
+    ', escribe este código en el panel para terminar de entrar:</td></tr>' +
+    '<tr><td align="center" style="padding:12px 24px;">' +
+    '<div style="display:inline-block;background:#F4F6FA;border:2px dashed #F29A2E;border-radius:12px;padding:14px 24px;' +
+    'font-family:\'Courier New\',Courier,monospace;font-size:36px;font-weight:bold;letter-spacing:.3em;color:#0B1E38;">' + esc_(code) + '</div></td></tr>' +
+    '<tr><td align="center" style="padding:4px 24px 20px 24px;font-size:14px;color:#64748B;">Vence a las <strong style="color:#0B1E38;">' + esc_(expires) +
+    '</strong> (10 minutos) y sirve una sola vez.<br>Después, este celular queda reconocido y solo pedirá tu contraseña.</td></tr>' +
+    '<tr><td style="padding:0 24px 24px 24px;"><div style="background:#FFF4E5;border-left:4px solid #F29A2E;border-radius:8px;padding:12px 14px;font-size:13px;color:#7A4A0B;line-height:1.5;">' +
+    '<strong>¿No fuiste tú?</strong> Alguien conoce tu contraseña. No compartas este código con nadie (el club nunca te lo pedirá) y pide que te cambien la contraseña.</div></td></tr>' +
+    '<tr><td style="padding:0 24px 24px 24px;font-size:12px;color:#94A3B8;">Correo automático del panel del Club Voley Zúñiga.</td></tr>' +
+    "</table></div>";
+  var plain = "Hola " + first + ",\n\nTu código para entrar al panel del club es: " + code +
+    "\n\nVence a las " + expires + " (10 minutos) y sirve una sola vez.\n\n" +
+    "¿No fuiste tú? Alguien conoce tu contraseña: no compartas este código y pide que te la cambien.";
+  return { subject: code + " es tu código del panel · Voley Zúñiga", plain: plain, html: html };
+}
+
 // La web decide a quién y qué código; aquí solo se valida el formato y se envía.
 function loginCode_(body) {
   var email = String(body.email || "").trim();
   var code = String(body.code || "");
   var name = String(body.name || "").replace(/[\r\n]+/g, " ").slice(0, 40);
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email) || !/^\d{6}$/.test(code)) return { ok: false, error: "bad_request" };
-  MailApp.sendEmail(email, "[Voley Zúñiga] Tu código para entrar al panel: " + code,
-    "Hola " + name + ",\n\nTu código para entrar al panel del club es: " + code + "\n\nVence en 10 minutos. " +
-    "Si no fuiste tú, cambia tu contraseña: alguien la conoce.", { name: "Club Voley Zúñiga (panel)" });
+  var expires = Utilities.formatDate(new Date(Date.now() + 10 * 60 * 1000), TZ, "h:mm a");
+  var siteUrl = String(PropertiesService.getScriptProperties().getProperty("SITE_URL") || "").replace(/\/+$/, "");
+  var mail = loginCodeEmail_(name, code, expires, siteUrl);
+  MailApp.sendEmail(email, mail.subject, mail.plain, { htmlBody: mail.html, name: "Club Voley Zúñiga" });
   return { ok: true };
 }
 
