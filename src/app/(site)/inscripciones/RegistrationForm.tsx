@@ -209,7 +209,7 @@ export default function RegistrationForm({ horarios, perCategory }: Props) {
           </a>
           <div className="mt-8 pt-8 border-t border-white/10">
             <p className="font-heading font-extrabold text-2xl">Tu pase de clase de prueba</p>
-            <p className="text-[#B7C4D8] mt-1">Descárgalo o compártelo en tus historias. En la cancha, el QR abre el chat del club con tus datos.</p>
+            <p className="text-[#B7C4D8] mt-1">Descárgalo o compártelo en tus historias. En la cancha, el profe escanea el QR para registrar tu clase gratis.</p>
             <div className="mt-4 flex flex-wrap gap-3">
               <button
                 type="button"
@@ -218,7 +218,7 @@ export default function RegistrationForm({ horarios, perCategory }: Props) {
                   try { await downloadPass(passData); } finally { setPassBusy(null); }
                 }}
                 disabled={passBusy !== null}
-                className="h-12 px-5 inline-flex items-center gap-2 rounded-md bg-[#F29A2E] hover:bg-[#FFB14A] disabled:opacity-60 text-[#071426] font-bold"
+                className="h-12 px-5 inline-flex items-center gap-2 rounded-md border border-white/25 hover:border-white disabled:opacity-60 font-semibold"
               >
                 {passBusy === "download" ? <Loader2 size={18} className="animate-spin" /> : <Download size={18} />} Descargar pase
               </button>
