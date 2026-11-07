@@ -25,6 +25,7 @@ Objetivo: entregar cambios pequeños, verificados y vistos por el usuario. No cu
 
 ## Avisos fijos
 
+- La hoja es del club: sus columnas pueden estar en **cualquier orden**. Todo cambio que escriba en ella se prueba con encabezados en otro orden (`tests/apps-script.test.ts` carga el Code.gs real). Un 2026-11-06 un "Origen" escrito por nombre pisó el nombre del deportista porque el resto de la fila iba por posición.
 - Cambios a `docs/google-sheets/Code.gs` requieren que el club publique una **Nueva versión** de la implementación; decirlo en el PR.
 - Datos de menores (Inscripciones): nunca leerlos completos si basta una columna; nunca en logs.
 - Nunca subir a Vercel ni fusionar sin orden explícita.
