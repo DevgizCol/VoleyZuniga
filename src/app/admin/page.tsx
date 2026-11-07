@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Inbox, Users, Mail, CalendarDays, ArrowRight, MessageCircle, CheckCircle2, CloudRain } from "lucide-react";
 import { getAdmin } from "@/lib/auth";
 import { adminRead } from "@/lib/sheets";
+import { funnel } from "@/lib/admin/free-class";
 import { siteUrl } from "@/lib/site-url";
 import { GroupMessage } from "./AdminTools";
 import StatusSelect from "./_components/StatusSelect";
@@ -21,6 +22,9 @@ export default async function AdminHome() {
   const registrations = (regs?.rows ?? []).slice().reverse();
   const pending = registrations.filter((r) => (r.Estado || "Nuevo") === "Nuevo");
   const regsWeek = registrations.filter((r) => isoDate(r.Fecha) >= weekAgo);
+  const monthAgo = daysAgo(30);
+  const fun = funnel(registrations.filter((r) => isoDate(r.Fecha) >= monthAgo));
+  const pct = (n: number) => (fun.total.inscritos ? `${Math.round((n / fun.total.inscritos) * 100)} %` : "");
   const messages = (msgs?.rows ?? []).slice().reverse();
   const msgsNew = messages.filter((m) => (m.Estado || "Nuevo") === "Nuevo");
   const upcoming = (fixture?.rows ?? [])
@@ -52,6 +56,45 @@ export default async function AdminHome() {
           detail={upcoming[0] ? `${upcoming[0].Categoría} · ${hhmm(upcoming[0].Hora) || "hora por confirmar"}` : "Sin partidos programados"}
         />
       </div>
+
+      {fun.total.inscritos > 0 ? (
+        <section aria-labelledby="embudo" className="mb-8 rounded-2xl border border-white/10 bg-[#0B1E38] p-5">
+          <h2 id="embudo" className="font-heading font-black uppercase text-2xl">Embudo · últimos 30 días</h2>
+          <p className="text-sm text-[#8FA3BF]">De la inscripción a la matrícula, pasando por la clase gratis.</p>
+          <ol className="mt-4 grid grid-cols-3 gap-3">
+            {([["Inscritos", fun.total.inscritos, ""], ["Clase gratis", fun.total.asistieron, pct(fun.total.asistieron)], ["Matriculados", fun.total.matriculados, pct(fun.total.matriculados)]] as const).map(([label, n, p]) => (
+              <li key={label} className="rounded-xl bg-white/[0.04] p-3">
+                <p className="text-xs text-[#8FA3BF]">{label}</p>
+                <p className="font-heading font-black text-3xl tabular-nums">{n}</p>
+                {p ? <p className="text-xs text-[#F29A2E] font-semibold">{p} de los inscritos</p> : null}
+              </li>
+            ))}
+          </ol>
+          <div className="mt-4 overflow-x-auto">
+            <table className="w-full text-sm text-left">
+              <caption className="sr-only">Embudo por canal de llegada</caption>
+              <thead className="text-xs text-[#8FA3BF]">
+                <tr>
+                  <th className="py-2 pr-3 font-semibold">Canal</th>
+                  <th className="py-2 px-3 font-semibold text-right">Inscritos</th>
+                  <th className="py-2 px-3 font-semibold text-right">Clase gratis</th>
+                  <th className="py-2 pl-3 font-semibold text-right">Matriculados</th>
+                </tr>
+              </thead>
+              <tbody>
+                {fun.porOrigen.slice(0, 6).map((f) => (
+                  <tr key={f.origen} className="border-t border-white/10">
+                    <td className="py-2 pr-3 font-semibold">{f.origen}</td>
+                    <td className="py-2 px-3 text-right tabular-nums">{f.inscritos}</td>
+                    <td className="py-2 px-3 text-right tabular-nums">{f.asistieron}</td>
+                    <td className="py-2 pl-3 text-right tabular-nums">{f.matriculados}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      ) : null}
 
       {(toScore.length > 0 || alerts.length > 0) && (
         <div className="grid md:grid-cols-2 gap-3 mb-8">
