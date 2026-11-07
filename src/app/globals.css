@@ -259,3 +259,16 @@ h1, h2, h3, h4, h5, h6 {
 .player-card:hover { transform: translateY(-6px) rotate(-1.2deg); box-shadow: 0 30px 50px -24px rgba(242, 154, 46, 0.55); }
 .player-shine { background: linear-gradient(115deg, transparent 30%, rgba(255, 255, 255, 0.35) 45%, transparent 60%); transform: translateX(-120%); transition: transform 0.9s ease; }
 .player-card:hover .player-shine { transform: translateX(120%); }
+
+/* Microinteracción: los botones y llamados a la acción ceden un poco al tocarlos (respuesta inmediata en celular). */
+/* shortcut: los enlace-botón se reconocen por su altura (h-11/h-12/h-14); si aparece otro tamaño, agregarlo aquí. */
+@layer base {
+  @media (prefers-reduced-motion: no-preference) {
+    button:not(:disabled), a[class*="h-11"], a[class*="h-12"], a[class*="h-14"] {
+      transition-property: color, background-color, border-color, transform;
+      transition-duration: 150ms;
+      transition-timing-function: cubic-bezier(0.23, 1, 0.32, 1);
+    }
+    button:not(:disabled):active, a[class*="h-11"]:active, a[class*="h-12"]:active, a[class*="h-14"]:active { transform: scale(0.97); }
+  }
+}
