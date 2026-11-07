@@ -337,7 +337,7 @@ export default async function Home() {
                       <div>
                         <p className="font-heading font-extrabold text-2xl leading-none tabular-nums">
                           {formatTime(s.start)}
-                          <span className="text-[#5B6B85] font-bold text-lg"> – {formatTime(s.end)}</span>
+                          <span className="text-[#44546F] font-bold text-lg"> – {formatTime(s.end)}</span>
                         </p>
                         <p className="font-semibold mt-1.5">{s.group.replace(/-/g, "\u2011")}</p>
                         <p className="text-sm text-[#44546F]">{s.sede}</p>
