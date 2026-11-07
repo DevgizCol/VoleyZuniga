@@ -56,3 +56,18 @@ describe("clean_ (Code.gs)", () => {
     expect(clean("Sí (2026-11-06) · autoriza Ana")).toBe("Sí (2026-11-06) · autoriza Ana");
   });
 });
+
+describe("loginCodeEmail_ (Code.gs)", () => {
+  const mail = ctx.loginCodeEmail_ as (n: string, c: string, e: string, u: string) => { subject: string; plain: string; html: string };
+  it("pone el código al inicio del asunto, saluda por el primer nombre y escapa el HTML", () => {
+    const m = mail("DanielG <b>x</b>", "982132", "12:23 a. m.", "https://voleyzuniga.co");
+    expect(m.subject.startsWith("982132 ")).toBe(true);
+    expect(m.html).toContain("Hola DanielG,");
+    expect(m.html).not.toContain("<b>x</b>");
+    expect(m.html).toContain("https://voleyzuniga.co/email-logo.png");
+    expect(m.plain).toContain("Vence a las 12:23 a. m.");
+  });
+  it("sin SITE_URL https no pone el logo", () => {
+    expect(mail("Ana", "000111", "1:00 p. m.", "").html).not.toContain("email-logo.png");
+  });
+});
