@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { pageMeta } from "@/lib/seo";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight, ChevronDown, Camera, MessageCircle, MapPin, Clock, Quote, Check, ShieldCheck, Users } from "lucide-react";
@@ -16,7 +17,10 @@ import { CATEGORIES, SEDES } from "@/data/registration";
 import { DAY_NAMES, formatTime } from "@/data/schedule";
 import { getCoaches, getGallery, getTestimonials } from "@/lib/club";
 
-export const metadata: Metadata = { alternates: { canonical: "/" } };
+export const metadata: Metadata = {
+  ...pageMeta("/", "Club de Voleibol Zúñiga | Voleibol en Medellín para niños y jóvenes", "Clases de voleibol en Medellín para niños, jóvenes y adultos desde los 7 años. Cinco categorías, dos sedes y la primera clase sin costo."),
+  title: { absolute: "Club de Voleibol Zúñiga | Voleibol en Medellín para niños y jóvenes" },
+};
 
 const ageLabel = (min: number, max: number) => (max >= 100 ? "18 años o más" : min === 0 ? "7 a 11 años" : `${min} a ${max} años`);
 

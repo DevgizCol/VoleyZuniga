@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { pageMeta } from "@/lib/seo";
 import Link from "next/link";
 import { ArrowRight, Clock, MapPin, Check } from "lucide-react";
 import PageHero from "@/components/PageHero";
@@ -7,11 +8,7 @@ import PlayerCard from "@/components/PlayerCard";
 import { CATEGORIES } from "@/data/registration";
 import { getRoster } from "@/lib/club";
 
-export const metadata: Metadata = {
-  title: "Equipos",
-  alternates: { canonical: "/equipos" },
-  description: "Las cinco categorías del Club Voley Zúñiga: edades, horarios y enfoque de entrenamiento.",
-};
+export const metadata: Metadata = pageMeta("/equipos", "Categorías de voleibol por edad", "Las cinco categorías del Club Voley Zúñiga en Medellín: edades, horarios y enfoque de entrenamiento.");
 
 const FOCUS: Record<string, { lead: string; points: string[] }> = {
   "Semillero Sub-12": {

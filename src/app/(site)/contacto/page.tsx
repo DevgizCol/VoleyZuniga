@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { pageMeta } from "@/lib/seo";
 import { MapPin, Phone, Mail, Clock, Navigation, MessageCircle, Camera } from "lucide-react";
 import PageHero from "@/components/PageHero";
 import ContactForm from "./ContactForm";
@@ -7,11 +8,7 @@ import { getSessions, getSettings, trainingDays } from "@/lib/content";
 import { VENUES, mapEmbed, mapsLink, wazeLink } from "@/data/venues";
 import { DAY_NAMES, formatTime } from "@/data/schedule";
 
-export const metadata: Metadata = {
-  title: "Sedes y contacto",
-  alternates: { canonical: "/contacto" },
-  description: "Sedes, horarios y canales de contacto del Club Voley Zúñiga en Medellín.",
-};
+export const metadata: Metadata = pageMeta("/contacto", "Sedes, horarios y contacto", "Sedes, horarios de entrenamiento y canales de contacto del Club Voley Zúñiga en Medellín.");
 
 export const revalidate = 300;
 

@@ -56,7 +56,6 @@ export const metadata: Metadata = {
     ],
   },
   description: "Club de voleibol en Medellín para niños, jóvenes y adultos desde los 7 años. Cinco categorías, dos sedes y clase de prueba sin costo.",
-  keywords: ["voleibol", "medellin", "club deportivo", "voley", "antioquia", "entrenamiento", "deporte"],
   openGraph: {
     type: "website",
     locale: "es_CO",
@@ -89,6 +88,7 @@ const jsonLd = {
   "telephone": `+${SITE.phoneDigits}`,
   "email": SITE.email,
   "sport": "Volleyball",
+  "areaServed": { "@type": "City", "name": "Medellín" },
   "url": siteUrl,
   "location": VENUES.map((v) => ({
     "@type": "SportsActivityLocation",
@@ -117,7 +117,7 @@ export default function RootLayout({
 }) {
   return (
     <html
-      lang="es"
+      lang="es-CO"
       className={`${figtree.variable} ${display.variable} scroll-smooth antialiased`}
     >
       <body className="min-h-screen flex flex-col font-sans text-white bg-[#071426] selection:bg-[#F29A2E] selection:text-white">

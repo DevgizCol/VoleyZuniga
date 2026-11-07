@@ -21,7 +21,7 @@ Objetivo: entregar cambios pequeños, verificados y vistos por el usuario. No cu
    - Panel `/admin`: arrancar antes `node scripts/dev/mock-sheets.mjs` (hoja simulada) con `.env.local` de desarrollo (ver cabecera del script). Nunca iniciar sesión en producción desde el navegador de prueba: la herramienta imprime el código ejecutado y expone la cookie.
 7. **Cerrar** el servidor (y el navegador de prueba) tras el visto bueno; comprobar que no quedan procesos `next`.
 8. **Commit + PR** con `~/.local/bin/gh pr create`; cuerpo: qué corrige, verificación, pendientes, pasos manuales (p. ej. "publicar nueva versión del Apps Script", variables de entorno en Vercel).
-9. **Tablero**: actualizar `docs/agentes/tablero.md` (Gate y Handoff).
+9. **Tablero**: actualizarlo en un commit aparte **después** de fusionar (no dentro de cada PR): varios PR editando la misma fila del tablero provocan conflictos.
 
 ## Avisos fijos
 
@@ -29,6 +29,7 @@ Objetivo: entregar cambios pequeños, verificados y vistos por el usuario. No cu
 - Datos de menores (Inscripciones): nunca leerlos completos si basta una columna; nunca en logs.
 - Nunca subir a Vercel ni fusionar sin orden explícita.
 - `useEffect` siempre con llaves `{ ... }`: una flecha que devuelve una llamada (p. ej. `scrollIntoView()`, que en Chrome reciente devuelve una promesa) rompe la página con `destroy is not a function` y el lint no lo detecta.
+- Metadata de Next: se combina de forma superficial (una página sin `openGraph` hereda el de la portada) y `openGraph.images` en config tapa un `opengraph-image` propio. Verificar `og:*` con curl.
 - Detener servidores con `TaskStop` o `kill <PID>` (ver `pgrep -af`), nunca `pkill -f <patrón>`: el patrón coincide con el propio comando, lo mata y deja huérfanos.
 - Datos en caché de 5 min en local: para ver cambios de la hoja simulada pedir con `Cache-Control: no-cache` (o recarga forzada).
 - Worktrees de prueba: crearlos dentro del mismo disco que el repo (Turbopack no resuelve `node_modules` enlazado desde `/tmp`).
