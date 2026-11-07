@@ -1,13 +1,9 @@
 import type { Metadata } from "next";
+import { pageMeta } from "@/lib/seo";
 import Link from "next/link";
 import PageHero from "@/components/PageHero";
 
-export const metadata: Metadata = {
-  title: "Política de tratamiento de datos personales",
-  description:
-    "Cómo el Club Voley Zúñiga recoge, usa y protege los datos personales de deportistas, padres y acudientes.",
-  alternates: { canonical: "/privacidad" },
-};
+export const metadata: Metadata = pageMeta("/privacidad", "Política de tratamiento de datos personales", "Cómo el Club Voley Zúñiga recoge, usa y protege los datos personales de deportistas, padres y acudientes.");
 
 const sections: { title: string; body: React.ReactNode }[] = [
   {

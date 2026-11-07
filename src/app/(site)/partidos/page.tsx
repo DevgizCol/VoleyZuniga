@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { pageMeta } from "@/lib/seo";
 import Link from "next/link";
 import { CalendarPlus, CalendarCheck, Clock, MapPin, Navigation, ArrowRight, Camera } from "lucide-react";
 import { siteUrl } from "@/lib/site-url";
@@ -10,11 +11,7 @@ import { getSettings } from "@/lib/content";
 import { CATEGORIES } from "@/data/registration";
 import { bogotaToday, calendarUrl, countdownLabel, dateParts, getMatches, time12, type Match } from "@/lib/matches";
 
-export const metadata: Metadata = {
-  title: "Partidos",
-  alternates: { canonical: "/partidos" },
-  description: "Calendario de partidos y resultados del Club Voley Zúñiga.",
-};
+export const metadata: Metadata = pageMeta("/partidos", "Partidos", "Calendario de partidos y resultados del Club Voley Zúñiga.", true);
 
 export const revalidate = 300;
 

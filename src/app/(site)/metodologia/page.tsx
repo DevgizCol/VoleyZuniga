@@ -1,13 +1,10 @@
 import type { Metadata } from "next";
+import { pageMeta } from "@/lib/seo";
 import Link from "next/link";
 import { ArrowRight, Dumbbell, Activity, Brain, ShieldCheck, Check } from "lucide-react";
 import PageHero from "@/components/PageHero";
 
-export const metadata: Metadata = {
-  title: "Metodología",
-  alternates: { canonical: "/metodologia" },
-  description: "Los cuatro pilares de entrenamiento del Club Voley Zúñiga.",
-};
+export const metadata: Metadata = pageMeta("/metodologia", "Metodología", "Los cuatro pilares de entrenamiento del Club Voley Zúñiga.");
 
 const PILLARS = [
   {

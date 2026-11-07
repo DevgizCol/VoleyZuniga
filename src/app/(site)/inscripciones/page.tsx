@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { pageMeta } from "@/lib/seo";
 import Link from "next/link";
 import { MessageCircle } from "lucide-react";
 import PageHero from "@/components/PageHero";
@@ -6,11 +7,7 @@ import RegistrationForm from "./RegistrationForm";
 import { categorySchedules, getSessions, getSettings, scheduleOptions } from "@/lib/content";
 import { waLink } from "@/config/contact";
 
-export const metadata: Metadata = {
-  title: "Inscripción",
-  alternates: { canonical: "/inscripciones" },
-  description: "Inscríbete al Club Voley Zúñiga y agenda una clase de prueba sin costo.",
-};
+export const metadata: Metadata = pageMeta("/inscripciones", "Inscripción y clase de prueba gratis", "Inscribe a tu hijo o inscríbete en voleibol en Medellín y agenda una clase de prueba sin costo en el Club Voley Zúñiga.");
 
 export const revalidate = 300;
 

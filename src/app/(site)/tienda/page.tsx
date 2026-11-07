@@ -1,15 +1,12 @@
 import type { Metadata } from "next";
+import { pageMeta } from "@/lib/seo";
 import PageHero from "@/components/PageHero";
 import StoreClient from "./StoreClient";
 import { getProducts } from "@/lib/content";
 
 export const revalidate = 300;
 
-export const metadata: Metadata = {
-  title: "Tienda",
-  alternates: { canonical: "/tienda" },
-  description: "Camisetas personalizadas, balones y accesorios del Club Voley Zúñiga.",
-};
+export const metadata: Metadata = pageMeta("/tienda", "Tienda", "Camisetas personalizadas, balones y accesorios del Club Voley Zúñiga.");
 
 const STEPS = [
   { title: "Arma tu pedido", text: "Personaliza la camiseta y agrega lo que necesites al carrito." },
