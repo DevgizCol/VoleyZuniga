@@ -88,7 +88,8 @@ export const getSettings = cache(async (): Promise<Settings> => {
     heroVideo: mediaUrl(map.get("portada_video") || ""),
     clubPhoto: imageUrl(map.get("foto_club") || "") || "",
     stats: parseStats(map.get("cifras") || ""),
-    priceFrom: (map.get("precio_desde") || "").slice(0, 40),
+    // Sin la fila en Ajustes se muestra el precio vigente; con la fila vacía se oculta.
+    priceFrom: (map.get("precio_desde") ?? "$60.000").slice(0, 40),
     spots: parseSpots(map.get("cupos") || ""),
     affiliations: (map.get("afiliaciones") || "")
       .split(/[,\n]/)

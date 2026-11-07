@@ -254,7 +254,7 @@ export default async function Home() {
             </p>
           </div>
 
-          <ol className="relative grid grid-flow-col auto-cols-[78%] sm:auto-cols-[45%] lg:grid-flow-row lg:grid-cols-5 gap-4 overflow-x-auto lg:overflow-visible snap-x snap-mandatory pb-4 -mx-4 px-4 sm:mx-0 sm:px-0 [scrollbar-width:none]">
+          <ol tabIndex={0} aria-label="La ruta del deportista (desliza para ver más)" className="relative grid grid-flow-col auto-cols-[78%] sm:auto-cols-[45%] lg:grid-flow-row lg:grid-cols-5 gap-4 overflow-x-auto lg:overflow-visible snap-x snap-mandatory pb-4 -mx-4 px-4 sm:mx-0 sm:px-0 [scrollbar-width:none]">
             <div className="hidden lg:block absolute left-0 right-0 top-[22px] h-px bg-gradient-to-r from-[#F29A2E] via-[#F29A2E]/50 to-[#F29A2E]/10" aria-hidden="true" />
             {CATEGORIES.map((c, i) => {
               const { name, tag } = splitCategory(c.value);
@@ -337,7 +337,7 @@ export default async function Home() {
                       <div>
                         <p className="font-heading font-extrabold text-2xl leading-none tabular-nums">
                           {formatTime(s.start)}
-                          <span className="text-[#8FA3BF] font-bold text-lg"> – {formatTime(s.end)}</span>
+                          <span className="text-[#5B6B85] font-bold text-lg"> – {formatTime(s.end)}</span>
                         </p>
                         <p className="font-semibold mt-1.5">{s.group.replace(/-/g, "\u2011")}</p>
                         <p className="text-sm text-[#44546F]">{s.sede}</p>

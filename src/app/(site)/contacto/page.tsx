@@ -74,7 +74,7 @@ export default async function ContactPage() {
       <section className="bg-[#EEF2F7] text-[#0F2347] py-20 sm:py-24">
         <div className="container mx-auto px-4 sm:px-6">
           <h2 className="font-heading font-black uppercase text-5xl sm:text-6xl leading-none mb-10">Horarios</h2>
-          <div className="overflow-x-auto rounded-xl bg-white shadow-[0_20px_40px_-24px_rgba(15,35,71,0.35)]">
+          <div tabIndex={0} role="region" aria-label="Horarios (desliza para ver la tabla completa)" className="overflow-x-auto rounded-xl bg-white shadow-[0_20px_40px_-24px_rgba(15,35,71,0.35)]">
             <table className="w-full min-w-[560px] text-left">
               <thead className="bg-[#0F2347] text-white">
                 <tr>

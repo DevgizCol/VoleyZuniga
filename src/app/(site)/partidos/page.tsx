@@ -139,7 +139,7 @@ function FeaturedMatch({ m }: { m: Match }) {
         <div className="text-center">
           <p className="font-heading font-black text-5xl sm:text-7xl leading-none tabular-nums">{d.day}</p>
           <p className="font-heading font-bold uppercase text-xl sm:text-2xl text-[#F29A2E]">{d.month}</p>
-          <p className="mt-2 font-heading font-black text-white/30 text-2xl">VS</p>
+          <p className="mt-2 font-heading font-black text-white/60 text-2xl">VS</p>
         </div>
         <TeamSide name={m.away} isClub={m.clubPlays && !m.clubIsHome} logo={m.clubIsHome ? m.rivalLogo : ""} label="Visitante" />
       </div>
@@ -262,7 +262,7 @@ function ResultRow({ m }: { m: Match }) {
         {score ? (
           <>
             {score[1]}
-            <span className="text-white/30 mx-1">–</span>
+            <span className="text-white/60 mx-1">–</span>
             {score[2]}
           </>
         ) : (

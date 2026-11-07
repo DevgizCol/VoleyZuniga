@@ -141,7 +141,7 @@ export const SETTING_RULES: Record<string, { label: string; help: string; schema
   },
   precio_desde: {
     label: "Mensualidad desde",
-    help: "Valor de referencia, por ejemplo “$80.000”. Se muestra en la ruta del deportista y en las preguntas frecuentes. Vacío: se dice que el valor se envía por WhatsApp.",
+    help: "Valor de referencia, por ejemplo “$80.000”. Se muestra en la ruta del deportista y en las preguntas frecuentes. Vacío: se oculta y se dice que el valor se envía por WhatsApp.",
     schema: text(40, "El valor"),
   },
   cupos: {

@@ -494,7 +494,7 @@ function Pass({
         </svg>
         <p className="relative text-sm text-[#F29A2E] font-semibold">{confirmed ? "Inscripción enviada" : "Tu inscripción"}</p>
         <p className="relative font-heading font-black uppercase text-3xl leading-tight mt-1 break-words min-h-[2.5rem]">
-          {name.trim() || <span className="text-white/30">Nombre del deportista</span>}
+          {name.trim() || <span className="text-white/60">Nombre del deportista</span>}
         </p>
       </div>
       <div className="px-6 py-5 grid grid-cols-2 gap-x-4 gap-y-4">
