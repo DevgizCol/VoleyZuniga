@@ -49,3 +49,8 @@ export const POLICY_VERSION = "2026-11-06";
 
 /** Quién autoriza el tratamiento cuando el deportista es menor de edad. */
 export const PARENTESCOS = ["Madre", "Padre", "Otro familiar", "Representante legal"] as const;
+
+/** Logos oficiales de entidades afiliadas: se usan si el nombre en Ajustes ("afiliaciones") coincide. */
+export const AFFILIATION_LOGOS: { match: RegExp; src: string; width: number; height: number }[] = [
+  { match: /\binder\b/i, src: "/afiliaciones/inder-medellin.webp", width: 474, height: 209 },
+];

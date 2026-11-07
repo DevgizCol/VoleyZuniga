@@ -24,6 +24,6 @@ Empezar con la acción **Log** un par de días si se quiere ver el tráfico ante
 
 1. Vercel → proyecto → **Storage** (Marketplace) → **Upstash for Redis** → plan **Free** (o crear la base en <https://console.upstash.com> sin tarjeta).
 2. Región: la más cercana a Vercel (`us-east-1`).
-3. Copiar **REST URL** y **REST TOKEN** a las variables `UPSTASH_REDIS_REST_URL` y `UPSTASH_REDIS_REST_TOKEN` (si se conecta desde el Marketplace se crean solas) → **Redeploy**.
+3. Desde el Marketplace: en **Connect a Project** elegir `voley-zuniga`, los 3 entornos, y dejar el prefijo **`KV`** (crea `KV_REST_API_URL` y `KV_REST_API_TOKEN`, que el código ya lee). Si se crea fuera de Vercel: copiar **REST URL** y **REST TOKEN** a `UPSTASH_REDIS_REST_URL` y `UPSTASH_REDIS_REST_TOKEN`. Luego **Redeploy**.
 
 Consumo esperado: 2 comandos por intento de acceso, inscripción o mensaje: muy por debajo del tope.

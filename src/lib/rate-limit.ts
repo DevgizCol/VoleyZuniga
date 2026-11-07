@@ -52,11 +52,12 @@ export function resetLimit(key: string): void {
 }
 
 // ---------- Límite compartido entre instancias (Upstash Redis, plan gratis) ----------
-// Variables: UPSTASH_REDIS_REST_URL y UPSTASH_REDIS_REST_TOKEN. Sin ellas, solo cuenta el límite en memoria.
+// Variables: UPSTASH_REDIS_REST_URL y UPSTASH_REDIS_REST_TOKEN, o KV_REST_API_URL y KV_REST_API_TOKEN
+// (las que crea la integración de Upstash en Vercel con el prefijo "KV"). Sin ellas, solo cuenta el límite en memoria.
 
 function upstash(): { url: string; token: string } | null {
-  const url = process.env.UPSTASH_REDIS_REST_URL;
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+  const url = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL;
+  const token = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN;
   return url?.startsWith("https://") && token ? { url, token } : null;
 }
 

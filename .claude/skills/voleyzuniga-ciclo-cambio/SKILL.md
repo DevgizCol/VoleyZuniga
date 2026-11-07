@@ -33,7 +33,7 @@ Objetivo: entregar cambios pequeños, verificados y vistos por el usuario. No cu
 - Nunca subir a Vercel ni fusionar sin orden explícita.
 - `useEffect` siempre con llaves `{ ... }`: una flecha que devuelve una llamada (p. ej. `scrollIntoView()`, que en Chrome reciente devuelve una promesa) rompe la página con `destroy is not a function` y el lint no lo detecta.
 - Metadata de Next: se combina de forma superficial (una página sin `openGraph` hereda el de la portada) y `openGraph.images` en config tapa un `opengraph-image` propio. Verificar `og:*` con curl.
-- Detener servidores con `TaskStop` o `kill <PID>` (ver `pgrep -af`), nunca `pkill -f <patrón>`: el patrón coincide con el propio comando, lo mata y deja huérfanos.
+- Detener servidores con `TaskStop` o `kill <PID>` (ver `pgrep -af`), nunca `pkill -f <patrón>`: el patrón coincide con el propio comando, lo mata y deja huérfanos; lo mismo con `kill $(ps … | grep <patrón>)` si el mismo comando contiene ese texto (p. ej. al reiniciar el simulador): buscar el PID en un comando y matar/arrancar en otro.
 - Datos en caché de 5 min en local: para ver cambios de la hoja simulada pedir con `Cache-Control: no-cache` (o recarga forzada).
 - Worktrees de prueba: crearlos dentro del mismo disco que el repo (Turbopack no resuelve `node_modules` enlazado desde `/tmp`).
 

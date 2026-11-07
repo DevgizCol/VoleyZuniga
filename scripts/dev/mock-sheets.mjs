@@ -51,6 +51,7 @@ const sheets = {
   Ajustes: t(["Clave", "Valor"], [
     ["telefono", "300 000 0000"], ["correo", "club@example.com"], ["instagram", "voleyzuniga"],
     ["inscripciones_abiertas", "SI"], ["aviso_portada", ""],
+    ["afiliaciones", "Liga de Voleibol de Antioquia, INDER Medellín"], ["resenas_url", "https://g.page/r/ejemplo/review"],
   ]),
 };
 
