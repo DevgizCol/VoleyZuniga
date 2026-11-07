@@ -26,11 +26,22 @@ export default function Header({ notices = [] }: { notices?: CourtNotice[] }) {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Bloquea el scroll del fondo mientras el menú está abierto.
+  const openRef = useRef<HTMLButtonElement>(null);
+  const closeRef = useRef<HTMLButtonElement>(null);
+  // Menú abierto: bloquea el scroll del fondo, lleva el foco adentro y cierra con Escape; al cerrar, el foco vuelve al botón.
   useEffect(() => {
-    document.body.style.overflow = menuOpen ? "hidden" : "";
+    if (!menuOpen) return;
+    document.body.style.overflow = "hidden";
+    closeRef.current?.focus();
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setMenuOpen(false);
+    };
+    document.addEventListener("keydown", onKey);
+    const opener = openRef.current;
     return () => {
       document.body.style.overflow = "";
+      document.removeEventListener("keydown", onKey);
+      opener?.focus();
     };
   }, [menuOpen]);
 
@@ -154,6 +165,7 @@ export default function Header({ notices = [] }: { notices?: CourtNotice[] }) {
             </button>
             <button
               className="lg:hidden w-11 h-11 flex items-center justify-center text-white hover:text-[#F29A2E] transition-colors"
+              ref={openRef}
               onClick={() => setMenuOpen(true)}
               aria-label="Abrir menú"
               aria-expanded={menuOpen}
@@ -181,6 +193,7 @@ export default function Header({ notices = [] }: { notices?: CourtNotice[] }) {
           <span className="font-heading font-extrabold text-2xl text-white">Voley Zúñiga</span>
           {/* El acceso al panel queda en el pie de página, lejos de lo que busca un visitante. */}
           <button
+            ref={closeRef}
             onClick={() => setMenuOpen(false)}
             aria-label="Cerrar menú"
             className="w-11 h-11 flex items-center justify-center text-white hover:text-[#F29A2E]"

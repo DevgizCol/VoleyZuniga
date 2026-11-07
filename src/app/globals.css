@@ -183,6 +183,11 @@ h1, h2, h3, h4, h5, h6 {
 .duotone-hover:hover > img, .group:hover .duotone-hover > img { filter: none; transform: scale(1.04); }
 .duotone-hover:hover::before, .duotone-hover:hover::after,
 .group:hover .duotone-hover::before, .group:hover .duotone-hover::after { opacity: 0; }
+/* En pantallas táctiles no existe "pasar el mouse": las fotos de personas van en color para que las familias se reconozcan */
+@media (hover: none) {
+  .duotone-hover > img { filter: none; }
+  .duotone-hover::before, .duotone-hover::after { opacity: 0; }
+}
 
 /* ---------- Texturas ---------- */
 /* Malla de red de voleibol, desvanecida hacia los bordes */
