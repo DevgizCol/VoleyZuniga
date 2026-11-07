@@ -48,8 +48,8 @@ de pestañas y columnas en el Apps Script.
 
 ## Variables de entorno (Vercel → Settings → Environment Variables)
 
-Ver `.env.example`. Obligatorias: `ADMIN_PASSWORD`, `SESSION_SECRET`, `SHEETS_WEBAPP_URL`, `SHEETS_SECRET`.
-Opcionales: `ADMIN_USERS` (más usuarios, `Nombre:clave; Nombre2:clave2`), `SHEET_URL` (botón "Abrir la hoja"
+Ver `.env.example`. Obligatorias: `ADMIN_USERS` (`Nombre:correo:clave; …`), `SESSION_SECRET`, `SHEETS_WEBAPP_URL`, `SHEETS_SECRET`.
+Opcionales: `ADMIN_PASSWORD` + `ADMIN_EMAIL` (usuario "Administrador"), `SHEET_URL` (botón "Abrir la hoja"
 del panel) y `NEXT_PUBLIC_SITE_URL` (dominio propio).
 
 ## Apps Script (backend de la hoja)

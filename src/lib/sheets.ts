@@ -137,3 +137,25 @@ export async function adminMutate(payload: {
     return { ok: false, error: "network" };
   }
 }
+
+/** Envía el código de acceso al panel por correo (MailApp de Apps Script, gratis). */
+export async function sendLoginCode(email: string, name: string, code: string): Promise<boolean> {
+  const url = process.env.SHEETS_WEBAPP_URL;
+  const secret = process.env.SHEETS_SECRET;
+  if (!url || !secret) return false;
+  try {
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify({ secret, action: "loginCode", email, name, code }),
+      redirect: "follow",
+      cache: "no-store",
+      signal: AbortSignal.timeout(TIMEOUT_MS),
+    });
+    if (!res.ok) return false;
+    return ((await res.json()) as { ok?: boolean }).ok === true;
+  } catch (err) {
+    console.error("[sheets] envío de código falló:", err instanceof Error ? err.message : err);
+    return false;
+  }
+}

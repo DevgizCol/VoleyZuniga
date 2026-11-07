@@ -7,7 +7,7 @@ La web guarda datos de menores (nombre, edad, WhatsApp del acudiente): actuar el
 
 | Secreto | Dónde | Qué protege | Al cambiarlo |
 |---|---|---|---|
-| `ADMIN_PASSWORD` / `ADMIN_USERS` | Vercel → Settings → Environment Variables | Entrar al panel `/admin` | Cierra todas las sesiones de ese usuario. Mínimo 12 caracteres (`ADMIN_USERS`: 8). |
+| `ADMIN_PASSWORD` / `ADMIN_USERS` | Vercel → Settings → Environment Variables | Entrar al panel `/admin` (contraseña + código por correo en celulares nuevos) | Cierra las sesiones de ese usuario y olvida sus celulares reconocidos. Mínimo 12 caracteres (`ADMIN_USERS`: 8). |
 | `SESSION_SECRET` | Vercel | Firma de las sesiones del panel | Cierra **todas** las sesiones. 32+ caracteres aleatorios. |
 | `SHEETS_SECRET` (Vercel) = `SHARED_SECRET` (Apps Script → Propiedades del script) | Ambos lados, **mismo valor** | Leer y escribir la hoja | Cambiar en los dos lados a la vez; si no coinciden, la web deja de leer y guardar. 24+ caracteres. |
 | `SHEETS_WEBAPP_URL` | Vercel | Dirección del Apps Script | Solo cambia si se crea una implementación nueva. |
@@ -20,8 +20,9 @@ Generar valores aleatorios: `openssl rand -base64 32`. Tras cambiar variables en
 
 ### Se filtró la contraseña del panel o una cookie de sesión
 1. Cambiar `ADMIN_PASSWORD` (o la clave del usuario en `ADMIN_USERS`) en Vercel → Redeploy.
-2. Si no se sabe qué usuario fue: cambiar `SESSION_SECRET` → Redeploy (cierra todas las sesiones).
-3. Revisar la pestaña **Historial** de la hoja: cambios hechos desde el panel y por quién.
+2. Si no se sabe qué usuario fue: cambiar `SESSION_SECRET` → Redeploy (cierra todas las sesiones y olvida todos los celulares).
+3. Si se filtró el correo de un usuario: cambiar su correo y su contraseña en `ADMIN_USERS`.
+4. Revisar la pestaña **Historial** de la hoja: cambios hechos desde el panel y por quién.
 
 ### Se filtró el secreto de la hoja (`SHEETS_SECRET` / `SHARED_SECRET`)
 1. Generar uno nuevo y ponerlo **a la vez** en Apps Script (Propiedades del script) y en Vercel → Redeploy.

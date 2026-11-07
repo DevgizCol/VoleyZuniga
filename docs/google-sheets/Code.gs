@@ -94,6 +94,7 @@ function doPost(e) {
     var body = JSON.parse(e.postData.contents);
     if (!secretOk_(body.secret)) return json_({ ok: false, error: "unauthorized" });
     if (body.action && String(body.action).indexOf("admin.") === 0) return json_(adminAction_(body));
+    if (body.action === "loginCode") return json_(loginCode_(body));
 
     var name = body.sheet;
     if (!WRITABLE.hasOwnProperty(name)) return json_({ ok: false, error: "sheet_not_allowed" });
@@ -257,6 +258,20 @@ function notify_(sheetName, fields, values, stamp, sheetUrl) {
   if (replyTo) options.replyTo = replyTo;
   // El asunto es texto plano: se quitan saltos de línea por si el nombre los trae.
   MailApp.sendEmail(to, subject.replace(/[\r\n]+/g, " "), plain, options);
+}
+
+// ---------- Panel: código de acceso por correo ----------
+
+// La web decide a quién y qué código; aquí solo se valida el formato y se envía.
+function loginCode_(body) {
+  var email = String(body.email || "").trim();
+  var code = String(body.code || "");
+  var name = String(body.name || "").replace(/[\r\n]+/g, " ").slice(0, 40);
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email) || !/^\d{6}$/.test(code)) return { ok: false, error: "bad_request" };
+  MailApp.sendEmail(email, "[Voley Zúñiga] Tu código para entrar al panel: " + code,
+    "Hola " + name + ",\n\nTu código para entrar al panel del club es: " + code + "\n\nVence en 10 minutos. " +
+    "Si no fuiste tú, cambia tu contraseña: alguien la conoce.", { name: "Club Voley Zúñiga (panel)" });
+  return { ok: true };
 }
 
 // ---------- Panel de administración: crear, editar y borrar ----------
