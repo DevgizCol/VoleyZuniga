@@ -4,10 +4,10 @@ import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import clsx from "clsx";
-import { Home, Users, CalendarDays, Trophy, Newspaper, CloudRain, Clock, Mail, History, HelpCircle, ShoppingBag, Settings } from "lucide-react";
+import { Home, Users, CalendarDays, Trophy, Newspaper, CloudRain, Clock, Mail, History, HelpCircle, ShoppingBag, Settings, Ticket } from "lucide-react";
 import { ADMIN_NAV } from "./nav";
 
-const ICONS = { home: Home, users: Users, calendar: CalendarDays, trophy: Trophy, news: Newspaper, cloud: CloudRain, clock: Clock, mail: Mail, history: History, help: HelpCircle, store: ShoppingBag, settings: Settings };
+const ICONS = { home: Home, users: Users, calendar: CalendarDays, trophy: Trophy, news: Newspaper, cloud: CloudRain, clock: Clock, mail: Mail, history: History, help: HelpCircle, store: ShoppingBag, settings: Settings, ticket: Ticket };
 
 export default function AdminNav({ variant }: { variant: "side" | "top" }) {
   const pathname = usePathname();

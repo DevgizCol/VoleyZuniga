@@ -21,9 +21,9 @@ const sheets = {
     ["2026-10-25", "16:30", "Menores Sub-16", "Escuela Bello Oriente", "Club Voley Zúñiga", "Polideportivo", "", "1-3"],
     ["2026-11-15", "10:00", "Juvenil Sub-18", "Club Voley Zúñiga", "Escuela Bello Oriente", "Coliseo", "Programado", ""],
   ]),
-  Inscripciones: t(["Fecha", "Nombre", "Edad", "Categoría", "Nivel", "Sede", "Horario", "WhatsApp", "Consentimiento", "Código", "Estado", "Notas", "Origen"], [
+  Inscripciones: t(["Fecha", "Nombre", "Edad", "Categoría", "Nivel", "Sede", "Horario", "WhatsApp", "Consentimiento", "Código", "Estado", "Notas", "Origen", "Clase gratis"], [
     ["2026-11-02", "Ana Prueba", "12", "Infantil Sub-14", "Principiante", "Buenos Aires", "Lun y Mié 4 pm", "3000000001", "Sí (2026-11-02)", "VZ-0001", "Contactado", "", "instagram"],
-    ["2026-11-05", "Luis Ficticio", "15", "Menores Sub-16", "Intermedio", "Laureles", "Mar y Jue 5 pm", "3000000002", "Sí (2026-11-05)", "VZ-0002", "Matriculado", "Paga en efectivo", "directo"],
+    ["2026-11-05", "Luis Ficticio", "15", "Menores Sub-16", "Intermedio", "Laureles", "Mar y Jue 5 pm", "3000000002", "Sí (2026-11-05)", "VZ-0002", "Matriculado", "Paga en efectivo", "directo", "2026-11-07 16:05 · Administrador"],
   ]),
   Contacto: t(["Fecha", "Nombre", "Contacto", "Asunto", "Mensaje", "Estado", "Notas"], [
     ["2026-11-04", "Marta Ejemplo", "marta@example.com", "Información de Sedes y Horarios", "¿Hay cupo para mi hija de 10 años los sábados?", "", ""],

@@ -45,7 +45,7 @@ var ADMIN_EDITABLE = {
   Horarios: { create: true, update: true, remove: true },
   Productos: { create: true, update: true, remove: true },
   Ajustes: { create: true, update: ["Valor"], remove: false },
-  Inscripciones: { create: false, update: ["Estado", "Notas"], remove: false },
+  Inscripciones: { create: false, update: ["Estado", "Notas", "Clase gratis"], remove: false },
   Contacto: { create: false, update: ["Estado", "Notas"], remove: false }
 };
 var HISTORY_SHEET = "Historial";
