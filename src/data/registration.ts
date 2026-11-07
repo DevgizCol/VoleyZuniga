@@ -54,6 +54,6 @@ export const PARENTESCOS = ["Madre", "Padre", "Otro familiar", "Representante le
 export const AFFILIATION_LOGOS: { match: RegExp; src: string; width: number; height: number }[] = [
   { match: /\binder\b/i, src: "/afiliaciones/inder-medellin.webp", width: 474, height: 209 },
   { match: /liga.*voleibol|voleibol.*antioqu/i, src: "/afiliaciones/liga-antioquena-voleibol.webp", width: 456, height: 287 },
-  { match: /alcald[ií]a/i, src: "/afiliaciones/alcaldia-medellin.webp", width: 600, height: 203 },
+  { match: /alcald[ií]a/i, src: "/afiliaciones/alcaldia-medellin.webp", width: 588, height: 409 },
   { match: /presupuesto\s+participativo|\bPP\b/i, src: "/afiliaciones/presupuesto-participativo.webp", width: 198, height: 247 },
 ];
