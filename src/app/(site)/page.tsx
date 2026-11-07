@@ -451,7 +451,7 @@ export default async function Home() {
                     const logo = AFFILIATION_LOGOS.find((l) => l.match.test(a));
                     return (
                       <li key={a} className="rounded-md border border-primary/20 bg-white px-4 py-2.5 font-semibold flex items-center">
-                        {logo ? <Image src={logo.src} alt={a} width={logo.width} height={logo.height} className="h-12 w-auto" /> : a}
+                        {logo ? <Image src={logo.src} alt={a} width={logo.width} height={logo.height} sizes="120px" className="h-12 w-auto" /> : a}
                       </li>
                     );
                   })}

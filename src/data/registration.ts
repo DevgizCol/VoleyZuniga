@@ -53,4 +53,6 @@ export const PARENTESCOS = ["Madre", "Padre", "Otro familiar", "Representante le
 /** Logos oficiales de entidades afiliadas: se usan si el nombre en Ajustes ("afiliaciones") coincide. */
 export const AFFILIATION_LOGOS: { match: RegExp; src: string; width: number; height: number }[] = [
   { match: /\binder\b/i, src: "/afiliaciones/inder-medellin.webp", width: 474, height: 209 },
+  { match: /liga.*voleibol|voleibol.*antioqu/i, src: "/afiliaciones/liga-antioquena-voleibol.webp", width: 456, height: 287 },
+  { match: /alcald[ií]a/i, src: "/afiliaciones/alcaldia-medellin.webp", width: 576, height: 441 },
 ];
