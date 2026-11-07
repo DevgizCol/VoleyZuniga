@@ -422,7 +422,46 @@ function rowsOf_(name) {
   });
 }
 
+// ---------- Ley 1581: borrado de inscripciones que no terminaron en matrícula ----------
+
+var PURGE_MONTHS = 6;
+
+// Filas (número de fila en la hoja, de mayor a menor) de inscripciones con fecha anterior a `cutoff` (AAAA-MM-DD)
+// que no están "Matriculado". Busca las columnas por nombre: el club puede reordenarlas.
+function rowsToPurge_(headers, values, cutoff) {
+  var f = headers.indexOf("Fecha");
+  var s = headers.indexOf("Estado");
+  if (f === -1 || s === -1) return []; // sin las columnas no se borra nada
+  var out = [];
+  values.forEach(function (r, i) {
+    var day = String(r[f]).slice(0, 10);
+    if (/^\d{4}-\d{2}-\d{2}$/.test(day) && day < cutoff && String(r[s]).trim() !== "Matriculado") out.push(i + 2);
+  });
+  return out.reverse(); // de abajo hacia arriba para que los números de fila no se corran
+}
+
+function depurarInscripciones() {
+  var sh = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Inscripciones");
+  if (!sh) return;
+  var lock = LockService.getScriptLock();
+  lock.waitLock(15000);
+  try {
+    var values = sh.getDataRange().getDisplayValues();
+    var headers = values.shift().map(function (h) { return String(h).trim(); });
+    var limit = new Date();
+    limit.setMonth(limit.getMonth() - PURGE_MONTHS);
+    var rows = rowsToPurge_(headers, values, Utilities.formatDate(limit, TZ, "yyyy-MM-dd"));
+    rows.forEach(function (n) { sh.deleteRow(n); });
+    // En el Historial solo la cantidad: nunca nombres ni teléfonos de menores.
+    if (rows.length) log_("Sistema", "Borró", "Inscripciones", rows.length + " inscripciones sin matrícula de más de " + PURGE_MONTHS + " meses (Ley 1581)");
+  } finally {
+    lock.releaseLock();
+  }
+}
+
 function resumenSemanal() {
+  // Corre cada lunes con el mismo activador del resumen (aunque no haya correo configurado).
+  try { depurarInscripciones(); } catch (err) { console.error("Depuración: " + err); }
   var to = PropertiesService.getScriptProperties().getProperty("NOTIFY_EMAIL");
   if (!to) return;
   var ss = SpreadsheetApp.getActiveSpreadsheet();

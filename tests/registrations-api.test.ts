@@ -27,6 +27,8 @@ const valid = {
   horario,
   phone: "312 845 9210",
   consent: true,
+  guardian: "Ana Gómez",
+  parentesco: "Madre",
   code: "vz14-4fgr",
 };
 
@@ -53,10 +55,20 @@ describe("POST /api/registrations", () => {
     ["teléfono inválido", { phone: "abc" }],
     ["nombre vacío", { name: " " }],
     ["horario inventado", { horario: "Domingo 3 AM" }],
+    ["menor sin acudiente", { guardian: "" }],
+    ["parentesco inventado", { parentesco: "Vecino" }],
   ])("rechaza: %s", async (_, change) => {
     const res = await send({ ...valid, ...change });
     expect(res.status).toBe(400);
     expect(appendToSheet).not.toHaveBeenCalled();
+  });
+
+  it("registra quién autoriza, la versión de la política y la autorización de imagen (Ley 1581)", async () => {
+    await send({ ...valid, imageOk: true });
+    const { Consentimiento } = (appendToSheet.mock.calls.at(-1) as unknown as [string, Record<string, string>])[1];
+    expect(Consentimiento).toMatch(/^Sí \(\d{4}-\d{2}-\d{2}\) · política \d{4}-\d{2}-\d{2} · autoriza Ana Gómez \(Madre\) · imagen: sí$/);
+    await send({ ...valid, age: 25, category: "Mayores Élite", guardian: "", parentesco: "" });
+    expect((appendToSheet.mock.calls.at(-1) as unknown as [string, Record<string, string>])[1].Consentimiento).toMatch(/autoriza el deportista · imagen: no$/);
   });
 
   it("descarta en silencio a los bots que llenan el campo trampa", async () => {

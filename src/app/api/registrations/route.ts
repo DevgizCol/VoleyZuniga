@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { appendToSheet, sheetsConfigured } from "@/lib/sheets";
 import { clientIp, isRateLimited } from "@/lib/rate-limit";
-import { CATEGORIES, NIVELES, SEDES } from "@/data/registration";
+import { CATEGORIES, NIVELES, PARENTESCOS, POLICY_VERSION, SEDES } from "@/data/registration";
 import { getSessions, getSettings, validHorarios } from "@/lib/content";
 import { isOneOf } from "@/data/contact";
 
@@ -51,6 +51,16 @@ export async function POST(request: Request) {
   if (body.consent !== true) {
     return bad("Debes aceptar el tratamiento de datos personales para continuar.");
   }
+  // Ley 1581: con menores de edad la autorización la da su representante, y queda registrado quién.
+  const guardian = text(body.guardian, 100);
+  const parentesco = (PARENTESCOS as readonly unknown[]).includes(body.parentesco) ? (body.parentesco as string) : "";
+  if (age < 18 && (guardian.length < 3 || !parentesco)) return bad("Escribe el nombre y el parentesco de quien autoriza.");
+  const consent = [
+    `Sí (${bogotaDate()})`,
+    `política ${POLICY_VERSION}`,
+    age < 18 ? `autoriza ${guardian} (${parentesco})` : "autoriza el deportista",
+    `imagen: ${body.imageOk === true ? "sí" : "no"}`,
+  ].join(" · ");
 
   if (!(await getSettings()).registrationsOpen) {
     return NextResponse.json({ ok: false, error: "Los cupos están cerrados por ahora. Escríbenos por WhatsApp." }, { status: 400 });
@@ -68,7 +78,7 @@ export async function POST(request: Request) {
     Sede: body.sede as string,
     Horario: body.horario as string,
     WhatsApp: phone,
-    Consentimiento: `Sí (${bogotaDate()})`,
+    Consentimiento: consent,
     Código: CODE_RE.test(code) ? code : "",
     Origen: origin,
   });

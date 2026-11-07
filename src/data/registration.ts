@@ -43,3 +43,9 @@ export function categoryForAge(age: number): CategoryInfo {
     CATEGORIES[CATEGORIES.length - 1]
   );
 }
+
+/** Versión de la política de datos que acepta cada inscripción (Ley 1581): cambiarla al modificar /privacidad. */
+export const POLICY_VERSION = "2026-11-06";
+
+/** Quién autoriza el tratamiento cuando el deportista es menor de edad. */
+export const PARENTESCOS = ["Madre", "Padre", "Otro familiar", "Representante legal"] as const;

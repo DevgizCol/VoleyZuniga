@@ -237,6 +237,7 @@ export async function redeemFreeClass(code: string): Promise<ActionState> {
   if (!table) return fail("No se pudo leer la hoja. Intenta de nuevo.");
   // Sin la columna, Apps Script ignora el cambio en silencio: avisar en vez de fingir que se guardó.
   if (!table.headers.includes(FREE_CLASS_COL)) return fail(`Falta la columna "${FREE_CLASS_COL}" en la pestaña Inscripciones.`);
+  if (!table.headers.includes("Código")) return fail('Falta la columna "Código" en la pestaña Inscripciones.');
   const reg = findByCode(table.rows, code);
   if (!reg) return fail("No hay ninguna inscripción con ese código.");
   if (reg[FREE_CLASS_COL]) return fail(`Esta clase gratis ya se usó: ${reg[FREE_CLASS_COL]}.`);

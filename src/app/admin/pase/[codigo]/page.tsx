@@ -18,6 +18,15 @@ export default async function PassCard({ params }: { params: Promise<{ codigo: s
   const code = decodeURIComponent(codigo).trim().toUpperCase();
   const table = await adminRead("Inscripciones");
   if (!table) return <NotConnected />;
+  // Un encabezado mal escrito ("Codigo ", sin tilde) haría que ningún pase aparezca: decirlo claro.
+  if (!table.headers.includes("Código")) {
+    return (
+      <>
+        <PageHeader title="Falta la columna Código" description="En la pestaña Inscripciones, el encabezado debe decir exactamente “Código” (con tilde y sin espacios)." />
+        <Empty title="Corrige el encabezado y vuelve a escanear" />
+      </>
+    );
+  }
   const r = findByCode(table.rows, code);
   if (!r) {
     return (

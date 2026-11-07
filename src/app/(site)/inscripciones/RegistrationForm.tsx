@@ -5,7 +5,7 @@ import Link from "next/link";
 import clsx from "clsx";
 import { ArrowLeft, ArrowRight, Check, Minus, Plus, Loader2, Clock, MapPin, Download, Share2, CalendarPlus, UserPlus } from "lucide-react";
 import { downloadPass, makeCode, passQrText, qrMatrix, sharePass, type PassData } from "@/lib/pass";
-import { CATEGORIES, NIVELES, SEDES, categoryForAge } from "@/data/registration";
+import { CATEGORIES, NIVELES, PARENTESCOS, SEDES, categoryForAge } from "@/data/registration";
 import { useContact } from "@/components/ContactProvider";
 import { ChoiceCard, Field, Honeypot, focusFirstInvalid, inputCls } from "@/components/forms/fields";
 import { WhatsAppIcon } from "@/components/BrandIcons";
@@ -73,6 +73,9 @@ export default function RegistrationForm({ horarios, perCategory }: Props) {
   const [horario, setHorario] = useState<string>(() => sched(categoryForAge(12).value).horario);
   const [phone, setPhone] = useState("");
   const [consent, setConsent] = useState(false);
+  const [guardian, setGuardian] = useState("");
+  const [parentesco, setParentesco] = useState<string>(PARENTESCOS[0]);
+  const [imageOk, setImageOk] = useState(false);
   const [honeypot, setHoneypot] = useState("");
   const [touched, setTouched] = useState(false);
   const [status, setStatus] = useState<Status>("idle");
@@ -122,9 +125,11 @@ export default function RegistrationForm({ horarios, perCategory }: Props) {
   const errors = {
     name: name.trim().length < 2 ? "Escribe el nombre del deportista." : null,
     phone: !PHONE_RE.test(phone.trim()) ? "Escribe un número de WhatsApp válido, por ejemplo 312 845 9210." : null,
+    // Ley 1581: con menores, queda registrado quién da la autorización.
+    guardian: age < 18 && guardian.trim().length < 3 ? "Escribe el nombre de quien autoriza (madre, padre o acudiente)." : null,
     consent: !consent ? "Necesitamos tu autorización para guardar estos datos." : null,
   };
-  const stepValid = [!errors.name, true, !errors.phone && !errors.consent][step];
+  const stepValid = [!errors.name, true, !errors.phone && !errors.guardian && !errors.consent][step];
 
   const next = () => {
     setTouched(true);
@@ -152,7 +157,7 @@ export default function RegistrationForm({ horarios, perCategory }: Props) {
       const res = await fetch("/api/registrations", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, age, category, level, sede, horario, phone, consent, code: passCode, origin: trafficOrigin(), website: honeypot }),
+        body: JSON.stringify({ name, age, category, level, sede, horario, phone, consent, guardian: age < 18 ? guardian : "", parentesco: age < 18 ? parentesco : "", imageOk, code: passCode, origin: trafficOrigin(), website: honeypot }),
       });
       if (res.ok) {
         setStatus("saved");
@@ -396,6 +401,29 @@ export default function RegistrationForm({ horarios, perCategory }: Props) {
                 aria-describedby={touched && errors.phone ? "phone-error" : "phone-hint"}
               />
             </Field>
+            {age < 18 ? (
+              <div className="grid sm:grid-cols-[1fr_auto] gap-4">
+                <Field label="Nombre de quien autoriza" htmlFor="guardian" error={touched ? errors.guardian : null} hint="El deportista es menor de edad: la autorización la da su madre, padre o acudiente.">
+                  <input
+                    id="guardian"
+                    autoComplete="name"
+                    className={inputCls}
+                    value={guardian}
+                    onChange={(e) => setGuardian(e.target.value)}
+                    maxLength={100}
+                    aria-invalid={touched && Boolean(errors.guardian)}
+                    aria-describedby={touched && errors.guardian ? "guardian-error" : "guardian-hint"}
+                  />
+                </Field>
+                <Field label="Parentesco" htmlFor="parentesco">
+                  <select id="parentesco" value={parentesco} onChange={(e) => setParentesco(e.target.value)} className={clsx(inputCls, "appearance-none bg-[#0B1E38]")}>
+                    {PARENTESCOS.map((p) => (
+                      <option key={p} value={p}>{p}</option>
+                    ))}
+                  </select>
+                </Field>
+              </div>
+            ) : null}
             <div>
               <label className="flex gap-3 items-start cursor-pointer">
                 <input
@@ -407,7 +435,7 @@ export default function RegistrationForm({ horarios, perCategory }: Props) {
                   aria-describedby={touched && errors.consent ? "consent-error" : undefined}
                 />
                 <span className="text-[#C9D5E6]">
-                  Autorizo al Club Voley Zúñiga a tratar estos datos para gestionar la inscripción, según la{" "}
+                  Autorizo al Club Voley Zúñiga a tratar estos datos para gestionar la inscripción y enviarme novedades del club, según la{" "}
                   <Link href="/privacidad" target="_blank" className="text-[#F29A2E] underline underline-offset-2">
                     política de datos
                   </Link>{" "}
@@ -416,6 +444,12 @@ export default function RegistrationForm({ horarios, perCategory }: Props) {
               </label>
               {touched && errors.consent ? <p id="consent-error" role="alert" className="mt-2 text-sm text-[#FF9C90]">{errors.consent}</p> : null}
             </div>
+            <label className="flex gap-3 items-start cursor-pointer">
+              <input type="checkbox" checked={imageOk} onChange={(e) => setImageOk(e.target.checked)} className="mt-1 h-5 w-5 accent-[#F29A2E] shrink-0" />
+              <span className="text-[#C9D5E6]">
+                Autorizo publicar fotos y videos del deportista en entrenamientos y partidos, en la web y las redes del club. <span className="text-[#8FA3BF]">(Opcional)</span>
+              </span>
+            </label>
             {serverError ? (
               <p role="alert" className="rounded-lg border border-[#FF7A6B]/40 bg-[#FF7A6B]/10 p-4 text-[#FFC2BA]">
                 {serverError}
