@@ -32,10 +32,12 @@ const splitSchedule = (value: string) => {
   return m ? { days: m[1], hours: m[2] } : { days: value, hours: "" };
 };
 
-// "Semillero Sub-12" -> { name: "Semillero", tag: "Sub-12" }
+// "Benjamín" -> { name: "Benjamín", tag: "7-10" }: la etiqueta grande es el rango de edad de la categoría.
 const splitCategory = (value: string) => {
-  const m = value.match(/^(.*?)\s+(Sub-\d+|Élite)$/);
-  return m ? { name: m[1], tag: m[2] === "Élite" ? "18+" : m[2] } : { name: value, tag: "" };
+  const c = CATEGORIES.find((x) => x.value === value);
+  if (!c) return { name: value, tag: "" };
+  const tag = c.maxAge >= 100 ? "18+" : c.label.match(/\((\d+)(?: a (\d+))? años\)/)?.slice(1).filter(Boolean).join("-") ?? "";
+  return { name: value, tag };
 };
 
 const METHOD = [
@@ -67,7 +69,7 @@ const VALUES = ["Puntualidad", "Resiliencia", "Humildad", "Respeto"];
 const faqs = (priceFrom: string) => [
   {
     q: "¿Desde qué edad pueden entrar?",
-    a: "Desde los 7 años, en Semillero Sub-12. Luego siguen Infantil Sub-14, Menores Sub-16, Juvenil Sub-18 y Mayores Élite, para 18 años en adelante.",
+    a: "Desde los 7 años, en Benjamín (7 a 10). Luego siguen Mini (10 a 12), Infantil (12 a 14), Pre-juvenil (14 a 16), Sub-17 (17) y Libre, para 18 años en adelante.",
   },
   {
     q: "¿Cómo funciona la clase de prueba?",
@@ -75,7 +77,7 @@ const faqs = (priceFrom: string) => [
   },
   {
     q: "¿Dónde y cuándo se entrena?",
-    a: "En el Polideportivo 3 Canchas (Buenos Aires) y en el Coliseo Yesid Santos (Atanasio Girardot). El horario de cada categoría está en la semana de entrenamientos, más arriba.",
+    a: "De lunes a viernes en cinco escenarios de Medellín: Polideportivo 3 Canchas, Placa Quinta Linda, Coliseo Alejandro Echavarría, Coliseo Poblado de Veracruz y Coliseo El Vergel. Los festivos no se entrena. El horario de cada categoría está en la semana de entrenamientos, más arriba.",
   },
   {
     q: "¿Cuánto cuesta?",

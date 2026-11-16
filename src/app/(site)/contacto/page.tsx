@@ -6,6 +6,7 @@ import ContactForm from "./ContactForm";
 import { telLink, waLink } from "@/config/contact";
 import { getSessions, getSettings, trainingDays } from "@/lib/content";
 import { VENUES, mapEmbed, mapsLink, wazeLink } from "@/data/venues";
+import { SITE } from "@/config/site";
 import { DAY_NAMES, formatTime } from "@/data/schedule";
 import { InstagramIcon, WhatsAppIcon } from "@/components/BrandIcons";
 
@@ -32,6 +33,10 @@ export default async function ContactPage() {
             <Phone size={20} className="text-accent" /> {contact.phoneDisplay}
           </a>
         </div>
+        <p className="mt-4 text-sm text-[#C9D5E6]">
+          Administrativo: {contact.phoneDisplay} · Técnico-deportivo (entrenamientos y convocatorias):{" "}
+          <a href={`https://wa.me/${SITE.coachPhoneDigits}`} target="_blank" rel="noopener noreferrer" className="font-semibold text-white underline underline-offset-4 hover:text-accent">{SITE.coachPhoneDisplay}</a>
+        </p>
       </PageHero>
 
       {/* Sedes */}

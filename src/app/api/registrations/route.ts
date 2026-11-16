@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { appendToSheet, sheetsConfigured } from "@/lib/sheets";
 import { clientIp, sharedLimited } from "@/lib/rate-limit";
-import { CATEGORIES, NIVELES, PARENTESCOS, POLICY_VERSION, SEDES } from "@/data/registration";
+import { CATEGORIES, NIVELES, PARENTESCOS, POLICY_VERSION, POR_CONFIRMAR, SEDES } from "@/data/registration";
 import { getSessions, getSettings, validHorarios } from "@/lib/content";
 import { isOneOf } from "@/data/contact";
 
@@ -44,7 +44,7 @@ export async function POST(request: Request) {
   if (!Number.isInteger(age) || age < 5 || age > 60) return bad("Revisa la edad del deportista.");
   if (!isOneOf(CATEGORIES, body.category)) return bad("Elige una categoría válida.");
   if (typeof body.level !== "string" || !(NIVELES as readonly string[]).includes(body.level)) return bad("Elige un nivel válido.");
-  const sedes = new Set<string>([...SEDES.map((x) => x.value as string), ...(await getSessions()).map((x) => x.sede)]);
+  const sedes = new Set<string>([...SEDES.map((x) => x.value as string), POR_CONFIRMAR, ...(await getSessions()).map((x) => x.sede)]);
   if (typeof body.sede !== "string" || !sedes.has(body.sede)) return bad("Elige una sede válida.");
   if (typeof body.horario !== "string" || !(await validHorarios()).includes(body.horario)) return bad("Elige un horario válido.");
   if (!PHONE_RE.test(phone)) return bad("Revisa el número de WhatsApp.");

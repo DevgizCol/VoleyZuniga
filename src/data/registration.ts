@@ -1,17 +1,24 @@
 // Fuente única para categorías, sedes, horarios y niveles de inscripción.
-// Los horarios coinciden con la programación de /contacto.
+// Horarios y sedes reales del club (noviembre 2026).
 
 export const SEDES = [
   { value: "Polideportivo 3 Canchas", label: "Polideportivo 3 Canchas (Buenos Aires)" },
-  { value: "Coliseo Yesid Santos", label: "Coliseo Yesid Santos (Atanasio Girardot)" },
+  { value: "Placa Quinta Linda", label: "Placa Polideportiva Quinta Linda (Buenos Aires)" },
+  { value: "Coliseo Alejandro Echavarría", label: "Coliseo Alejandro Echavarría (Buenos Aires)" },
+  { value: "Coliseo Poblado de Veracruz", label: "Coliseo Poblado de Veracruz" },
+  { value: "Coliseo El Vergel", label: "Coliseo El Vergel (Buenos Aires)" },
 ] as const;
 
+/** Categorías sin horario publicado: la inscripción queda a confirmar por el club. */
+export const POR_CONFIRMAR = "Por confirmar con el club";
+
+// Respaldo si la pestaña Horarios no tiene la categoría (mismo formato que scheduleOptions en content.ts).
 export const HORARIOS = [
-  { value: "Martes y Jueves (4:00 PM – 5:30 PM)", label: "Mar & Jue (4:00 PM – 5:30 PM)" },
-  { value: "Martes y Jueves (5:30 PM – 7:00 PM)", label: "Mar & Jue (5:30 PM – 7:00 PM)" },
-  { value: "Martes y Jueves (7:00 PM – 8:30 PM)", label: "Mar & Jue (7:00 PM – 8:30 PM)" },
-  { value: "Sábados Intensivos (8:00 AM – 12:00 M)", label: "Sábados Intensivos (8:00 AM – 12:00 M)" },
-  { value: "Viernes (6:00 PM – 8:30 PM)", label: "Viernes (6:00 PM – 8:30 PM) · Selección Élite" },
+  { value: "Miércoles y Jueves (6:00 PM – 7:30 PM)", label: "Mié y Jue (6:00 PM – 7:30 PM) · Benjamín" },
+  { value: "Martes y Jueves (6:00 PM – 7:10 PM)", label: "Mar y Jue (6:00 PM – 7:10 PM) · Mini" },
+  { value: "Martes y Jueves (4:30 PM – 6:00 PM)", label: "Mar y Jue (4:30 PM – 6:00 PM) · Infantil" },
+  { value: "Lunes, Miércoles y Viernes (7:00 PM – 8:30 PM)", label: "Lun, Mié y Vie (7:00 PM – 8:30 PM) · Libre" },
+  { value: POR_CONFIRMAR, label: POR_CONFIRMAR },
 ] as const;
 
 export const NIVELES = [
@@ -25,16 +32,19 @@ export type CategoryInfo = {
   label: string;
   minAge: number;
   maxAge: number;
-  sede: (typeof SEDES)[number]["value"];
+  sede: string;
   horario: (typeof HORARIOS)[number]["value"];
 };
 
+// Edades del club: Benjamín 7-10, Mini 10-12, Infantil 12-14, Pre-juvenil 14-16, Sub-17 (17) y Libre (18+).
+// En las edades límite se asigna la categoría menor; el club puede reasignar.
 export const CATEGORIES: CategoryInfo[] = [
-  { value: "Semillero Sub-12", label: "Semillero Sub-12 (7-11 años)", minAge: 0, maxAge: 11, sede: "Polideportivo 3 Canchas", horario: HORARIOS[0].value },
-  { value: "Infantil Sub-14", label: "Infantil Sub-14 (12-13 años)", minAge: 12, maxAge: 13, sede: "Polideportivo 3 Canchas", horario: HORARIOS[1].value },
-  { value: "Menores Sub-16", label: "Menores Sub-16 (14-15 años)", minAge: 14, maxAge: 15, sede: "Polideportivo 3 Canchas", horario: HORARIOS[2].value },
-  { value: "Juvenil Sub-18", label: "Juvenil Sub-18 (16-17 años)", minAge: 16, maxAge: 17, sede: "Polideportivo 3 Canchas", horario: HORARIOS[2].value },
-  { value: "Mayores Élite", label: "Mayores Élite (18+ años)", minAge: 18, maxAge: 120, sede: "Coliseo Yesid Santos", horario: HORARIOS[4].value },
+  { value: "Benjamín", label: "Benjamín (7 a 10 años)", minAge: 0, maxAge: 9, sede: "Coliseo Poblado de Veracruz", horario: HORARIOS[0].value },
+  { value: "Mini", label: "Mini (10 a 12 años)", minAge: 10, maxAge: 11, sede: "Placa Quinta Linda", horario: HORARIOS[1].value },
+  { value: "Infantil", label: "Infantil (12 a 14 años)", minAge: 12, maxAge: 13, sede: "Coliseo Alejandro Echavarría", horario: HORARIOS[2].value },
+  { value: "Pre-juvenil", label: "Pre-juvenil (14 a 16 años)", minAge: 14, maxAge: 16, sede: POR_CONFIRMAR, horario: POR_CONFIRMAR },
+  { value: "Sub-17", label: "Sub-17 (17 años)", minAge: 17, maxAge: 17, sede: POR_CONFIRMAR, horario: POR_CONFIRMAR },
+  { value: "Libre", label: "Libre (18 años en adelante)", minAge: 18, maxAge: 120, sede: "Polideportivo 3 Canchas", horario: HORARIOS[3].value },
 ];
 
 export function categoryForAge(age: number): CategoryInfo {

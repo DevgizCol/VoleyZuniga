@@ -94,7 +94,6 @@ const jsonLd = {
     "@type": "SportsActivityLocation",
     "name": v.name,
     "address": { "@type": "PostalAddress", "streetAddress": v.address, "addressLocality": "Medellín", "addressRegion": "Antioquia", "addressCountry": "CO" },
-    "geo": { "@type": "GeoCoordinates", "latitude": v.lat, "longitude": v.lng },
     "hasMap": mapsLink(v),
   })),
 };

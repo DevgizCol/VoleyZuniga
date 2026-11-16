@@ -151,7 +151,7 @@ export const SETTING_RULES: Record<string, { label: string; help: string; schema
   },
   cupos: {
     label: "Cupos por categoría",
-    help: "Una línea por categoría con los cupos que quedan, por ejemplo “Sub-14: 4” o “Élite: 0”. Con 5 o menos se muestra “Quedan N cupos”; con 0, “Lista de espera”. Vacío: no se muestra nada.",
+    help: "Una línea por categoría con los cupos que quedan, por ejemplo “Infantil: 4” o “Libre: 0”. Con 5 o menos se muestra “Quedan N cupos”; con 0, “Lista de espera”. Vacío: no se muestra nada.",
     schema: text(300, "Los cupos"),
     type: "textarea",
   },

@@ -1,4 +1,4 @@
-// Horario semanal estructurado. Coincide con HORARIOS y CATEGORIES de registration.ts.
+// Horario semanal estructurado (respaldo si la pestaña Horarios está vacía). Coincide con CATEGORIES de registration.ts.
 // day: 0 = domingo … 6 = sábado. Horas en formato 24 h, hora de Bogotá.
 
 export type Session = {
@@ -10,16 +10,27 @@ export type Session = {
 };
 
 const POLI = "Polideportivo 3 Canchas";
-const COLISEO = "Coliseo Yesid Santos";
+const QUINTA = "Placa Quinta Linda";
+const ECHAVARRIA = "Coliseo Alejandro Echavarría";
+const VERACRUZ = "Coliseo Poblado de Veracruz";
+const VERGEL = "Coliseo El Vergel";
 
+// Horario real del club (los festivos no se entrena). La pestaña Horarios de la hoja tiene prioridad.
 export const SESSIONS: Session[] = [
-  ...[2, 4].flatMap((day) => [
-    { day, start: "16:00", end: "17:30", group: "Semillero Sub-12", sede: POLI },
-    { day, start: "17:30", end: "19:00", group: "Infantil Sub-14", sede: POLI },
-    { day, start: "19:00", end: "20:30", group: "Menores Sub-16 y Juvenil Sub-18", sede: POLI },
-  ]),
-  { day: 5, start: "18:00", end: "20:30", group: "Mayores Élite", sede: COLISEO },
-  { day: 6, start: "08:00", end: "12:00", group: "Sábado intensivo", sede: POLI },
+  { day: 1, start: "16:30", end: "18:00", group: "Infantil", sede: QUINTA },
+  { day: 1, start: "19:00", end: "20:30", group: "Libre", sede: POLI },
+  { day: 2, start: "16:30", end: "18:00", group: "Infantil", sede: ECHAVARRIA },
+  { day: 2, start: "18:00", end: "19:10", group: "Benjamín", sede: QUINTA },
+  { day: 2, start: "18:00", end: "19:10", group: "Mini", sede: QUINTA },
+  { day: 3, start: "18:00", end: "19:30", group: "Benjamín", sede: VERACRUZ },
+  { day: 3, start: "19:00", end: "20:30", group: "Libre", sede: POLI },
+  { day: 4, start: "16:30", end: "18:00", group: "Infantil", sede: ECHAVARRIA },
+  { day: 4, start: "18:00", end: "19:30", group: "Benjamín", sede: VERACRUZ },
+  { day: 4, start: "18:00", end: "19:10", group: "Mini", sede: QUINTA },
+  { day: 5, start: "18:00", end: "19:30", group: "Benjamín", sede: VERGEL },
+  { day: 5, start: "18:00", end: "19:10", group: "Mini", sede: VERGEL },
+  { day: 5, start: "19:00", end: "20:00", group: "Infantil", sede: VERGEL },
+  { day: 5, start: "19:00", end: "20:30", group: "Libre", sede: POLI },
 ];
 
 export const DAY_NAMES = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];

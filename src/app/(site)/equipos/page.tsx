@@ -8,34 +8,39 @@ import PlayerCard from "@/components/PlayerCard";
 import { CATEGORIES } from "@/data/registration";
 import { getRoster } from "@/lib/club";
 
-export const metadata: Metadata = pageMeta("/equipos", "Categorías de voleibol por edad", "Las cinco categorías del Club Voley Zúñiga en Medellín: edades, horarios y enfoque de entrenamiento.");
+export const metadata: Metadata = pageMeta("/equipos", "Categorías de voleibol por edad", "Las seis categorías del Club Voley Zúñiga en Medellín: edades, horarios y enfoque de entrenamiento.");
 
 const FOCUS: Record<string, { lead: string; points: string[] }> = {
-  "Semillero Sub-12": {
+  Benjamín: {
     lead: "El primer contacto con el balón: jugar, moverse bien y enamorarse del voleibol.",
     points: ["Coordinación y control del balón", "Postura y desplazamientos básicos", "Compañerismo y disciplina desde el juego"],
   },
-  "Infantil Sub-14": {
-    lead: "Llegan los fundamentos completos y los primeros sistemas de juego.",
-    points: ["Saque, recepción y armado con técnica correcta", "Batida y remate con trabajo de salto seguro", "Primeros partidos y festivales"],
+  Mini: {
+    lead: "Del juego a la técnica: los fundamentos se aprenden con minivoleibol.",
+    points: ["Saque y recepción con técnica correcta", "Toque de dedos y antebrazos", "Primeros festivales de minivoleibol"],
   },
-  "Menores Sub-16": {
+  Infantil: {
+    lead: "Llegan los fundamentos completos y los primeros sistemas de juego.",
+    points: ["Saque, recepción y armado", "Batida y remate con trabajo de salto seguro", "Primeros partidos y torneos"],
+  },
+  "Pre-juvenil": {
     lead: "Se compite en serio y cada posición empieza a especializarse.",
     points: ["Sistemas 5-1 y 4-2", "Lectura de bloqueo y cobertura", "Partidos de liga y torneos interclubes"],
   },
-  "Juvenil Sub-18": {
+  "Sub-17": {
     lead: "Alta competencia: decisiones rápidas, cabeza fría y liderazgo en la cancha.",
     points: ["Preparación física por posición", "Manejo de la presión en puntos críticos", "Liga de Antioquia y festivales nacionales"],
   },
-  "Mayores Élite": {
+  Libre: {
     lead: "Para quienes quieren seguir compitiendo después del colegio, o volver a la cancha.",
-    points: ["Entrenamiento táctico de alto nivel", "Partidos oficiales en el Coliseo Yesid Santos", "Acompañamiento para becas deportivas"],
+    points: ["Entrenamiento táctico de alto nivel", "Partidos y torneos de categoría libre", "Un espacio para jugar en equipo toda la vida"],
   },
 };
 
-const tagOf = (v: string) => (v.match(/Sub-\d+/)?.[0] ?? "18+");
-const nameOf = (v: string) => v.replace(/\s*(Sub-\d+|Élite)$/, "");
-const ages = (min: number, max: number) => (max >= 100 ? "18 años o más" : min === 0 ? "7 a 11 años" : `${min} a ${max} años`);
+// Etiqueta grande de cada tarjeta: el rango de edad ("7-10", "17", "18+").
+const tagOf = (c: { minAge: number; maxAge: number; label: string }) => c.maxAge >= 100 ? "18+" : (c.label.match(/\((\d+)(?: a (\d+))? años\)/)?.slice(1).filter(Boolean).join("-") ?? "");
+const nameOf = (v: string) => v;
+const ages = (c: { label: string }) => c.label.match(/\(([^)]+)\)/)?.[1] ?? "";
 
 export const revalidate = 300;
 
@@ -43,7 +48,7 @@ export default async function TeamPage() {
   const roster = await getRoster();
   return (
     <>
-      <PageHero art="net" kicker="Cinco categorías" title="Equipos" intro="Cada equipo tiene un objetivo claro para su edad. Así trabaja cada uno y cuándo entrena." />
+      <PageHero art="net" kicker="Seis categorías" title="Equipos" intro="Cada equipo tiene un objetivo claro para su edad. Así trabaja cada uno y cuándo entrena." />
       <section className="bg-primary-dark text-white pb-24 sm:pb-32">
         <div className="container mx-auto px-4 sm:px-6 space-y-5">
           {CATEGORIES.map((c, i) => {
@@ -54,11 +59,11 @@ export default async function TeamPage() {
                 <div className="lg:col-span-4 relative p-7 sm:p-10 flex flex-col justify-between min-h-[220px] border-b lg:border-b-0 lg:border-r border-white/10 overflow-hidden">
                   <Volleyball className="absolute -right-16 -bottom-16 w-64 opacity-[0.08] transition-transform duration-700 group-hover:rotate-45" id={`team-${i}`} />
                   <p className="font-heading font-black uppercase whitespace-nowrap text-[5rem] sm:text-[6.5rem] leading-[0.8] text-outline-accent group-hover:text-accent transition-colors">
-                    {tagOf(c.value)}
+                    {tagOf(c)}
                   </p>
                   <div className="relative">
                     <h2 className="font-heading font-black uppercase text-4xl leading-none mt-4">{nameOf(c.value)}</h2>
-                    <p className="text-accent font-semibold mt-1">{ages(c.minAge, c.maxAge)}</p>
+                    <p className="text-accent font-semibold mt-1">{ages(c)}</p>
                   </div>
                 </div>
                 <div className="lg:col-span-8 p-7 sm:p-10 grid md:grid-cols-2 gap-8">

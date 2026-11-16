@@ -11,10 +11,10 @@ import { getSettings } from "@/lib/content";
 export const metadata: Metadata = pageMeta("/el-club", "El club", "Quiénes somos, qué nos mueve y el camino que recorre cada deportista del Club Voley Zúñiga.");
 
 const PATH = [
-  { title: "Semillero", age: "7 a 11 años", text: "Psicomotricidad, control del balón y disciplina básica, aprendidos jugando." },
-  { title: "Desarrollo", age: "12 a 14 años", text: "Fundamentos completos, primeros sistemas de juego y salto con técnica segura." },
-  { title: "Competencia", age: "15 a 18 años", text: "Liga de Antioquia y festivales: resiliencia, decisiones bajo presión y liderazgo." },
-  { title: "Proyección", age: "Mayores y egresados", text: "Acompañamos a quienes buscan becas deportivas y mantenemos viva la red de egresados." },
+  { title: "Iniciación", age: "Benjamín y Mini · 7 a 12 años", text: "Psicomotricidad, control del balón y disciplina básica, aprendidos jugando." },
+  { title: "Desarrollo", age: "Infantil · 12 a 14 años", text: "Fundamentos completos, primeros sistemas de juego y salto con técnica segura." },
+  { title: "Competencia", age: "Pre-juvenil y Sub-17 · 14 a 17 años", text: "Liga de Antioquia y festivales: resiliencia, decisiones bajo presión y liderazgo." },
+  { title: "Proyección", age: "Libre · 18 años en adelante", text: "Acompañamos a quienes buscan becas deportivas y mantenemos viva la red de egresados." },
 ];
 
 const VALUES = [
