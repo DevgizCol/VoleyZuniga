@@ -77,7 +77,7 @@ const faqs = (priceFrom: string) => [
   },
   {
     q: "¿Dónde y cuándo se entrena?",
-    a: "De lunes a viernes en cinco escenarios de Medellín: Polideportivo 3 Canchas, Placa Quinta Linda, Coliseo Alejandro Echavarría, Coliseo Poblado de Veracruz y Coliseo El Vergel. Los festivos no se entrena. El horario de cada categoría está en la semana de entrenamientos, más arriba.",
+    a: "De lunes a viernes en cinco escenarios de Medellín: Polideportivo 3 Canchas, Placa Quinta Linda, Coliseo Alejandro Echavarría, Coliseo Poblado de Veracruz y Placa El Vergel. Los festivos no se entrena. El horario de cada categoría está en la semana de entrenamientos, más arriba.",
   },
   {
     q: "¿Cuánto cuesta?",

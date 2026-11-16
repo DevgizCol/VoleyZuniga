@@ -2,11 +2,11 @@
 // Horarios y sedes reales del club (noviembre 2026).
 
 export const SEDES = [
-  { value: "Polideportivo 3 Canchas", label: "Polideportivo 3 Canchas (Buenos Aires)" },
+  { value: "Polideportivo 3 Canchas", label: "Polideportivo 3 Canchas (Bombona II, Buenos Aires)" },
   { value: "Placa Quinta Linda", label: "Placa Polideportiva Quinta Linda (Buenos Aires)" },
   { value: "Coliseo Alejandro Echavarría", label: "Coliseo Alejandro Echavarría (Buenos Aires)" },
-  { value: "Coliseo Poblado de Veracruz", label: "Coliseo Poblado de Veracruz" },
-  { value: "Coliseo El Vergel", label: "Coliseo El Vergel (Buenos Aires)" },
+  { value: "Coliseo Poblado de Veracruz", label: "Coliseo Poblado de Veracruz (vía Santa Elena)" },
+  { value: "Placa El Vergel", label: "Placa Polideportiva El Vergel (Bombona II, Buenos Aires)" },
 ] as const;
 
 /** Categorías sin horario publicado: la inscripción queda a confirmar por el club. */
