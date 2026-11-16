@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import { toast } from "sonner";
 import { Check, Loader2 } from "lucide-react";
 import { createSetting, saveSetting } from "../actions";
-import { btn } from "../_components/ui";
+import { NotifyCheck, btn } from "../_components/ui";
 
 type Props = {
   settingKey: string;
@@ -19,13 +19,14 @@ type Props = {
 export default function SettingField({ settingKey, label, help, type = "text", row, value }: Props) {
   const [draft, setDraft] = useState(value);
   const [saved, setSaved] = useState(value);
+  const [notify, setNotify] = useState(true);
   const [pending, start] = useTransition();
   const dirty = draft !== saved;
   const id = `s-${settingKey}`;
 
   const save = () =>
     start(async () => {
-      const res = row ? await saveSetting(Number(row._row), row.values, settingKey, draft) : await createSetting(settingKey, draft);
+      const res = row ? await saveSetting(Number(row._row), row.values, settingKey, draft, notify) : await createSetting(settingKey, draft, notify);
       if (res.ok) {
         setSaved(draft);
         toast.success(res.message);
@@ -65,6 +66,8 @@ export default function SettingField({ settingKey, label, help, type = "text", r
           {pending ? <Loader2 size={18} className="animate-spin" /> : dirty ? null : <Check size={18} />} {dirty ? "Guardar" : "Guardado"}
         </button>
       </div>
+      {/* solo al editar: con 14 ajustes, la casilla siempre visible sería ruido */}
+      {dirty ? <NotifyCheck checked={notify} onChange={setNotify} /> : null}
     </div>
   );
 }

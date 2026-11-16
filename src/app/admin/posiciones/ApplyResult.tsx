@@ -4,20 +4,21 @@ import { useRef, useState, useTransition } from "react";
 import { toast } from "sonner";
 import { Calculator, Loader2 } from "lucide-react";
 import { applyResult } from "../actions";
-import { btn } from "../_components/ui";
+import { NotifyCheck, btn } from "../_components/ui";
 
 const input = "w-full h-11 rounded-lg bg-white/[0.05] border border-[#6B7F9C] px-3.5 focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent focus:border-accent";
 
 export default function ApplyResult({ categories, teams }: { categories: string[]; teams: string[] }) {
   const ref = useRef<HTMLDialogElement>(null);
   const [pending, start] = useTransition();
+  const [notify, setNotify] = useState(true);
   const [form, setForm] = useState({ category: categories[0] ?? "", a: "Club Voley Zúñiga", b: "", sa: "3", sb: "0" });
   const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => setForm((f) => ({ ...f, [k]: e.target.value }));
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
     start(async () => {
-      const res = await applyResult(form.category, form.a, form.b, Number(form.sa), Number(form.sb));
+      const res = await applyResult(form.category, form.a, form.b, Number(form.sa), Number(form.sb), notify);
       if (res.ok) {
         toast.success(res.message);
         ref.current?.close();
@@ -64,6 +65,7 @@ export default function ApplyResult({ categories, teams }: { categories: string[
             </label>
           </div>
           <datalist id="ar-teams">{teams.map((t) => <option key={t} value={t} />)}</datalist>
+          <NotifyCheck checked={notify} onChange={setNotify} />
           <div className="flex justify-end gap-2 pt-2">
             <button type="button" onClick={() => ref.current?.close()} className={btn.secondary}>
               Cancelar

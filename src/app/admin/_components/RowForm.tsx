@@ -132,10 +132,10 @@ export default function RowForm({
         })}
       </div>
 
-      {(sheet === "Fixture" || sheet === "Noticias") ? <label className="flex gap-3 items-start rounded-lg border border-accent/30 p-4">
+      <label className="flex gap-3 items-start rounded-lg border border-accent/30 p-4">
         <input name="_notify" type="checkbox" defaultChecked className="mt-1 h-5 w-5 accent-accent shrink-0" />
-        <span><strong className="block">Notificar a los dispositivos suscritos</strong><span className="text-sm text-steel">Al guardar contenido publicado. Los borradores no envían avisos. Desmarca para una corrección menor.</span></span>
-      </label> : null}
+        <span><strong className="block">Notificar a quienes activaron los avisos</strong><span className="text-sm text-steel">Solo llega a los dispositivos suscritos o con la app instalada. Los borradores no envían avisos. Desmarca para una corrección menor.</span></span>
+      </label>
       {children}
 
       {!state.ok && state.message && !state.fieldErrors ? (

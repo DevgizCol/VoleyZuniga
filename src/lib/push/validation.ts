@@ -30,6 +30,6 @@ export type ClubSubscription = z.infer<typeof subscriptionSchema>;
 export const noticeSchema = z.object({
   title: z.string().trim().min(3).max(100),
   body: z.string().trim().min(3).max(240),
-  url: z.enum(["/partidos", "/noticias", "/"]),
+  url: z.enum(["/partidos", "/noticias", "/", "/posiciones", "/tienda", "/inscripciones"]), // igual que public/sw.js
 });
 export type ClubNotice = z.infer<typeof noticeSchema> & { tag?: string };
