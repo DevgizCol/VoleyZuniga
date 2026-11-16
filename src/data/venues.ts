@@ -1,29 +1,51 @@
-// Sedes de entrenamiento y competencia.
+// Escenarios de entrenamiento del club (Medellín). Direcciones según el INDER/Alcaldía cuando existen;
+// los mapas buscan por nombre y dirección para no fijar coordenadas sin confirmar.
 export const VENUES = [
   {
     id: "polideportivo-3-canchas",
     name: "Polideportivo 3 Canchas",
-    role: "Sede principal de entrenamiento",
-    address: "Sector Buenos Aires / Alejandro Echavarría, Medellín",
-    lat: 6.231821,
-    lng: -75.541992,
-    schedule: "Martes y jueves de 4:00 PM a 8:30 PM · Sábados de 8:00 AM a 12:00 M",
-    description: "Tres canchas reglamentarias, iluminación nocturna y graderías para las familias.",
+    role: "Categoría Libre",
+    address: "Sector Buenos Aires, Medellín",
+    schedule: "Lunes, miércoles y viernes de 7:00 PM a 8:30 PM",
+    description: "Escenario de la categoría Libre (18 años en adelante).",
   },
   {
-    id: "yesid-santos",
-    name: "Coliseo Yesid Santos",
-    role: "Mayores Élite y partidos de liga",
-    address: "Unidad Deportiva Atanasio Girardot, Medellín",
-    lat: 6.2575,
-    lng: -75.5905,
-    schedule: "Viernes de 6:00 PM a 8:30 PM · Fines de semana según programación de la liga",
-    description: "Escenario de los partidos oficiales de la liga y de las finales de categoría.",
+    id: "placa-quinta-linda",
+    name: "Placa Quinta Linda",
+    role: "Infantil, Benjamín y Mini",
+    address: "Calle 36C con Carrera 15AA, barrio Quinta Linda (Buenos Aires), Medellín",
+    schedule: "Lunes 4:30 PM a 6:00 PM · Martes y jueves 6:00 PM a 7:10 PM",
+    description: "Placa polideportiva Quinta Linda, en la comuna 9 (Buenos Aires).",
+  },
+  {
+    id: "coliseo-alejandro-echavarria",
+    name: "Coliseo Alejandro Echavarría",
+    role: "Categoría Infantil",
+    address: "Parque Deportivo Alejandro Echavarría, Calle 50 # 14C-43 (Buenos Aires), Medellín",
+    schedule: "Martes y jueves de 4:30 PM a 6:00 PM",
+    description: "Cancha cubierta del parque deportivo Alejandro Echavarría, comuna 9 (Buenos Aires).",
+  },
+  {
+    id: "coliseo-poblado-veracruz",
+    name: "Coliseo Poblado de Veracruz",
+    role: "Categoría Benjamín",
+    address: "Medellín",
+    schedule: "Miércoles y jueves de 6:00 PM a 7:30 PM",
+    description: "Escenario de la categoría Benjamín a mitad de semana.",
+  },
+  {
+    id: "coliseo-el-vergel",
+    name: "Coliseo El Vergel",
+    role: "Benjamín, Mini e Infantil",
+    address: "Barrio El Vergel (Buenos Aires), Medellín",
+    schedule: "Viernes de 6:00 PM a 8:00 PM",
+    description: "Los viernes entrenan aquí Benjamín, Mini e Infantil.",
   },
 ] as const;
 
 export type Venue = (typeof VENUES)[number];
 
-export const mapsLink = (v: Venue) => `https://www.google.com/maps/search/?api=1&query=${v.lat},${v.lng}`;
-export const wazeLink = (v: Venue) => `https://waze.com/ul?ll=${v.lat},${v.lng}&navigate=yes`;
-export const mapEmbed = (v: Venue) => `https://www.google.com/maps?q=${v.lat},${v.lng}&z=15&output=embed`;
+const query = (v: Venue) => encodeURIComponent(`${v.name}, ${v.address}`);
+export const mapsLink = (v: Venue) => `https://www.google.com/maps/search/?api=1&query=${query(v)}`;
+export const wazeLink = (v: Venue) => `https://waze.com/ul?q=${query(v)}&navigate=yes`;
+export const mapEmbed = (v: Venue) => `https://www.google.com/maps?q=${query(v)}&z=15&output=embed`;

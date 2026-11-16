@@ -4,9 +4,13 @@ export const SITE = {
   name: "Club Voley Zúñiga",
   shortName: "Voley Zúñiga",
   city: "Medellín, Antioquia",
-  phoneDisplay: "+57 312 845 9210",
-  phoneDigits: "573128459210",
-  email: "clubvoleyzuniga@gmail.com",
+  // Número administrativo: WhatsApp principal (inscripciones, pagos). El de Ajustes en la hoja tiene prioridad.
+  phoneDisplay: "+57 320 559 3426",
+  phoneDigits: "573205593426",
+  // Número técnico-deportivo: entrenamientos, convocatorias y competencias.
+  coachPhoneDisplay: "+57 350 247 2031",
+  coachPhoneDigits: "573502472031",
+  email: "svasupa30@gmail.com",
   instagram: { handle: "@voleyzuniga", url: "https://www.instagram.com/voleyzuniga" },
   whatsappMessage: "Hola, quisiera información sobre inscripciones y horarios en el Club Voley Zúñiga",
 } as const;

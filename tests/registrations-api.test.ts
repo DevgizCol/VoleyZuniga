@@ -21,7 +21,7 @@ const send = (body: unknown) =>
 const valid = {
   name: "Sara Gómez",
   age: 13,
-  category: "Infantil Sub-14",
+  category: "Infantil",
   level: "Iniciación Formativa",
   sede: session.sede,
   horario,
@@ -67,7 +67,7 @@ describe("POST /api/registrations", () => {
     await send({ ...valid, imageOk: true });
     const { Consentimiento } = (appendToSheet.mock.calls.at(-1) as unknown as [string, Record<string, string>])[1];
     expect(Consentimiento).toMatch(/^Sí \(\d{4}-\d{2}-\d{2}\) · política \d{4}-\d{2}-\d{2} · autoriza Ana Gómez \(Madre\) · imagen: sí$/);
-    await send({ ...valid, age: 25, category: "Mayores Élite", guardian: "", parentesco: "" });
+    await send({ ...valid, age: 25, category: "Libre", guardian: "", parentesco: "" });
     expect((appendToSheet.mock.calls.at(-1) as unknown as [string, Record<string, string>])[1].Consentimiento).toMatch(/autoriza el deportista · imagen: no$/);
   });
 
@@ -89,4 +89,11 @@ describe("POST /api/registrations", () => {
     expect(statuses.slice(0, 5).every((s) => s === 400)).toBe(true);
     expect(statuses[5]).toBe(429);
   });
+});
+
+it("asigna la categoría real por edad y acepta las categorías sin horario publicado", async () => {
+  const { categoryForAge } = await import("@/data/registration");
+  expect([7, 10, 12, 14, 16, 17, 18, 40].map((a) => categoryForAge(a).value)).toEqual(["Benjamín", "Mini", "Infantil", "Pre-juvenil", "Pre-juvenil", "Sub-17", "Libre", "Libre"]);
+  const res = await send({ ...valid, age: 17, category: "Sub-17", sede: "Por confirmar con el club", horario: "Por confirmar con el club" });
+  expect(res.status).toBe(200);
 });

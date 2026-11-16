@@ -22,7 +22,7 @@ export type Settings = {
   stats: { value: number; label: string }[];
   /** Mensualidad de referencia, por ejemplo "$80.000". Vacío: no se muestra. */
   priceFrom: string;
-  /** Cupos disponibles por categoría (clave: la categoría, por ejemplo "Sub-14"). */
+  /** Cupos disponibles por categoría (clave: la categoría, por ejemplo "Infantil"). */
   spots: Record<string, number>;
   /** Ligas o entidades a las que el club está afiliado. */
   affiliations: string[];
@@ -50,7 +50,7 @@ const parseStats = (raw: string) =>
     .filter((s): s is { value: number; label: string } => s !== null)
     .slice(0, 4);
 
-// "Sub-14: 4" -> { "Sub-14": 4 }. La clave se compara luego contra el nombre de cada categoría.
+// "Infantil: 4" -> { "Infantil": 4 }. La clave se compara luego contra el nombre de cada categoría.
 const parseSpots = (raw: string) =>
   Object.fromEntries(
     lines(raw)
