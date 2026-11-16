@@ -6,9 +6,9 @@ import { useEffect, useState } from "react";
 import { Bell, X } from "lucide-react";
 import { enablePush } from "./NotificationSettings";
 
-const KEY = "vz-invitacion-avisos";
+const KEY = "vz-permiso-avisos"; // nombre nuevo: la versión anterior marcaba la pausa sin haber mostrado la ventana
 const PAUSA = 14 * 24 * 60 * 60 * 1000; // si la persona no acepta, no volver a preguntar en 14 días
-const ESPERA = 4000; // dejar ver la web antes de preparar la pregunta
+const ESPERA = 4000; // iPhone sin instalar: dejar ver la web antes de mostrar el cartel
 
 function marcar() {
   try { localStorage.setItem(KEY, String(Date.now())); } catch { /* sin almacenamiento */ }
@@ -23,31 +23,35 @@ export default function NotificationInvite() {
 
   useEffect(() => {
     if (pathname === "/notificaciones") return;
+    try {
+      if (Date.now() - Number(localStorage.getItem(KEY) || 0) < PAUSA) return;
+    } catch { /* sin almacenamiento: se pregunta igual */ }
     let vivo = true;
     let quitar = () => {};
-    const timer = setTimeout(async () => {
-      try {
-        if (Date.now() - Number(localStorage.getItem(KEY) || 0) < PAUSA) return;
-      } catch { /* sin almacenamiento: se pregunta igual */ }
-      const apple = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
-      const instalada = window.matchMedia("(display-mode: standalone)").matches || Boolean((navigator as Navigator & { standalone?: boolean }).standalone);
-      if (apple && !instalada) { if (vivo) setIphone(true); return; }
-      const soporta = window.isSecureContext && "serviceWorker" in navigator && "PushManager" in window && "Notification" in window;
-      if (!soporta || Notification.permission !== "default") return; // ya decidió, o el navegador no lo admite
-      try {
-        const config = await fetch("/api/notifications", { cache: "no-store" }).then((r) => r.json());
-        if (!config.configured || !vivo) return;
-        const pedir = () => {
-          quitar();
-          marcar(); // si la cierra sin elegir, no insistir hasta dentro de 14 días
-          enablePush(config.publicKey).catch(() => { /* rechazó o falló el guardado: /notificaciones permite reintentar */ });
-        };
-        document.addEventListener("pointerup", pedir, { capture: true });
-        document.addEventListener("keydown", pedir, { capture: true });
-        quitar = () => { document.removeEventListener("pointerup", pedir, true); document.removeEventListener("keydown", pedir, true); };
-      } catch { /* sin conexión con la API: no molestar */ }
-    }, ESPERA);
-    return () => { vivo = false; clearTimeout(timer); quitar(); };
+    const apple = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+    const instalada = window.matchMedia("(display-mode: standalone)").matches || Boolean((navigator as Navigator & { standalone?: boolean }).standalone);
+    if (apple && !instalada) {
+      const timer = setTimeout(() => { if (vivo) setIphone(true); }, ESPERA);
+      return () => { vivo = false; clearTimeout(timer); };
+    }
+    const soporta = window.isSecureContext && "serviceWorker" in navigator && "PushManager" in window && "Notification" in window;
+    if (!soporta || Notification.permission !== "default") return; // ya decidió, o el navegador no lo admite
+    // La configuración se carga antes del toque: dentro del gesto no puede haber esperas previas al permiso.
+    void fetch("/api/notifications", { cache: "no-store" }).then((r) => r.json()).then((config) => {
+      if (!vivo || !config.configured) return;
+      const pedir = () => {
+        quitar();
+        // Ventana NATIVA: requestPermission es lo primero que hace enablePush, dentro del mismo toque.
+        enablePush(config.publicKey).catch(() => {
+          // Solo si la cerró sin elegir: no insistir en 14 días. Si bloqueó, el navegador ya no deja preguntar.
+          if (Notification.permission === "default") marcar();
+        });
+      };
+      // click/touchend/keydown cuentan como gesto en Chrome, Safari y Firefox (pointerup no siempre).
+      for (const ev of ["click", "touchend", "keydown"]) document.addEventListener(ev, pedir, { capture: true });
+      quitar = () => { for (const ev of ["click", "touchend", "keydown"]) document.removeEventListener(ev, pedir, true); };
+    }).catch(() => { /* sin conexión con la API: no molestar */ });
+    return () => { vivo = false; quitar(); };
   }, [pathname]);
 
   useEffect(() => {
