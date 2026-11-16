@@ -5,7 +5,8 @@ import os from "node:os";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { subscriptionSchema } from "@/lib/push/validation";
 import { pushConfig } from "@/lib/push/config";
-import { noticeForRow } from "@/lib/push/events";
+import { noticeForRow, removalNotice, settingNotice } from "@/lib/push/events";
+import { noticeSchema } from "@/lib/push/validation";
 import { pushStore } from "@/lib/push/store";
 
 const sub = { endpoint: "https://fcm.googleapis.com/fcm/send/device-test", keys: { p256dh: (() => { const ec = createECDH("prime256v1"); ec.generateKeys(); return ec.getPublicKey().toString("base64url"); })(), auth: Buffer.alloc(16, 2).toString("base64url") } };
@@ -45,6 +46,23 @@ describe("Eventos de publicación", () => {
     expect(noticeForRow("Inscripciones", match)).toBeNull();
     expect(noticeForRow("Noticias", { Título: "Convocatoria", Activo: "NO" })).toBeNull();
     expect(noticeForRow("Noticias", { Título: "Convocatoria", Activo: "" }, { Título: "Convocatoria", Activo: "NO" })?.url).toBe("/noticias");
+  });
+  it("avisa de todo lo público: cancha, posiciones, horarios y tienda, con enlace válido", () => {
+    const lluvia = noticeForRow("Cancha", { Sede: "Coliseo", Estado: "Lluvia", Mensaje: "Hoy no hay entrenamiento" }, { Sede: "Coliseo", Estado: "Normal", Mensaje: "" });
+    expect(lluvia).toMatchObject({ title: "Lluvia · Coliseo", body: "Hoy no hay entrenamiento", url: "/" });
+    expect(noticeForRow("Cancha", { Sede: "Coliseo", Estado: "Normal", Mensaje: "" })?.body).toContain("normal");
+    expect(noticeForRow("Tabla", { Categoría: "Sub-18", Equipo: "Zúñiga", PJ: "4", PG: "3", PP: "1", Puntos: "9", Activo: "" })?.url).toBe("/posiciones");
+    expect(noticeForRow("Horarios", { Día: "Martes", Inicio: "16:00", Fin: "17:30", Grupo: "Semillero", Sede: "Coliseo", Activo: "" })?.body).toContain("16:00–17:30");
+    expect(noticeForRow("Productos", { Nombre: "Camiseta", Precio: "95000", Descripción: "", Activo: "" })?.body).toContain("95.000");
+    for (const n of [lluvia, settingNotice("Inscripciones", "inscripciones_abiertas", "SI"), removalNotice("Horarios", { Día: "Lunes", Inicio: "16:00", Fin: "17:00", Grupo: "Infantil", Sede: "Coliseo", Activo: "" })]) expect(noticeSchema.safeParse(n).success).toBe(true);
+  });
+  it("retirar o cambiar ajustes avisa con el texto correcto; retirar un borrador no avisa", () => {
+    expect(removalNotice("Fixture", match)?.title).toBe("Partido retirado de agenda");
+    expect(removalNotice("Productos", { Nombre: "Gorra", Precio: "30000", Activo: "" })?.body).toMatch(/^Se retiró: Gorra/);
+    expect(removalNotice("Productos", { Nombre: "Gorra", Precio: "30000", Activo: "NO" })).toBeNull();
+    expect(settingNotice("Inscripciones", "inscripciones_abiertas", "NO").title).toContain("cerradas");
+    expect(settingNotice("Aviso", "aviso_inicio", "Inscripciones 2027 abiertas").body).toBe("Inscripciones 2027 abiertas");
+    expect(settingNotice("Correo de contacto", "correo", "club@x.co").body).toContain("Correo de contacto");
   });
 });
 

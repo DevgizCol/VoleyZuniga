@@ -4,7 +4,7 @@ self.addEventListener("activate", event => event.waitUntil(self.clients.claim())
 self.addEventListener("push", event => {
   let data = {};
   try { data = event.data?.json() || {}; } catch { /* notificación visible también si el cuerpo no es JSON */ }
-  const url = ["/", "/partidos", "/noticias"].includes(data.url) ? data.url : "/";
+  const url = ["/", "/partidos", "/noticias", "/posiciones", "/tienda", "/inscripciones"].includes(data.url) ? data.url : "/"; // igual que noticeSchema
   event.waitUntil(self.registration.showNotification(String(data.title || "Club Voley Zúñiga").slice(0, 100), {
     body: String(data.body || "Hay novedades del club.").slice(0, 240),
     icon: "/icon-192.png", badge: "/icon-192.png",

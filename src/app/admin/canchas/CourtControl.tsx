@@ -5,7 +5,7 @@ import clsx from "clsx";
 import { toast } from "sonner";
 import { CheckCircle2, CloudRain, Ban, MapPinned, Megaphone, Loader2 } from "lucide-react";
 import { quickCourt } from "../actions";
-import { Card, btn } from "../_components/ui";
+import { Card, NotifyCheck, btn } from "../_components/ui";
 import type { RowData } from "../_components/types";
 
 const PRESETS = [
@@ -21,13 +21,14 @@ export default function CourtControl({ sede, row }: { sede: string; row: RowData
   const current = row?.Estado || "Normal";
   const [estado, setEstado] = useState(current);
   const [mensaje, setMensaje] = useState(row?.Mensaje || "");
+  const [notify, setNotify] = useState(true);
   const [pending, start] = useTransition();
   const live = current !== "Normal";
 
   const publish = (e: string, m: string) =>
     start(async () => {
       const expected = row ? Object.fromEntries(Object.entries(row).filter(([k]) => k !== "_row")) : null;
-      const res = await quickCourt(row ? Number(row._row) : null, expected, sede, e, m);
+      const res = await quickCourt(row ? Number(row._row) : null, expected, sede, e, m, notify);
       if (res.ok) toast.success(res.message);
       else toast.error(res.message);
     });
@@ -78,6 +79,7 @@ export default function CourtControl({ sede, row }: { sede: string; row: RowData
         </label>
       )}
 
+      <NotifyCheck checked={notify} onChange={setNotify} />
       <div className="mt-4 flex justify-end">
         <button type="button" disabled={pending || (estado === current && mensaje === (row?.Mensaje || ""))} onClick={() => publish(estado, estado === "Normal" ? "" : mensaje)} className={btn.primary}>
           {pending ? <Loader2 size={16} className="animate-spin" /> : null} {estado === "Normal" ? "Guardar como normal" : "Publicar aviso"}

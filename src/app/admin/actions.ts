@@ -1,7 +1,8 @@
 "use server";
 
-import { noticeForRow } from "@/lib/push/events";
+import { noticeForRow, removalNotice, settingNotice } from "@/lib/push/events";
 import { broadcastNotice, deliveryText } from "@/lib/push/send";
+import type { ClubNotice } from "@/lib/push/validation";
 import { sharedLimited } from "@/lib/rate-limit";
 import { revalidatePath, updateTag } from "next/cache";
 import { getAdmin } from "@/lib/auth";
@@ -62,11 +63,18 @@ function parseExpected(raw: FormDataEntryValue | null): Row | undefined {
 const done = (message: string): ActionState => ({ ok: true, message, at: Date.now() });
 const fail = (message: string, fieldErrors?: Record<string, string>): ActionState => ({ ok: false, message, fieldErrors, at: Date.now() });
 
+// Envía el aviso a los dispositivos suscritos (solo quienes activaron notificaciones) con límite por admin.
+async function announce(actor: string, notice: ClubNotice | null): Promise<string> {
+  if (!notice) return "";
+  if (await sharedLimited(`push:auto:${actor}`, 20, 600000)) return " Guardado; se alcanzó el límite temporal de avisos.";
+  return ` ${deliveryText(await broadcastNotice(notice))}`;
+}
+
 function bogotaNow() {
   return new Intl.DateTimeFormat("sv-SE", { timeZone: "America/Bogota", dateStyle: "short", timeStyle: "short" }).format(new Date());
 }
 
-/** Crea o edita una fila de Fixture, Tabla, Noticias, Cancha u Horarios. */
+/** Crea o edita una fila de Fixture, Tabla, Noticias, Cancha, Horarios o Productos. */
 export async function saveRow(_prev: ActionState, form: FormData): Promise<ActionState> {
   const user = await getAdmin();
   if (!user) return fail("Tu sesión expiró. Vuelve a entrar.");
@@ -103,14 +111,7 @@ export async function saveRow(_prev: ActionState, form: FormData): Promise<Actio
   });
   if (!result.ok) return fail(errorText(result.error));
   refresh(sheet);
-  let notification = "";
-  if (form.get("_notify") === "on" && (sheet === "Fixture" || sheet === "Noticias")) {
-    const notice = noticeForRow(sheet, data, row ? parseExpected(form.get("_expected")) : undefined);
-    if (notice) {
-      if (await sharedLimited(`push:auto:${user.name}`, 20, 600000)) notification = " Contenido guardado; se alcanzó el límite temporal de avisos.";
-      else notification = ` ${deliveryText(await broadcastNotice(notice))}`;
-    }
-  }
+  const notification = form.get("_notify") === "on" ? await announce(user.name, noticeForRow(sheet, data, row ? parseExpected(form.get("_expected")) : undefined)) : "";
   return done((row ? "Cambios guardados. La web ya está actualizada." : "Creado. Ya aparece en la web.") + notification);
 }
 
@@ -122,14 +123,7 @@ export async function deleteRow(sheet: EditableSheet, row: number, expected: Row
   const result = await adminMutate({ action: "remove", sheet, actor: user.name, row, expected });
   if (!result.ok) return fail(errorText(result.error));
   refresh(sheet);
-  let notification = "";
-  if (sheet === "Fixture" && notify && String(expected.Activo).toUpperCase() !== "NO") {
-    if (await sharedLimited(`push:auto:${user.name}`, 20, 600000)) notification = " Se alcanzó el límite temporal de avisos; no se envió la notificación.";
-    else {
-      const notice = noticeForRow(sheet, expected);
-      if (notice) notification = ` ${deliveryText(await broadcastNotice({ ...notice, title: "Partido retirado de agenda", body: `${expected.Local} vs ${expected.Visitante} · ${expected.Fecha}. Consulta la agenda actualizada.`.slice(0, 240) }))}`;
-    }
-  }
+  const notification = notify ? await announce(user.name, removalNotice(sheet, expected)) : "";
   return done("Eliminado." + notification);
 }
 
@@ -146,7 +140,7 @@ export async function setStatus(sheet: StatusSheet, row: number, expected: Row, 
 }
 
 /** Atajo: marca o quita la lluvia (u otro aviso) en una sede con un toque. */
-export async function quickCourt(row: number | null, expected: Row | null, sede: string, estado: string, mensaje: string): Promise<ActionState> {
+export async function quickCourt(row: number | null, expected: Row | null, sede: string, estado: string, mensaje: string, notify = false): Promise<ActionState> {
   const user = await getAdmin();
   if (!user) return fail("Tu sesión expiró. Vuelve a entrar.");
   const parsed = SCHEMAS.Cancha.safeParse({ Sede: sede, Estado: estado, Mensaje: mensaje });
@@ -157,7 +151,8 @@ export async function quickCourt(row: number | null, expected: Row | null, sede:
     : await adminMutate({ action: "create", sheet: "Cancha", actor: user.name, data });
   if (!result.ok) return fail(errorText(result.error));
   refresh("Cancha");
-  return done(estado === "Normal" ? `${sede}: aviso quitado.` : `${sede}: aviso publicado.`);
+  const notification = notify ? await announce(user.name, noticeForRow("Cancha", data, expected ?? undefined)) : "";
+  return done((estado === "Normal" ? `${sede}: aviso quitado.` : `${sede}: aviso publicado.`) + notification);
 }
 
 /**
@@ -165,7 +160,7 @@ export async function quickCourt(row: number | null, expected: Row | null, sede:
  * 3-0 o 3-1 → 3 puntos al ganador y 0 al perdedor; 3-2 → 2 al ganador y 1 al perdedor.
  * Si un equipo no existe en esa categoría, se crea.
  */
-export async function applyResult(category: string, teamA: string, teamB: string, setsA: number, setsB: number): Promise<ActionState> {
+export async function applyResult(category: string, teamA: string, teamB: string, setsA: number, setsB: number, notify = false): Promise<ActionState> {
   const user = await getAdmin();
   if (!user) return fail("Tu sesión expiró. Vuelve a entrar.");
   const cat = category.trim().slice(0, 60);
@@ -204,11 +199,12 @@ export async function applyResult(category: string, teamA: string, teamB: string
     if (!res.ok) return fail(errorText(res.error));
   }
   refresh("Tabla");
-  return done(`Tabla actualizada: ${aWins ? a : b} gana ${Math.max(setsA, setsB)}-${Math.min(setsA, setsB)}.`);
+  const notification = notify ? await announce(user.name, { title: "Posiciones actualizadas · Zúñiga", body: `${cat}: ${a} ${setsA}-${setsB} ${b}. Toca para ver la tabla.`.slice(0, 240), url: "/posiciones" }) : "";
+  return done(`Tabla actualizada: ${aWins ? a : b} gana ${Math.max(setsA, setsB)}-${Math.min(setsA, setsB)}.` + notification);
 }
 
 /** Cambia el valor de un ajuste de la web (teléfono, Instagram, aviso de portada…). */
-export async function saveSetting(row: number, expected: Row, key: string, value: string): Promise<ActionState> {
+export async function saveSetting(row: number, expected: Row, key: string, value: string, notify = false): Promise<ActionState> {
   const user = await getAdmin();
   if (!user) return fail("Tu sesión expiró. Vuelve a entrar.");
   const rule = SETTING_RULES[key];
@@ -219,11 +215,12 @@ export async function saveSetting(row: number, expected: Row, key: string, value
   const result = await adminMutate({ action: "update", sheet: "Ajustes", actor: user.name, row, expected, data: { Valor: parsed.data } });
   if (!result.ok) return fail(errorText(result.error));
   refresh("Ajustes");
-  return done(`${rule.label}: guardado. La web ya lo muestra.`);
+  const notification = notify && parsed.data !== (expected.Valor ?? "") ? await announce(user.name, settingNotice(rule.label, key, parsed.data)) : "";
+  return done(`${rule.label}: guardado. La web ya lo muestra.` + notification);
 }
 
 /** Crea un ajuste que todavía no existe en la hoja. */
-export async function createSetting(key: string, value: string): Promise<ActionState> {
+export async function createSetting(key: string, value: string, notify = false): Promise<ActionState> {
   const user = await getAdmin();
   if (!user) return fail("Tu sesión expiró. Vuelve a entrar.");
   const rule = SETTING_RULES[key];
@@ -233,7 +230,8 @@ export async function createSetting(key: string, value: string): Promise<ActionS
   const result = await adminMutate({ action: "create", sheet: "Ajustes", actor: user.name, data: { Clave: key, Valor: parsed.data } });
   if (!result.ok) return fail(errorText(result.error));
   refresh("Ajustes");
-  return done(`${rule.label}: guardado.`);
+  const notification = notify && parsed.data ? await announce(user.name, settingNotice(rule.label, key, parsed.data)) : "";
+  return done(`${rule.label}: guardado.` + notification);
 }
 
 /** Nota interna en una inscripción o un mensaje (no se muestra en la web). */

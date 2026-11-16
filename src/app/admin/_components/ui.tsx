@@ -64,3 +64,13 @@ export const statusTone = (estado: string): "accent" | "info" | "success" | "mut
   if (e.startsWith("descart") || e.startsWith("archiv")) return "muted";
   return "neutral";
 };
+
+// Casilla para avisar a quienes activaron las notificaciones (solo dispositivos suscritos, nunca a todo el público).
+export function NotifyCheck({ checked, onChange, label = "Notificar a quienes activaron los avisos" }: { checked: boolean; onChange: (v: boolean) => void; label?: string }) {
+  return (
+    <label className="mt-4 flex gap-3 items-start text-sm">
+      <input type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} className="mt-1 h-5 w-5 accent-accent shrink-0" />
+      <span>{label}</span>
+    </label>
+  );
+}

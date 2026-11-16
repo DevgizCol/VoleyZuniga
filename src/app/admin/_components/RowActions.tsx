@@ -5,13 +5,13 @@ import { toast } from "sonner";
 import { Loader2, Trash2 } from "lucide-react";
 import { deleteRow } from "../actions";
 import type { EditableSheet } from "@/lib/admin/schemas";
-import { btn } from "./ui";
+import { btn, NotifyCheck } from "./ui";
 import type { RowData } from "./types";
 
 // Botón de borrar con confirmación (diálogo nativo accesible).
 export function DeleteButton({ sheet, row, label, compact = false }: { sheet: EditableSheet; row: RowData; label: string; compact?: boolean }) {
   const ref = useRef<HTMLDialogElement>(null);
-  const [notify, setNotify] = useState(sheet === "Fixture");
+  const [notify, setNotify] = useState(true);
   const [pending, start] = useTransition();
 
   const confirm = () =>
@@ -33,10 +33,7 @@ export function DeleteButton({ sheet, row, label, compact = false }: { sheet: Ed
         <p className="mt-2 text-[#C9D5E6]">
           Se borrará <strong className="text-white">{label}</strong> de la hoja y de la web. Queda registrado en el historial.
         </p>
-        {sheet === "Fixture" ? <label className="mt-4 flex gap-3 items-start text-sm">
-          <input type="checkbox" checked={notify} onChange={e => setNotify(e.target.checked)} className="mt-1 h-5 w-5 accent-accent shrink-0" />
-          <span>Notificar que el partido se retiró de la agenda</span>
-        </label> : null}
+        <NotifyCheck checked={notify} onChange={setNotify} label={sheet === "Fixture" ? "Notificar que el partido se retiró de la agenda" : undefined} />
         <div className="mt-6 flex justify-end gap-2">
           <button type="button" onClick={() => ref.current?.close()} className={btn.secondary}>
             Cancelar
