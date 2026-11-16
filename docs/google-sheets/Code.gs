@@ -11,6 +11,7 @@
  *
  * Propiedades del script (Configuración del proyecto > Propiedades de la secuencia de comandos):
  *   SHARED_SECRET : cadena larga y aleatoria. La MISMA va en Vercel como SHEETS_SECRET.
+ *   ADMIN_SECRET  : clave distinta de SHARED_SECRET, 24+ caracteres, obligatoria para el registro Web Push.
  *   NOTIFY_EMAIL  : correo(s) que reciben el aviso de cada inscripción/mensaje (opcional).
  *
  * Panel de administración (/admin): crea, edita y borra filas de Fixture, Tabla, Noticias, Cancha y Horarios,
@@ -64,6 +65,23 @@ function json_(obj) {
   return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON);
 }
 
+function safeEqual_(a, b) {
+  var sa = String(a || "");
+  var sb = String(b || "");
+  if (!sa.length || sa.length !== sb.length) return false;
+  var diff = 0;
+  for (var i = 0; i < sa.length; i++) diff |= sa.charCodeAt(i) ^ sb.charCodeAt(i);
+  return diff === 0;
+}
+
+function prop_(key) {
+  try {
+    return PropertiesService.getScriptProperties().getProperty(key) || "";
+  } catch (err) {
+    return "";
+  }
+}
+
 function secretOk_(provided) {
   var expected = PropertiesService.getScriptProperties().getProperty("SHARED_SECRET");
   return !!expected && expected.length >= 24 && provided === expected;
@@ -92,6 +110,11 @@ function buildRowByHeaders_(headers, fields, after, data, stamp) {
 function doPost(e) {
   try {
     var body = JSON.parse(e.postData.contents);
+    if (String(body.action || "").indexOf("push.") === 0) {
+      var pushSecret = prop_("ADMIN_SECRET");
+      if (pushSecret.length < 24 || pushSecret === prop_("SHARED_SECRET") || !safeEqual_(body.secret, pushSecret)) return json_({ ok: false, error: "unauthorized" });
+      return json_(pushAction_(body));
+    }
     if (!secretOk_(body.secret)) return json_({ ok: false, error: "unauthorized" });
     if (body.action && String(body.action).indexOf("admin.") === 0) return json_(adminAction_(body));
     if (body.action === "loginCode") return json_(loginCode_(body));
@@ -144,6 +167,58 @@ function doPost(e) {
   } catch (err) {
     return json_({ ok: false, error: "server_error" });
   }
+}
+
+// ---------- Registro privado Web Push (solo secreto administrativo, nunca READABLE) ----------
+function pushAction_(body) {
+  var action = String(body.action);
+  if (["push.list", "push.upsert", "push.remove", "push.prune", "push.audit"].indexOf(action) === -1) return { ok: false, error: "bad_action" };
+  if (action === "push.audit") {
+    log_(String(body.actor || "Panel").slice(0, 60), "Notificó", "Noticias", String(body.detail || "Comunicado Web Push").slice(0, 500));
+    return { ok: true, subscriptions: [] };
+  }
+  var supplied = body.subscription;
+  var inputs = action === "push.prune" ? supplied : supplied ? [supplied] : [];
+  if (action !== "push.list" && (!Array.isArray(inputs) || !inputs.length || inputs.length > 200 || inputs.some(function (s) { return !validPushSubscription_(s); }))) return { ok: false, error: "invalid_subscription" };
+  var lock = LockService.getScriptLock();
+  lock.waitLock(10000);
+  try {
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var sh = ss.getSheetByName("PushSuscripciones");
+    if (!sh) {
+      sh = ss.insertSheet("PushSuscripciones");
+      sh.appendRow(["Endpoint", "p256dh", "auth", "Actualizado"]);
+    }
+    var rows = sh.getLastRow() > 1 ? sh.getRange(2, 1, sh.getLastRow() - 1, 4).getValues().map(function (r) { return r.map(unquote_); }) : [];
+    var previousCount = rows.length;
+    if (rows.length > 200) return { ok: false, error: "capacity" };
+    if (action !== "push.list") {
+      for (var j = 0; j < inputs.length; j++) {
+        var sub = inputs[j];
+        var index = rows.findIndex(function (r) { return r[0] === sub.endpoint; });
+        if (index !== -1 && (rows[index][1] !== sub.keys.p256dh || rows[index][2] !== sub.keys.auth)) {
+          if (action === "push.prune") continue;
+          return { ok: false, error: "subscription_mismatch" };
+        }
+        if (action === "push.upsert") {
+          if (index === -1 && rows.length >= 200) return { ok: false, error: "capacity" };
+          var row = [sub.endpoint, sub.keys.p256dh, sub.keys.auth, new Date().toISOString()];
+          if (index === -1) rows.push(row); else rows[index] = row;
+        } else if (index !== -1) rows.splice(index, 1);
+      }
+      // Bloque pequeño bajo lock: solo datos técnicos de suscripción, con fórmulas escapadas.
+      if (rows.length) sh.getRange(2, 1, rows.length, 4).setNumberFormat("@").setValues(rows.map(function (r) { return r.map(function (v) { return clean_(v, 2048); }); }));
+      if (previousCount > rows.length) sh.getRange(rows.length + 2, 1, previousCount - rows.length, 4).clearContent();
+    }
+    return { ok: true, subscriptions: rows.map(function (r) { return { endpoint: String(r[0]), keys: { p256dh: String(r[1]), auth: String(r[2]) } }; }) };
+  } finally { lock.releaseLock(); }
+}
+
+function validPushSubscription_(s) {
+  if (!s || typeof s.endpoint !== "string" || s.endpoint.length > 2048 || !s.keys) return false;
+  // Mismos dominios permitidos que el emisor Next. Sin credenciales, puertos ni fragmentos.
+  return /^https:\/\/(fcm\.googleapis\.com|updates\.push\.services\.mozilla\.com|push\.services\.mozilla\.com|[a-z0-9.-]+\.push\.apple\.com|[a-z0-9.-]+\.notify\.windows\.com)\/[^\s#]*$/i.test(s.endpoint)
+    && /^[A-Za-z0-9_-]{87}$/.test(s.keys.p256dh) && /^[A-Za-z0-9_-]{22}$/.test(s.keys.auth);
 }
 
 // ---------- Aviso por correo ----------

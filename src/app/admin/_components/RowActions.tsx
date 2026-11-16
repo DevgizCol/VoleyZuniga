@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useTransition } from "react";
+import { useRef, useState, useTransition } from "react";
 import { toast } from "sonner";
 import { Loader2, Trash2 } from "lucide-react";
 import { deleteRow } from "../actions";
@@ -11,12 +11,13 @@ import type { RowData } from "./types";
 // Botón de borrar con confirmación (diálogo nativo accesible).
 export function DeleteButton({ sheet, row, label, compact = false }: { sheet: EditableSheet; row: RowData; label: string; compact?: boolean }) {
   const ref = useRef<HTMLDialogElement>(null);
+  const [notify, setNotify] = useState(sheet === "Fixture");
   const [pending, start] = useTransition();
 
   const confirm = () =>
     start(async () => {
       const expected = Object.fromEntries(Object.entries(row).filter(([k]) => k !== "_row"));
-      const res = await deleteRow(sheet, Number(row._row), expected);
+      const res = await deleteRow(sheet, Number(row._row), expected, notify);
       ref.current?.close();
       if (res.ok) toast.success(res.message);
       else toast.error(res.message);
@@ -32,6 +33,10 @@ export function DeleteButton({ sheet, row, label, compact = false }: { sheet: Ed
         <p className="mt-2 text-[#C9D5E6]">
           Se borrará <strong className="text-white">{label}</strong> de la hoja y de la web. Queda registrado en el historial.
         </p>
+        {sheet === "Fixture" ? <label className="mt-4 flex gap-3 items-start text-sm">
+          <input type="checkbox" checked={notify} onChange={e => setNotify(e.target.checked)} className="mt-1 h-5 w-5 accent-accent shrink-0" />
+          <span>Notificar que el partido se retiró de la agenda</span>
+        </label> : null}
         <div className="mt-6 flex justify-end gap-2">
           <button type="button" onClick={() => ref.current?.close()} className={btn.secondary}>
             Cancelar

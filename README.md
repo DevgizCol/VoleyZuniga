@@ -85,3 +85,9 @@ Estructura útil:
 Las rutas están en español (`/inscripciones`, `/partidos`, `/posiciones`, `/equipos`, `/noticias`,
 `/tienda`, `/el-club`, `/metodologia`, `/contacto`, `/galeria`). Las antiguas en inglés redirigen
 permanentemente (ver `next.config.ts`).
+
+## Notificaciones Web Push
+
+Suscripción voluntaria: `/notificaciones`. Prueba individual y comunicados: `/admin/notificaciones`.
+Los formularios de noticias, agenda y resultados incluyen la casilla «Notificar».
+Preparación y activación en producción: [guía](docs/notificaciones/README.md).

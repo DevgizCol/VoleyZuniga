@@ -52,6 +52,7 @@ export default async function Footer() {
               {NAV_LINKS.map((l) => (
                 <li key={l.href}><Link href={l.href} className="hover:text-accent transition-colors">{l.name}</Link></li>
               ))}
+              <li><Link href="/notificaciones" className="hover:text-accent transition-colors">Notificaciones</Link></li>
               <li><Link href="/galeria" className="hover:text-accent transition-colors">Galería</Link></li>
             </ul>
           </nav>

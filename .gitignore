@@ -45,3 +45,6 @@ next-env.d.ts
 /test-results/
 /playwright-report/
 /.lighthouseci/
+
+# Registro privado de suscripciones Web Push de desarrollo
+/.local-data/

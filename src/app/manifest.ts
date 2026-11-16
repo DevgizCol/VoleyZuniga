@@ -5,6 +5,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: "Club Voley Zúñiga",
     short_name: "Voley Zúñiga",
     description: "Horarios, partidos, posiciones e inscripciones del Club Voley Zúñiga en Medellín.",
+    id: "/",
     start_url: "/",
     display: "standalone",
     background_color: "#071426",

@@ -1,3 +1,4 @@
+import NotificationInvite from "@/components/NotificationInvite";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import CartDrawer from "@/components/CartDrawer";
@@ -16,6 +17,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
       <main id="contenido" className="flex-1">
         {children}
       </main>
+      <NotificationInvite />
       <Footer />
       <MobileBar />
     </ContactProvider>
