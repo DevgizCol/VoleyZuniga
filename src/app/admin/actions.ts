@@ -1,5 +1,8 @@
 "use server";
 
+import { noticeForRow } from "@/lib/push/events";
+import { broadcastNotice, deliveryText } from "@/lib/push/send";
+import { sharedLimited } from "@/lib/rate-limit";
 import { revalidatePath, updateTag } from "next/cache";
 import { getAdmin } from "@/lib/auth";
 import { adminMutate, adminRead, sheetTag, type Row } from "@/lib/sheets";
@@ -100,18 +103,34 @@ export async function saveRow(_prev: ActionState, form: FormData): Promise<Actio
   });
   if (!result.ok) return fail(errorText(result.error));
   refresh(sheet);
-  return done(row ? "Cambios guardados. La web ya está actualizada." : "Creado. Ya aparece en la web.");
+  let notification = "";
+  if (form.get("_notify") === "on" && (sheet === "Fixture" || sheet === "Noticias")) {
+    const notice = noticeForRow(sheet, data, row ? parseExpected(form.get("_expected")) : undefined);
+    if (notice) {
+      if (await sharedLimited(`push:auto:${user.name}`, 20, 600000)) notification = " Contenido guardado; se alcanzó el límite temporal de avisos.";
+      else notification = ` ${deliveryText(await broadcastNotice(notice))}`;
+    }
+  }
+  return done((row ? "Cambios guardados. La web ya está actualizada." : "Creado. Ya aparece en la web.") + notification);
 }
 
 /** Borra una fila. */
-export async function deleteRow(sheet: EditableSheet, row: number, expected: Row): Promise<ActionState> {
+export async function deleteRow(sheet: EditableSheet, row: number, expected: Row, notify = false): Promise<ActionState> {
   const user = await getAdmin();
   if (!user) return fail("Tu sesión expiró. Vuelve a entrar.");
   if (!SCHEMAS[sheet] || !Number.isInteger(row) || row < 2) return fail("Fila no válida.");
   const result = await adminMutate({ action: "remove", sheet, actor: user.name, row, expected });
   if (!result.ok) return fail(errorText(result.error));
   refresh(sheet);
-  return done("Eliminado.");
+  let notification = "";
+  if (sheet === "Fixture" && notify && String(expected.Activo).toUpperCase() !== "NO") {
+    if (await sharedLimited(`push:auto:${user.name}`, 20, 600000)) notification = " Se alcanzó el límite temporal de avisos; no se envió la notificación.";
+    else {
+      const notice = noticeForRow(sheet, expected);
+      if (notice) notification = ` ${deliveryText(await broadcastNotice({ ...notice, title: "Partido retirado de agenda", body: `${expected.Local} vs ${expected.Visitante} · ${expected.Fecha}. Consulta la agenda actualizada.`.slice(0, 240) }))}`;
+    }
+  }
+  return done("Eliminado." + notification);
 }
 
 /** Cambia el Estado de una inscripción o de un mensaje. */

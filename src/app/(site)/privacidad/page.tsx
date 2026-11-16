@@ -7,6 +7,10 @@ export const metadata: Metadata = pageMeta("/privacidad", "Política de tratamie
 
 const sections: { title: string; body: React.ReactNode }[] = [
   {
+    title: "Avisos voluntarios del club (Web Push)",
+    body: <p>Si activas los avisos, guardamos la dirección técnica de suscripción de tu navegador y sus claves de entrega en un registro privado del club en Google Sheets. No se vincula con tu inscripción, nombre, correo ni teléfono. Se usa para enviar partidos y noticias mediante el servicio push de tu navegador (Google, Mozilla, Apple o Microsoft, según el dispositivo). Puedes retirar la suscripción desde <Link href="/notificaciones" className="text-accent underline">Notificaciones</Link>; esa acción elimina el registro y da de baja el navegador. También puedes bloquear el permiso en los ajustes del dispositivo. Las suscripciones que el proveedor declara caducadas se eliminan al enviar. Esta función se incorporó el 15 de noviembre de 2026.</p>,
+  },
+  {
     title: "1. Responsable del tratamiento",
     body: (
       <p>

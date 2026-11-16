@@ -9,6 +9,8 @@ import AdminLogin from "./AdminLogin";
 import AdminNav from "./_components/AdminNav";
 import { LogoutButton } from "./AdminTools";
 
+export const maxDuration = 60;
+
 export const metadata: Metadata = {
   title: { default: "Panel del club", template: "%s · Panel Voley Zúñiga" },
   robots: { index: false, follow: false },

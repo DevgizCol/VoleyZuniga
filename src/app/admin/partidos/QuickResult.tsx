@@ -26,7 +26,7 @@ export default function QuickResult({ row }: { row: RowData }) {
     if (!state.at || state.at === last.current) return;
     last.current = state.at;
     if (state.ok) {
-      toast.success("Resultado guardado. Ya aparece en la web.");
+      toast.success(state.message || "Resultado guardado. Ya aparece en la web.");
       ref.current?.close();
     } else toast.error(state.fieldErrors?.Resultado ?? state.message);
   }, [state]);
@@ -70,6 +70,10 @@ export default function QuickResult({ row }: { row: RowData }) {
           <label className="block mt-5">
             <span className="block text-sm font-semibold mb-1.5">Parciales (opcional)</span>
             <input value={sets} onChange={(e) => setSets(e.target.value)} placeholder="25-20, 23-25, 25-18, 25-21" className="w-full h-11 rounded-lg bg-white/[0.05] border border-[#6B7F9C] px-3.5 focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent focus:border-accent" />
+          </label>
+          <label className="flex gap-3 items-start mt-5 text-sm">
+            <input name="_notify" type="checkbox" defaultChecked className="mt-1 h-5 w-5 accent-accent shrink-0" />
+            <span>Notificar el resultado a los dispositivos suscritos</span>
           </label>
           <div className="mt-6 flex justify-end gap-2">
             <button type="button" onClick={() => ref.current?.close()} className={btn.secondary}>

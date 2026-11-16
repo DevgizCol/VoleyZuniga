@@ -18,6 +18,8 @@ const csp = [
   `font-src 'self'${isPreview ? " https://vercel.live https://assets.vercel.com" : ""}`,
   `connect-src 'self'${isPreview ? " https://vercel.live wss://ws-us3.pusher.com" : ""}`,
   `frame-src https://www.google.com${live}`,
+  "worker-src 'self'",
+  "manifest-src 'self'",
   "object-src 'none'",
   "base-uri 'self'",
   "form-action 'self'",
@@ -59,6 +61,7 @@ const nextConfig: NextConfig = {
         { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
       ],
     },
+    { source: "/sw.js", headers: [{ key: "Cache-Control", value: "no-cache, no-store, must-revalidate" }] },
     {
       source: "/logo.svg",
       headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],

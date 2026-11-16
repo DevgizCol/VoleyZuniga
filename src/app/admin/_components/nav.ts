@@ -4,6 +4,7 @@ export const ADMIN_NAV = [
   { href: "/admin/pase", label: "Clase gratis", icon: "ticket" },
   { href: "/admin/partidos", label: "Partidos", icon: "calendar" },
   { href: "/admin/posiciones", label: "Posiciones", icon: "trophy" },
+  { href: "/admin/notificaciones", label: "Notificaciones", icon: "bell" },
   { href: "/admin/noticias", label: "Noticias", icon: "news" },
   { href: "/admin/canchas", label: "Canchas", icon: "cloud" },
   { href: "/admin/horarios", label: "Horarios", icon: "clock" },
