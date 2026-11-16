@@ -1,11 +1,11 @@
-// Escenarios de entrenamiento del club (Medellín). Direcciones según el INDER/Alcaldía cuando existen;
-// los mapas buscan por nombre y dirección para no fijar coordenadas sin confirmar.
+// Escenarios de entrenamiento del club (Medellín). Direcciones confirmadas por el club o el INDER;
+// los mapas buscan por nombre y dirección (sin coordenadas fijas).
 export const VENUES = [
   {
     id: "polideportivo-3-canchas",
     name: "Polideportivo 3 Canchas",
     role: "Categoría Libre",
-    address: "Sector Buenos Aires, Medellín",
+    address: "Carrera 15 # 46-70, Bombona II (Buenos Aires), Medellín",
     schedule: "Lunes, miércoles y viernes de 7:00 PM a 8:30 PM",
     description: "Escenario de la categoría Libre (18 años en adelante).",
   },
@@ -29,17 +29,17 @@ export const VENUES = [
     id: "coliseo-poblado-veracruz",
     name: "Coliseo Poblado de Veracruz",
     role: "Categoría Benjamín",
-    address: "Medellín",
+    address: "Carrera 6AB # 47A-99, vía Santa Elena (Buenos Aires), Medellín",
     schedule: "Miércoles y jueves de 6:00 PM a 7:30 PM",
     description: "Escenario de la categoría Benjamín a mitad de semana.",
   },
   {
-    id: "coliseo-el-vergel",
-    name: "Coliseo El Vergel",
+    id: "placa-el-vergel",
+    name: "Placa El Vergel",
     role: "Benjamín, Mini e Infantil",
-    address: "Barrio El Vergel (Buenos Aires), Medellín",
+    address: "Calle 45, Bombona II (Buenos Aires), Medellín",
     schedule: "Viernes de 6:00 PM a 8:00 PM",
-    description: "Los viernes entrenan aquí Benjamín, Mini e Infantil.",
+    description: "Placa polideportiva El Vergel: los viernes entrenan aquí Benjamín, Mini e Infantil.",
   },
 ] as const;
 

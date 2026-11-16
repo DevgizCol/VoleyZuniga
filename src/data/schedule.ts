@@ -13,7 +13,7 @@ const POLI = "Polideportivo 3 Canchas";
 const QUINTA = "Placa Quinta Linda";
 const ECHAVARRIA = "Coliseo Alejandro Echavarría";
 const VERACRUZ = "Coliseo Poblado de Veracruz";
-const VERGEL = "Coliseo El Vergel";
+const VERGEL = "Placa El Vergel";
 
 // Horario real del club (los festivos no se entrena). La pestaña Horarios de la hoja tiene prioridad.
 export const SESSIONS: Session[] = [
