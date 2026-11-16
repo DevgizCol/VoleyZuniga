@@ -15,6 +15,16 @@ function keyBytes(key: string) {
   return Uint8Array.from(raw, c => c.charCodeAt(0));
 }
 
+/** Pide permiso y suscribe este dispositivo. Llamar solo desde un toque del usuario (iOS lo exige). */
+export async function enablePush(publicKey: string): Promise<PushSubscription> {
+  const allowed = await Notification.requestPermission();
+  if (allowed !== "granted") throw new Error("No se activaron los avisos. Puedes cambiar el permiso en los ajustes del navegador.");
+  const registration = await navigator.serviceWorker.register("/sw.js", { scope: "/", updateViaCache: "none" }).then(() => navigator.serviceWorker.ready);
+  const sub = (await registration.pushManager.getSubscription()) || await registration.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: keyBytes(publicKey) });
+  await api("subscribe", sub);
+  return sub;
+}
+
 export default function NotificationSettings({ admin = false }: { admin?: boolean }) {
   const [supported, setSupported] = useState<boolean | null>(null);
   const [ios, setIos] = useState(false);
@@ -56,17 +66,17 @@ export default function NotificationSettings({ admin = false }: { admin?: boolea
     setBusy(true); setMessage("");
     try {
       // Debe ejecutarse directamente por un gesto del usuario, especialmente en iOS.
-      const allowed = await Notification.requestPermission();
-      setPermission(allowed);
-      if (allowed !== "granted") throw new Error("No se activaron los avisos. Puedes cambiar el permiso en los ajustes del navegador.");
-      const registration = await navigator.serviceWorker.ready;
-      const previous = await registration.pushManager.getSubscription();
-      const sub = previous || await registration.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: keyBytes(publicKey) });
-      setSubscription(sub); // Permite desactivar incluso si falla el guardado remoto.
-      await api("subscribe", sub);
+      const sub = await enablePush(publicKey);
+      setPermission(Notification.permission);
+      setSubscription(sub);
       setRegistered(true);
       setMessage("Avisos activados para este dispositivo. Recibirás partidos y noticias publicados desde el admin.");
-    } catch (e) { setMessage(pushClientError(e, Boolean((navigator as Navigator & { brave?: unknown }).brave))); }
+    } catch (e) {
+      setMessage(pushClientError(e, Boolean((navigator as Navigator & { brave?: unknown }).brave)));
+      setPermission(Notification.permission);
+      // Si el navegador quedó suscrito pero falló el guardado remoto, conservar la opción de desactivar o reintentar.
+      setSubscription(await navigator.serviceWorker.getRegistration("/").then(r => r?.pushManager.getSubscription() ?? null).catch(() => null));
+    }
     finally { setBusy(false); }
   }
 
